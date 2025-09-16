@@ -3,8 +3,8 @@
 
 //#define EASY_EXAMPLE
 //#define CIRCLE
-//#define SPHERE
-#define MATRIX
+#define SPHERE
+//#define MATRIX
 
 
 #ifdef EASY_EXAMPLE
