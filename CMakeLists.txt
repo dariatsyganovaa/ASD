@@ -19,10 +19,6 @@ add_subdirectory(lib_circle)
 add_subdirectory(lib_point3d)
 add_subdirectory(lib_sphere)
 
-add_subdirectory(lib_tvector)
-add_subdirectory(lib_mathvector)
-add_subdirectory(lib_matrix)
-
 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main
 
