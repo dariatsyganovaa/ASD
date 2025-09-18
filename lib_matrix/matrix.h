@@ -12,7 +12,9 @@ public:
 	Matrix ();
 	Matrix (size_t, size_t);
 
-	Matrix<T> trans();
+	void trans();
+	void input_matrix();
+	void print_matrix();
 
 	Matrix<T> operator+ (const Matrix&);
 	Matrix<T> operator- (const Matrix&);
@@ -35,46 +37,72 @@ Matrix <T>::Matrix(size_t N, size_t M) : MathVector <MathVector <T>>(N), _N(N), 
 }
 
 template <typename T>
-Matrix<T> Matrix <T>::operator+ (const Matrix& other) {
-	if (_N != other._N || _M != other._M) {
-		std::cout << "The matrices must have the same dimensions!" << std::endl;
-	}
+void Matrix <T>::trans() {
+	std::cout << " - transposition matrix" << std::endl;
+}
 
-	Matrix<T> result(_M, _N);
+template <typename T>
+void Matrix <T>::input_matrix() {
+	std::cout << "Enter elems: " << std::endl;
+	std::cout << " - input elems" << std::endl;
+}
+
+template <typename T>
+void Matrix <T>::print_matrix() {
+	std::cout << "Print matrix: " << std::endl;
+	std::cout << " - print elems" << std::endl;
+}
+
+template <typename T>
+Matrix<T> Matrix <T>::operator+ (const Matrix& other) {
+	/* Matrix<T> result(_M, _N);
 	for (size_t i = 0; i < _M; i++) {
 		for (size_t j = 0; j < _N; j++) {
 			result[i][j] = (*this)[i][j] + other[i][j];
 		}
 	}
 	return result;
+	*/
+
+	std::cout << "TBD operator+" << std::endl;
+	return *this;
+	
 	//return this->MathVector <MathVector <T>> :: operator+ (other);
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator* (T val){
-	if (_M != other._N) {
-		std::cout << "The matrices must have the same dimensions!" << std::endl;
-	}
+Matrix<T> Matrix <T>::operator- (const Matrix& other) {
+	std::cout << "TBD operator-" << std::endl;
+	return *this;
+}
 
-	Matrix<T> result(_M, _N);
+template <typename T>
+Matrix<T> Matrix<T>::operator* (T val){
+	/*Matrix<T> result(_M, _N);
 	for (size_t i = 0; i < _M; i++) {
 		result[i] = (*this)[i] * val;
 	}
-	return result;
+	return result;*/
+
+	std::cout << "TBD operator* " << std::endl;
+	return *this;
 }
 
 template <typename T>
 MathVector <T> Matrix<T>::operator* (MathVector <T> vec) {
-	MathVector <T> result(_M);
+	/*MathVector <T> result(_M);
 	for (size_t i = 0; i < _M; i++) {
 		result[i] = (*this)[i] * vec[i];
 	}
-	return result;
+	return result;*/
+
+	std::cout << "TBD operator*" << std::endl;
+	return *this;
 }
 
 template <typename T>
 Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
-	Matrix<T> result(_M, matr._N);
+	/*Matrix<T> result(_M, matr._N);
 	Matrix<T> Matr_t = matr.trans();
 
 	for (size_t i = 0; i < _M; i++) {
@@ -82,7 +110,10 @@ Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
 			result[i][j] = (*this)[i] * Matr_t[j];
 		}
 	}
-	return result;
+	return result;*/
+
+	std::cout << "TBD operator*" << std::endl;
+	return *this;
 }
 
 #endif  // LIB_MATRIX_MATRIX_H_

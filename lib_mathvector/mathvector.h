@@ -13,9 +13,8 @@ public:
 
 	MathVector<T> operator* (T val);
 	T operator* (MathVector<T> vec);
-	MathVector<T> operator+ (T vec); //??
-
-	T& operator [] (size_t);
+	//MathVector<T> operator+ (T vec); //??
+	//T& operator [] (size_t);
 };
 
 template <typename T>
@@ -42,11 +41,13 @@ T MathVector <T>::operator* (MathVector <T> vec) {
 	return result;
 }
 
-
+/* 
 template <typename T>
 T& MathVector<T>::operator [] (size_t index) {
 	if (index - _start_index < 0) { return T(); }
 	return _data[index - _start_index];
 }
+*/
+
 
 #endif  // LIB_MATHVECTOR_MATHVECTOR_H_

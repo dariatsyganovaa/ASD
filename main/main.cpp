@@ -7,112 +7,125 @@
 
 #include "../lib_triangle_matrix/triangle_matrix.h"
 
-typedef int TYPE;
-
-template <typename T>
-void start_add_matrix(int N1, int N2, int M1, int M2);
-
-template <typename T>
-void start_sub_matrix(int N1, int N2, int M1, int M2);
-
-template <typename T>
-void start_mult_matrix(int N1, int N2, int M1, int M2);
-
 int main() {
-    int N1, M1, N2, M2;
+    int N1, M1;
     int user;
 
-    TYPE result;
+    std::cout << "Specify the size of the matrix, where N is the number of rows, M is the number of cols" << std::endl;
 
-    std::cout << "Hello! Specify the size of the matrix, where N is the number of rows, M is the number of columns" << std::endl;
-
-    std::cout << "Enter the size of your first matrix separated by a space: ";
+    std::cout << "Enter the size of 1-st matrix separated by a space: ";
     std::cin >> N1 >> M1;
+    Matrix <int> matrix_1(N1, M1);
+    matrix_1.input_matrix();
+    system("pause");
 
-    std::cout << "Enter the size of your second matrix separated by a space: ";
-    std::cin >> N2 >> M2;
-
-    TriangleMatrix <TYPE> matrix_1(N1);
-    TriangleMatrix <TYPE> matrix_2(N2);
-
-    char operation;
-    while (1) {
+    while (1) {       
         system("cls");
-
         std::cout << "==== MATRIX CALCULATOR ====" << std::endl;
-        std::cout << "Choose:\n1. func\n2. foo\n3. output\n0. exit\nYour: ";
+        std::cout << "Choose:\n1. add \n2. sub \n3. mult \n4. mult by a scalar \n5. transposition \n0. exit\nYour: ";
+        std::cin >> user;
         std::cout << "===========================" << std::endl;
-
+        
+        int N2, M2;
 
         if (user == 0) break;
 
         switch (user) {
         case 1:
-            matrix_1.func();
+            system("cls");
+            std::cout << "==== MATRIX ADDITION ====" << std::endl;
+
+            while (1) {
+                std::cout << "Enter the size of 2-nd matrix: ";
+                std::cin >> N2 >> M2;
+                if (N1 != N2 || M1 != M2) {
+                    std::cout << "Error! The sizes of the matrices must match! ";
+                    continue;
+                }
+                Matrix<int> matrix_2(N2, M2);
+                matrix_2.input_matrix();
+
+                Matrix<int> result = matrix_1 + matrix_2;
+                result.print_matrix();
+                system("pause");
+                break;
+            }
             break;
         case 2:
-            result = matrix_1.foo();
-            std::cout << "Result is " << result << ".\n";
+            system("cls");
+            std::cout << "==== MATRIX SUBTRACTION ====" << std::endl;
+
+            while (1) {
+                std::cout << "Enter the size of 2-nd matrix: ";
+                std::cin >> N2 >> M2;
+                if (N1 != N2 || M1 != M2) {
+                    std::cout << "Error! The sizes of the matrices must match! ";
+                    continue;
+                }
+                Matrix<int> matrix_2(N2, M2);
+                matrix_2.input_matrix();
+
+                Matrix<int> result = matrix_1 - matrix_2;
+                result.print_matrix();
+                system("pause");
+                break;
+            }
             break;
         case 3:
-            std::cout << matrix_1;
+            system("cls");
+            std::cout << "==== MATRIX MULTIPLICATION ====" << std::endl;
+
+            while (1) {
+                std::cout << "Enter the size of 2-nd matrix: ";
+                std::cin >> N2 >> M2;
+                if (M1 != N2) {
+                    std::cout << "Error! The number of cols in the 1-st matrix must match the number of rows in the 2-nd matrix! ";
+                    continue;
+                }
+                Matrix<int> matrix_2(N2, M2);
+                matrix_2.input_matrix();
+
+                Matrix<int> result = matrix_1 * matrix_2;
+                result.print_matrix();
+                system("pause");
+                break;
+            }
             break;
+
+        case 4:
+            system("cls");
+            std::cout << "==== MATRIX MULTIPLICATION BY A SCALAR ====" << std::endl;
+
+            while (1) {
+                std::cout << "Enter a scalar: ";
+                int scalar;
+                std::cin >> scalar;
+                Matrix<int> result = matrix_1 * scalar;
+
+                result.print_matrix();
+                system("pause");
+                break;
+            }
+            break;
+        case 5:
+            system("cls");
+            std::cout << "==== MATRIX TRANSPOSITION ====" << std::endl;
+
+            while (1) {
+                matrix_1.trans();
+                matrix_1.print_matrix();
+                system("pause");
+                break;
+            }
+            break;
+
         default:
             std::cout << "Wrong input!\n";
+            system("pause");
             break;
         }
     }
     return 0;
-}
-
-template <typename T>
-void start_add_matrix(int N1, int N2, int M1, int M2) {
-    system("cls");
-    std::cout << "==== MATRIX ADDITION ====" << std::endl;
- 
-    try {
-        Matrix<T> matrix_1(N1, M1);
-        Matrix<T> matrix_2(N2, M2);
-
-        Matrix<T> result = matrix_1 + matrix_2;
-    }
-    catch (const std::exception& e){
-        std::cout << "Error: " << e.what() << std::endl;
-    }
-    
-}
-
-template <typename T>
-void start_sub_matrix(int N1, int N2, int M1, int M2) {
-    system("cls");
-    std::cout << "==== MATRIX SUBTRACTION ====" << std::endl;
-
-    try {
-        Matrix<T> matrix_1(N1, M1);
-        Matrix<T> matrix_2(N2, M2);
-
-        Matrix<T> result = matrix_1 - matrix_2;
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    }
-}
-
-template <typename T>
-void start_mult_matrix(int N1, int N2, int M1, int M2) {
-    system("cls");
-
-    std::cout << "==== MATRIX MULTIPLICATION ====" << std::endl;
-
-    try {
-        Matrix<T> matrix_1(N1, M1);
-        Matrix<T> matrix_2(N2, M2);
-
-        Matrix<T> result = matrix_1 * matrix_2;
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    }
 }
 
 #endif  // MATRIX

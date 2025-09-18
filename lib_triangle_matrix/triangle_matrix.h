@@ -22,12 +22,13 @@ public:
 template <typename T>
 TriangleMatrix <T>::TriangleMatrix() : MathVector <MathVector <T>>(), _N(0) {}
 
-template <typename T>
-TriangleMatrix <T> ::TriangleMatrix(size_t N) : MathVector <MathVector <T>>(N), _N(N){
-	for (size_t i = 0; i < N; i++) {
-		_data[i] = new MathVector<T>(N - i, i); //i - доп. поле индекса
-	}
-}
+//template <typename T>
+//TriangleMatrix <T>::TriangleMatrix(size_t N) : MathVector <MathVector <T>>(N), _N(N){
+//	for (size_t i = 0; i < N; i++) {
+//		//_data[i] = new MathVector<T>(N - i, i); //i - доп. поле индекса
+//	}
+//
+//}
 
 template <class T>
 void TriangleMatrix<T>::func() {}
@@ -36,7 +37,7 @@ template <class T>
 T TriangleMatrix<T>::foo() { return T(); }
 
 template <class T>
-std::ostream& operator << <T>(std::ostream& out, const TriangleMatrix<T>& obj) {
+std::ostream& operator <<(std::ostream& out, const TriangleMatrix<T>& obj) {
 	return out;
 }
 
