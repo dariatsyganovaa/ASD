@@ -19,12 +19,12 @@ public:
 	TVector();
 	TVector(size_t);
 
-    void clear() noexcept;
-
     TVector<T>& operator=(const TVector<T>&);
     bool operator==(const TVector<T>&) const;
     bool operator!=(const TVector<T>&) const;
     T& operator[](size_t);
+    
+    void clear() noexcept;
 };
 
 template<class T>

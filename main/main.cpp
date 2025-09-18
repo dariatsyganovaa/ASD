@@ -5,9 +5,9 @@
 
 #ifdef MATRIX
 
-#include "../lib_matrix/matrix.h"
+#include "../lib_triangle_matrix/triangle_matrix.h"
 
-void start_main_menu();
+typedef int TYPE;
 
 template <typename T>
 void start_add_matrix(int N1, int N2, int M1, int M2);
@@ -19,54 +19,50 @@ template <typename T>
 void start_mult_matrix(int N1, int N2, int M1, int M2);
 
 int main() {
-    start_main_menu();
-    return 0;
-}
-
-void start_main_menu() {
     int N1, M1, N2, M2;
+    int user;
+
+    TYPE result;
+
     std::cout << "Hello! Specify the size of the matrix, where N is the number of rows, M is the number of columns" << std::endl;
 
     std::cout << "Enter the size of your first matrix separated by a space: ";
     std::cin >> N1 >> M1;
-    std::cout << "The size of your first matrix: " << N1 << " x " << M1 << std::endl;
 
     std::cout << "Enter the size of your second matrix separated by a space: ";
     std::cin >> N2 >> M2;
-    std::cout << "The size of your second matrix: " << N2 << " x " << M2 << std::endl << std::endl;
+
+    TriangleMatrix <TYPE> matrix_1(N1);
+    TriangleMatrix <TYPE> matrix_2(N2);
 
     char operation;
     while (1) {
         system("cls");
 
-        std::cout << "==== MATRIX CALCILATOR ====" << std::endl;
-        std::cout << "Matrix 1: " << N1 << " x " << M1 << std::endl;
-        std::cout << "Matrix 2: " << N2 << " x " << M2 << std::endl;
+        std::cout << "==== MATRIX CALCULATOR ====" << std::endl;
+        std::cout << "Choose:\n1. func\n2. foo\n3. output\n0. exit\nYour: ";
         std::cout << "===========================" << std::endl;
 
-        std::cout << "Select operation (+, -, *)" << std::endl;
-        std::cout << "Your choice: ";
-        std::cin >> operation;
 
-        switch (operation) {
-        case '+':
-            start_add_matrix<int>(N1, N2, M1, M2);
+        if (user == 0) break;
+
+        switch (user) {
+        case 1:
+            matrix_1.func();
             break;
-        case '-':
-            start_sub_matrix<int>(N1, N2, M1, M2);
+        case 2:
+            result = matrix_1.foo();
+            std::cout << "Result is " << result << ".\n";
             break;
-        case '*':
-            start_mult_matrix<int>(N1, N2, M1, M2);
+        case 3:
+            std::cout << matrix_1;
             break;
-        case '0':
-            std::cout << "Goodbye!" << std::endl;
-            return;
         default:
-            std::cout << "Invalid operation! Try again! " << std::endl;
-            system("pause");
+            std::cout << "Wrong input!\n";
             break;
         }
     }
+    return 0;
 }
 
 template <typename T>
