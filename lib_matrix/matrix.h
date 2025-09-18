@@ -11,19 +11,18 @@ class Matrix : public MathVector <MathVector <T>>{
 public:
 	Matrix ();
 	Matrix (size_t, size_t);
+	Matrix(const MathVector <MathVector <T>>&);
+	Matrix(const Matrix&);
 
-	void trans();
+	Matrix<T> operator+ (const Matrix& other);
+	Matrix<T> operator- (const Matrix& other);
+	Matrix<T> operator* (Matrix<T> matr);
+	Matrix<T> operator* (T val);
+	MathVector<T> operator* (MathVector<T> vec);
+
+	Matrix<T> trans();
 	void input_matrix();
 	void print_matrix();
-
-	Matrix<T> operator+ (const Matrix&);
-	Matrix<T> operator- (const Matrix&);
-
-	Matrix<T> operator* (T val);
-	MathVector<T> operator* (MathVector<T> vec);//?? тип вектора
-	Matrix<T> operator* (Matrix<T> matr);
-
-
 };
 
 template <typename T>
@@ -37,43 +36,23 @@ Matrix <T>::Matrix(size_t N, size_t M) : MathVector <MathVector <T>>(N), _N(N), 
 }
 
 template <typename T>
-void Matrix <T>::trans() {
-	std::cout << " - transposition matrix" << std::endl;
-}
+Matrix <T>::Matrix(const MathVector <MathVector <T>>& vec) : MathVector <MathVector <T>>(vec), _N(vec.size()), _M(_N > 0 ? vec[0].size() : 0) {}
 
 template <typename T>
-void Matrix <T>::input_matrix() {
-	std::cout << "Enter elems: " << std::endl;
-	std::cout << " - input elems" << std::endl;
-}
-
-template <typename T>
-void Matrix <T>::print_matrix() {
-	std::cout << "Print matrix: " << std::endl;
-	std::cout << " - print elems" << std::endl;
-}
+Matrix <T>::Matrix(const Matrix& other) : MathVector <MathVector <T>>(other), _N(other._N), _M(other._M) {}
 
 template <typename T>
 Matrix<T> Matrix <T>::operator+ (const Matrix& other) {
-	/* Matrix<T> result(_M, _N);
-	for (size_t i = 0; i < _M; i++) {
-		for (size_t j = 0; j < _N; j++) {
-			result[i][j] = (*this)[i][j] + other[i][j];
-		}
-	}
-	return result;
-	*/
-
-	std::cout << "TBD operator+" << std::endl;
+	std::cout << "operator+" << std::endl;	
 	return *this;
-	
 	//return this->MathVector <MathVector <T>> :: operator+ (other);
 }
 
 template <typename T>
 Matrix<T> Matrix <T>::operator- (const Matrix& other) {
-	std::cout << "TBD operator-" << std::endl;
+	std::cout << "operator-" << std::endl;
 	return *this;
+	//return this->MathVector <MathVector <T>> :: operator- (other);
 }
 
 template <typename T>
@@ -84,7 +63,7 @@ Matrix<T> Matrix<T>::operator* (T val){
 	}
 	return result;*/
 
-	std::cout << "TBD operator* " << std::endl;
+	std::cout << "operator* val" << std::endl;
 	return *this;
 }
 
@@ -96,7 +75,7 @@ MathVector <T> Matrix<T>::operator* (MathVector <T> vec) {
 	}
 	return result;*/
 
-	std::cout << "TBD operator*" << std::endl;
+	std::cout << "operator* vec" << std::endl;
 	return *this;
 }
 
@@ -112,8 +91,26 @@ Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
 	}
 	return result;*/
 
-	std::cout << "TBD operator*" << std::endl;
+	std::cout << "operator* matr" << std::endl;
 	return *this;
+}
+
+template <typename T>
+Matrix<T> Matrix <T>::trans() {
+	std::cout << " - transposition matrix" << std::endl;
+	return *this;
+}
+
+template <typename T>
+void Matrix <T>::input_matrix() {
+	std::cout << "Enter elems: " << std::endl;
+	std::cout << " - input elems" << std::endl;
+}
+
+template <typename T>
+void Matrix <T>::print_matrix() {
+	std::cout << "Print matrix: " << std::endl;
+	std::cout << " - print elems" << std::endl;
 }
 
 #endif  // LIB_MATRIX_MATRIX_H_

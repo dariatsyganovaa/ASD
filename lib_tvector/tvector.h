@@ -19,6 +19,8 @@ public:
 	TVector();
 	TVector(size_t);
 
+    size_t size() const { return _size; }
+
     TVector<T>& operator=(const TVector<T>&);
     bool operator==(const TVector<T>&) const;
     bool operator!=(const TVector<T>&) const;
