@@ -4,7 +4,11 @@
 #include <cstddef>
 #include "../lib_mathvector/mathvector.h"
 
-template <typename T>
+template <typename T> class Matrix;
+template <typename T> std::ostream& operator<<(std::ostream& out, const Matrix<T>& matr);
+template <typename T> std::istream& operator>>(std::istream& in, Matrix<T>& matr);
+
+template <class T>
 class Matrix : public MathVector <MathVector <T>>{
 	size_t _N;
 	size_t _M;
@@ -23,6 +27,9 @@ public:
 	Matrix<T> trans();
 	void input_matrix();
 	void print_matrix();
+
+	friend std::ostream& operator<< <T>(std::ostream& out, const Matrix<T>& matr);
+	friend std::istream& operator>> <T>(std::istream& in, Matrix<T>& matr);
 };
 
 template <typename T>
@@ -103,14 +110,28 @@ Matrix<T> Matrix <T>::trans() {
 
 template <typename T>
 void Matrix <T>::input_matrix() {
-	std::cout << "Enter elems: " << std::endl;
-	std::cout << " - input elems" << std::endl;
+	Matrix<T> matrix;
+	std::cout << "Enter elems: ";
+	std::cin >> matrix;
 }
 
 template <typename T>
 void Matrix <T>::print_matrix() {
-	std::cout << "Print matrix: " << std::endl;
-	std::cout << " - print elems" << std::endl;
+	Matrix<T> matrix; 
+	std::cout << "Print matrix: ";
+	std::cout << matrix;
+}
+
+template <class T>
+std::ostream& operator<< (std::ostream& out, const Matrix<T>& matr) {
+	std::cout << "operator<<" << std::endl;
+	return out;
+}
+
+template <class T>
+std::istream& operator>> (std::istream& in, Matrix<T>& matr){
+	std::cout << "operator>>" << std::endl;
+	return in;
 }
 
 #endif  // LIB_MATRIX_MATRIX_H_

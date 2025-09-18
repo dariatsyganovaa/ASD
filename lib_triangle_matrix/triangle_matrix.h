@@ -6,7 +6,8 @@
 #include "../lib_matrix/matrix.h"
 
 template <typename T> class TriangleMatrix;
-template <typename T> std::ostream& operator<<(std::ostream& out, const TriangleMatrix<T>& obj);
+template <typename T> std::ostream& operator<<(std::ostream& out, const TriangleMatrix<T>& matr);
+template <typename T> std::istream& operator>>(std::istream& in, TriangleMatrix<T>& matr);
 
 template <class T>
 class TriangleMatrix : public Matrix<T> {
@@ -25,7 +26,9 @@ public:
 	void input_tri_matrix();
 	void print_tri_matrix();
 
-	friend std::ostream& operator << <T>(std::ostream& out, const TriangleMatrix<T>& obj);
+	friend std::ostream& operator<< <T>(std::ostream& out, const TriangleMatrix<T>& matr);
+	friend std::istream& operator>> <T>(std::istream& in, TriangleMatrix<T>& matr);
+
 };
 
 template <typename T>
@@ -72,19 +75,27 @@ TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 
 template <typename T>
 void TriangleMatrix <T>::input_tri_matrix() {
-	std::cout << "Enter elems: " << std::endl;
-	std::cout << " - input elems" << std::endl;
+	TriangleMatrix<T> matrix;
+	std::cout << "Enter elems: ";
+	std::cin >> matrix;
 }
 
 template <typename T>
 void TriangleMatrix <T>::print_tri_matrix() {
-	std::cout << "Print matrix: " << std::endl;
-	std::cout << " - print elems" << std::endl;
+	TriangleMatrix<T> matrix;
+	std::cout << "Print matrix: ";
+	std::cout << matrix;
 }
 
 template <class T>
-std::ostream& operator <<(std::ostream& out, const TriangleMatrix<T>& obj) {
+std::ostream& operator<< (std::ostream& out, const TriangleMatrix<T>& matr) {
+	std::cout << "operator<<" << std::endl;
 	return out;
 }
 
+template <class T>
+std::istream& operator>> (std::istream& in, TriangleMatrix<T>& matr) {
+	std::cout << "operator>>" << std::endl;
+	return in;
+}
 #endif  // LIB_TRIANGLEMATRIX_TRIANGLEMATRIX_H_
