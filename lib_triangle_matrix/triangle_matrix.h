@@ -22,6 +22,14 @@ public:
 	TriangleMatrix<T> operator* (TriangleMatrix<T> matr);
 	TriangleMatrix<T> operator* (T val);
 
+	TriangleMatrix<T>& operator=(const TriangleMatrix<T>& other);
+	bool operator==(const TriangleMatrix<T>&) const;
+	bool operator!=(const TriangleMatrix<T>&) const;
+
+	TriangleMatrix<T>& operator+= (const TriangleMatrix<T>& other) const;
+	TriangleMatrix<T>& operator-= (const TriangleMatrix<T>& other) const;
+	TriangleMatrix<T>& operator*= (T val);
+
 	T& operator [] (size_t);
 	const T& operator [] (size_t) const;
 
@@ -102,6 +110,39 @@ TriangleMatrix<T> TriangleMatrix<T>::operator* (TriangleMatrix<T> matr) {
 template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 	std::cout << "operator* val" << std::endl;
+	return *this;
+}
+
+template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator= (const TriangleMatrix& other) { 
+	return Matrix<T>::operator=(other);
+}
+
+template <typename T>
+bool TriangleMatrix <T>::operator== (const TriangleMatrix& other) const {
+	return Matrix<T>::operator==(other);
+}
+
+template <typename T>
+bool TriangleMatrix <T>::operator!= (const TriangleMatrix& other) const {
+	return Matrix<T>::operator!=(other);
+}
+
+template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) const {
+	std::cout << "operator +=" << std::endl;
+	return *this;
+}
+
+template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) const {
+	std::cout << "operator -=" << std::endl;
+	return *this;
+}
+
+template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator*= (T val) {
+	std::cout << "operator *=" << std::endl;
 	return *this;
 }
 

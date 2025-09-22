@@ -28,6 +28,10 @@ public:
 	bool operator==(const Matrix<T>&) const;
 	bool operator!=(const Matrix<T>&) const;
 
+	Matrix<T>& operator+= (const Matrix<T>& other) const;
+	Matrix<T>& operator-= (const Matrix<T>& other) const;
+	Matrix<T>& operator*= (T val);
+
 	T& operator [] (size_t);
 	const T& operator [] (size_t) const;
 
@@ -122,6 +126,24 @@ bool Matrix <T>::operator== (const Matrix& other) const {
 template <typename T>
 bool Matrix <T>::operator!= (const Matrix& other) const {
 	return MathVector<T>::operator!=(other);
+}
+
+template <typename T>
+Matrix <T>& Matrix <T>::operator+= (const Matrix& other) const {
+	std::cout << "operator +=" << std::endl;
+	return *this;
+}
+
+template <typename T>
+Matrix <T>& Matrix <T>::operator-= (const Matrix& other) const {
+	std::cout << "operator -=" << std::endl;
+	return *this;
+}
+
+template <typename T>
+Matrix <T>& Matrix <T>::operator*= (T val) {
+	std::cout << "operator *=" << std::endl;
+	return *this;
 }
 
 template <typename T>

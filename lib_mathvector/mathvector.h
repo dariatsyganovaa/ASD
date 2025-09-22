@@ -68,7 +68,8 @@ MathVector <T> MathVector <T>::operator* (T val) {
 
 template <typename T>
 MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
-	return TVector<T>::operator=(other);
+	TVector<T>::operator=(other);
+	return *this;
 }
 
 template <typename T>
