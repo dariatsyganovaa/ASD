@@ -22,6 +22,12 @@ public:
 	TriangleMatrix<T> operator* (TriangleMatrix<T> matr);
 	TriangleMatrix<T> operator* (T val);
 
+	T& operator [] (size_t);
+	const T& operator [] (size_t) const;
+
+	bool isUpperTriangular();
+	bool isLowerTriangular();
+
 	void status();
 	void input_tri_matrix();
 	void print_tri_matrix();
@@ -45,8 +51,34 @@ template <typename T>
 TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix& other) : Matrix<T>(other), _N(other._N){}
 
 template <class T>
+bool TriangleMatrix<T>::isUpperTriangular() {
+	std::cout << "checking upper triangular matrix" << std::endl;
+	return true;
+}
+
+template <class T>
+bool TriangleMatrix<T>::isLowerTriangular() {
+	std::cout << "checking lower triangular matrix" << std::endl;
+	return true;
+}
+
+template <class T>
 void TriangleMatrix<T>::status() {
-	std::cout << "upper triangular or lower triangular matrix" << std::endl;
+	bool isUpper = isUpperTriangular();
+	bool isLower = isLowerTriangular();
+
+	if (isUpper && isLower) {
+		std::cout << "Diagonal matrix" << std::endl;
+	}
+	else if (isUpper) {
+		std::cout << "Upper triangular matrix" << std::endl;
+	}
+	else if (isLower) {
+		std::cout << "Lower triangular matrix" << std::endl;
+	}
+	else {
+		std::cout << "Not a triangular matrix" << std::endl;
+	}
 } 
 
 template <class T>
@@ -71,6 +103,16 @@ template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 	std::cout << "operator* val" << std::endl;
 	return *this;
+}
+
+template <typename T>
+T& TriangleMatrix<T>::operator [] (size_t index) {
+	return Matrix<T>::operator[](index); //used start_index
+}
+
+template <typename T>
+const T& TriangleMatrix<T>::operator [] (size_t index) const {
+	return Matrix<T>::operator[](index);
 }
 
 template <typename T>

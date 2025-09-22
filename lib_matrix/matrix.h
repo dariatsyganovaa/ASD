@@ -24,6 +24,13 @@ public:
 	Matrix<T> operator* (T val);
 	MathVector<T> operator* (MathVector<T> vec);
 
+	Matrix<T>& operator=(const Matrix<T>& other);
+	bool operator==(const Matrix<T>&) const;
+	bool operator!=(const Matrix<T>&) const;
+
+	T& operator [] (size_t);
+	const T& operator [] (size_t) const;
+
 	Matrix<T> trans();
 	void input_matrix();
 	void print_matrix();
@@ -100,6 +107,31 @@ Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
 
 	std::cout << "operator* matr" << std::endl;
 	return *this;
+}
+
+template <typename T>
+Matrix <T>& Matrix <T>::operator= (const Matrix& other) {
+	return MathVector<T>::operator=(other);
+}
+
+template <typename T>
+bool Matrix <T>::operator== (const Matrix& other) const {
+	return MathVector<T>::operator==(other);
+}
+
+template <typename T>
+bool Matrix <T>::operator!= (const Matrix& other) const {
+	return MathVector<T>::operator!=(other);
+}
+
+template <typename T>
+T& Matrix<T>::operator [] (size_t index) {
+	return MathVector<T>::operator[](index);
+}
+
+template <typename T>
+const T& Matrix<T>::operator [] (size_t index) const {
+	return MathVector<T>::operator[](index);
 }
 
 template <typename T>
