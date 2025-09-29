@@ -1,75 +1,213 @@
 #include <gtest/gtest.h>
 #include "../lib_tvector/tvector.h"
 
-TEST(TestTVectorLib, DefaultConstructor) {
-    // Arrange
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<int> vec);
+TEST(TestTVectorLib, default_constructor) {
+    TVector<int> vec;
+    EXPECT_TRUE((vec.size() == (size_t)0) && (vec.is_empty() == true));
 }
 
-TEST(TestTVectorLib, SizeConstructor) {
-    // Arrange
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<int> vec(7));
+TEST(TestTVectorLib, size_constructor) {
+    TVector<int> vec(7);
+    EXPECT_EQ(vec.size(), 7);
+    EXPECT_EQ(vec.capacity(), 15);
+
+    for (size_t i = 0; i < vec.capacity(); i++) {
+        EXPECT_EQ(vec.states()[i], empty);
+    }
 }
 
-TEST(TestTVectorLib, SizeZeroConstructor) {
-    // Arrange
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<int> vec(0));
+TEST(TestTVectorLib, size_null_constructor) {
+    TVector<int> vec;
+    EXPECT_TRUE((vec.size() == (size_t)0) && (vec.is_empty() == true));
 }
 
-TEST(TestTVectorLib, CopyConstructor) {
-    // Arrange
+TEST(TestTVectorLib, copy_constructor) {
     int arr[9] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     TVector<int> vec1(arr, 9);
+    TVector<int> vec2(vec1);
 
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<int> vec2(vec1));
+    EXPECT_EQ(vec2.size(), 9);
+    EXPECT_EQ(vec2.capacity(), 15);
+
+    for (size_t i = 0; i < vec2.size(); i++) {
+        EXPECT_EQ(vec1.data()[i], vec2.data()[i]);
+    }
 }
 
-TEST(TestTVectorLib, MassConstructor) {
-    // Arrange
+TEST(TestTVectorLib, copy_null_constructor) {
+    TVector<int> vec1(0);
+    TVector<int> vec2(vec1);
+
+    EXPECT_TRUE((vec2.size() == (size_t)0) && (vec2.capacity() == (size_t)15) && (vec2.is_empty() == true));
+}
+
+TEST(TestTVectorLib, mass_constructor) {
     int arr[9] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    TVector<int> vec(arr, 9);
 
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<int> vec(arr, 9));
+    EXPECT_EQ(vec.size(), 9);
+    EXPECT_EQ(vec.capacity(), 15);
+
+    for (size_t i = 0; i < vec.size(); i++) {
+        EXPECT_EQ(vec.data()[i], arr[i]);
+        EXPECT_EQ(vec.states()[i], busy);
+    }
 }
 
-TEST(TestTVectorLib, MassNullConstructor) {
-    // Arrange
+TEST(TestTVectorLib, mass_null_constructor) {
     int* arr = nullptr;
+    TVector<int> vec(arr, 0);
 
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<int> vec(arr, 0));
+    EXPECT_TRUE((vec.size() == (size_t)0) && (vec.capacity() == (size_t)15) && (vec.is_empty() == true));
 }
 
-// Тесты методов доступа
-TEST(TestTVectorLib, FrontElement) {
-    // Arrange
-    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec.front());
+TEST(TestTVectorLib, destructor) {
+    TVector<int> vec2;
+    vec2.push_back_elem(222);
 }
 
-TEST(TestTVectorLib, BackElement) {
-    // Arrange
+TEST(TestTVectorLib, front_elem) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
     TVector<int> vec(arr, 14);
+    int expected_res = 1;
+    int actual_res = vec.front();
 
-    // Act & Assert
-    ASSERT_NO_THROW(vec.back());
+    EXPECT_EQ(expected_res, actual_res);
 }
 
-TEST(TestTVectorLib, AtMethod) {
-    // Arrange
+TEST(TestTVectorLib, back_elem) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
     TVector<int> vec(arr, 14);
+    int expected_res = 14;
+    int actual_res = vec.back();
 
-    // Act & Assert
-    ASSERT_NO_THROW(vec.at(0));
+    EXPECT_EQ(expected_res, actual_res);
+}
+
+TEST(TestTVectorLib, begin_vector_with_size) {
+    TVector<int> vec(6);
+    EXPECT_EQ(&vec[0], vec.begin());
+}
+
+TEST(TestTVectorLib, begin_empty_vector) {
+    TVector<int> empty_vec;
+    EXPECT_EQ(empty_vec.end(), empty_vec.begin());
+}
+
+TEST(TestTVectorLib, end_vector_with_size) {
+    int size = 6;
+    TVector<int> vec(size);
+    EXPECT_EQ(&vec[size], vec.end());
+}
+
+TEST(TestTVectorLib, end_empty_vector) {
+    TVector<int> empty_vec;
+    EXPECT_EQ(empty_vec.end(), empty_vec.begin()); 
+}
+
+TEST(TestTVectorLib, end_empty_vector) {
+    TVector<int> empty_vec;
+    EXPECT_EQ(empty_vec.end(), empty_vec.begin());
+}
+
+TEST(TestTVectorLib, push_front_elem) { 
+    const int size = 6;
+    int arr[size];
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = i + 1;
+    }
+
+    TVector<int> vec(arr, size);
+    size_t old_capacity = vec.capacity();
+    vec.push_front_elem(111);
+
+    EXPECT_EQ(vec.size(), size + 1);
+    EXPECT_EQ(vec[0], 111);
+
+    EXPECT_GE(vec.capacity(), old_capacity);
+
+    for (size_t i = 0; i < size; i++) {
+        EXPECT_EQ(vec[i+1], arr[i]);
+    }
+}
+
+TEST(TestTVectorLib, push_front_elems) {
+    const int size = 6;
+    int arr[size];
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = i + 1;
+    }
+
+    const int count_of_elems = 3;
+    int mass[count_of_elems];
+    for (size_t i = 0; i < count_of_elems; i++) {
+        mass[i] = (i + 1) * 111;
+    }
+
+    TVector<int> vec(arr, size);
+    size_t old_capacity = vec.capacity();
+    vec.push_front_elems(mass, count_of_elems);
+
+    EXPECT_EQ(vec.size(), size + count_of_elems);
+    EXPECT_GE(vec.capacity(), old_capacity);
+
+    for (size_t i = 0; i < count_of_elems; i++) {
+        EXPECT_EQ(vec[i], mass[i]);
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        EXPECT_EQ(vec[i + count_of_elems], arr[i]);
+    }
+}
+
+TEST(TestTVectorLib, push_back_elem) {
+    const int size = 6;
+    int arr[size];
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = i + 1;
+    }
+
+    TVector<int> vec(arr, size);
+    size_t old_capacity = vec.capacity();
+    vec.push_back_elem(111);
+
+    EXPECT_EQ(vec.size(), size + 1);
+    EXPECT_GE(vec.capacity(), old_capacity);
+
+    for (size_t i = 0; i < size; i++) {
+        EXPECT_EQ(vec[i], arr[i]);
+    }
+
+    EXPECT_EQ(vec[size], 111);
+}
+
+TEST(TestTVectorLib, push_back_elems) {
+    const int size = 6;
+    int arr[size];
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = i + 1;
+    }
+
+    const int count_of_elems = 3;
+    int mass[count_of_elems];
+    for (size_t i = 0; i < count_of_elems; i++) {
+        mass[i] = (i + 1) * 111;
+    }
+
+    TVector<int> vec(arr, size);
+    size_t old_capacity = vec.capacity();
+    vec.push_front_elems(mass, count_of_elems);
+
+    EXPECT_EQ(vec.size(), size + count_of_elems);
+    EXPECT_GE(vec.capacity(), old_capacity);
+
+    for (size_t i = 0; i < size; i++) {
+        EXPECT_EQ(vec[i], arr[i]);
+    }
+
+    for (size_t i = 0; i < count_of_elems; i++) {
+        EXPECT_EQ(vec[size + i], mass[i]);
+    }
 }
 
 TEST(TestTVectorLib, BeginIterator) {
