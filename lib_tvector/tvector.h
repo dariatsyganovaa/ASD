@@ -239,6 +239,7 @@ void TVector<T>::shift_elements(size_t count, size_t pos) {
 
 template<class T>
 void TVector<T>::push_front_elem(const T& value) {
+    _size++;
     if (_size >= _capacity) {
         reallocate_memory(_capacity + STEP_OF_CAPACITY);
     }
@@ -247,7 +248,6 @@ void TVector<T>::push_front_elem(const T& value) {
     }
     _data[0] = value;
     _states[0] = busy;
-    _size++;
 }
 
 template<class T>
@@ -306,7 +306,7 @@ void TVector<T>::insert_elem(const T& value, size_t pos) {
     if (pos > _size) {
         throw std::out_of_range("TVector::insert_elem: insert position out of range!");
     }
-
+    _size++;
     if (_size >= _capacity) {
         reallocate_memory(_capacity + STEP_OF_CAPACITY);
     }
@@ -315,7 +315,6 @@ void TVector<T>::insert_elem(const T& value, size_t pos) {
     }
     _data[pos] = value;
     _states[pos] = busy;
-    _size++;
 }
 
 template<class T>
@@ -374,7 +373,7 @@ void TVector<T>::pop_back_elem() {
     }
     for (size_t i = _size + _deleted - 1; i >= 0; --i) {
         if (_states[i] == busy) {
-            _states[i] = deleted;
+            _states[i] = empty;
             _deleted++;
             _size--;
             break;
@@ -396,7 +395,7 @@ void TVector<T>::pop_back_elems(size_t count) {
     size_t j = 0;
     for (size_t i = _size + _deleted - 1; i >= 0; --i) {
         if (_states[i] == busy) {
-            _states[i] = deleted;
+            _states[i] = empty;
             j++;
             if (j == count) break;
         }
