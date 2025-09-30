@@ -6,43 +6,56 @@
 
 template<typename T>
 class MathVector : public TVector <T> {
-	size_t _N;
+protected:
 	size_t _start_index;
 public:
 	MathVector();
 	MathVector(size_t);
-	//MathVector(size_t, size_t);
+	MathVector(size_t, size_t);
+	MathVector(const MathVector<T>&);
+
+	size_t get_size() const {
+		return this->size();
+	}
 
 	MathVector<T> operator+ (const MathVector<T>& vec) const;
 	MathVector<T> operator- (const MathVector<T>& vec) const;
+	MathVector<T> operator* (const MathVector<T>& vec) const;
 	MathVector<T> operator* (T val);
 
 	MathVector<T>& operator=(const MathVector<T>& other);
 	bool operator==(const MathVector<T>&) const;
 	bool operator!=(const MathVector<T>&) const;
 
-	MathVector<T>& operator+= (const MathVector<T>& other) const;
-	MathVector<T>& operator-= (const MathVector<T>& other) const;
+	MathVector<T>& operator+= (const MathVector<T>& other);
+	MathVector<T>& operator-= (const MathVector<T>& other);
+	MathVector<T>& operator*= (const MathVector<T>& other);
 	MathVector<T>& operator*= (T val);
 	
 	T operator* (MathVector<T> vec);
 	T& operator [] (size_t);
 	const T& operator [] (size_t) const;
+
+	void input_math_vector();
+	void print_math_vector();
 };
 
 template <typename T>
-MathVector <T>::MathVector() : TVector <T>(), _N(0), _start_index(0) {}
+MathVector <T>::MathVector() : TVector <T>(), _start_index(0) {}
 
 template <typename T>
-MathVector <T>::MathVector(size_t N) : TVector <T>(N), _N(N) {}
+MathVector <T>::MathVector(size_t size) : TVector <T>(size), _start_index(0) {}
 
-//template <typename T>
-//MathVector <T>::MathVector(size_t N, size_t start_index) : TVector <T>(N), _N(N), _start_index(start_index) {}
+template <typename T>
+MathVector <T>::MathVector(size_t size, size_t start_index) : TVector <T>(size), _start_index(start_index) {}
+
+template <typename T>
+MathVector <T>::MathVector(const MathVector& other) : TVector <T>(other), _start_index(other._start_index) {}
 
 template <typename T>
 MathVector <T> MathVector <T>::operator+ (const MathVector& other) const {
-	MathVector <T> result(_size);
-	for (size_t i = 0; i < _size; i++) {
+	MathVector <T> result(this-> get_size());
+	for (size_t i = 0; i < other.get_size(); i++) {
 		result[i] = (*this)[i] + other[i];
 	}
 	return result;
@@ -50,17 +63,23 @@ MathVector <T> MathVector <T>::operator+ (const MathVector& other) const {
 
 template <typename T>
 MathVector <T> MathVector <T>::operator- (const MathVector& other) const {
-	MathVector <T> result(_size);
-	for (size_t i = 0; i < _size; i++) {
+	MathVector <T> result(this->get_size()); 
+	for (size_t i = 0; i < other.get_size(); i++) { 
 		result[i] = (*this)[i] - other[i];
 	}
 	return result;
 }
 
 template <typename T>
+MathVector <T> MathVector<T>::operator* (const MathVector<T>& vec) const {
+	std::cout << "operator *" << std::endl;
+	return *this;
+}
+
+template <typename T>
 MathVector <T> MathVector <T>::operator* (T val) {
-	MathVector <T> result(_size);
-	for (size_t i = 0; i < _size; i++) {
+	MathVector <T> result(this->get_size());
+	for (size_t i = 0; i < this->get_size(); i++) {
 		result[i] = (*this)[i] * val;
 	}
 	return result;
@@ -83,14 +102,26 @@ bool MathVector <T>::operator!= (const MathVector& other) const {
 }
 
 template <typename T>
-MathVector <T>& MathVector <T>::operator+= (const MathVector& other) const {
-	std::cout << "operator +=" << std::endl;
+MathVector <T>& MathVector <T>::operator+= (const MathVector& other) {
+	for (size_t i = 0; i < _size; i++) {
+		_data[i] += other._data[i];
+	}
 	return *this;
 }
 
 template <typename T>
-MathVector <T>& MathVector <T>::operator-= (const MathVector& other) const {
-	std::cout << "operator -=" << std::endl;
+MathVector <T>& MathVector <T>::operator-= (const MathVector& other) {
+	for (size_t i = 0; i < _size; i++) {
+		_data[i] -= other._data[i];
+	}
+	return *this;
+}
+
+template <typename T>
+MathVector <T>& MathVector <T>::operator*= (const MathVector& other) {
+	for (size_t i = 0; i < _size; i++) {
+		_data[i] *= other._data[i];
+	}
 	return *this;
 }
 
@@ -103,7 +134,7 @@ MathVector <T>& MathVector <T>::operator*= (T val) {
 template <typename T>
 T MathVector <T>::operator* (MathVector <T> vec) {
 	T result = T();
-	for (size_t i = 0; i < _size; i++) {
+	for (size_t i = 0; i < vec.get_size(); i++) {
 		result += (*this)[i] * vec[i];
 	}
 	return result;
@@ -125,6 +156,25 @@ const T& MathVector<T>::operator [] (size_t index) const{
 		throw std::out_of_range("Index out of range");
 	}
 	return _data[index - _start_index];
+}
+
+template <typename T>
+void MathVector<T>::input_math_vector() {
+	std::cout << ("Enter the elements of the vector: ") << std::endl;
+
+	for (size_t i = 0; i < this->get_size(); i++) {
+		std::cin >> _data[i];
+	}
+}
+
+template <typename T>
+void MathVector<T>::print_math_vector() {
+	std::cout << ("Elements of the vector: ") << std::endl;
+
+	for (size_t i = 0; i < this->get_size(); i++) {
+		std::cout << _data[i] << std::endl;
+	}
+
 }
 
 #endif  // LIB_MATHVECTOR_MATHVECTOR_H_
