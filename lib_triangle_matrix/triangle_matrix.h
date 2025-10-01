@@ -11,10 +11,11 @@ template <typename T> std::istream& operator>>(std::istream& in, TriangleMatrix<
 
 template <class T>
 class TriangleMatrix : public Matrix<T> {
-	size_t _N;
+	//size_t _N;
 public:
 	TriangleMatrix();
 	TriangleMatrix(size_t);
+	TriangleMatrix(const Matrix<T>&);
 	TriangleMatrix(const TriangleMatrix&);
 
 	TriangleMatrix<T> operator+ (const TriangleMatrix& other);
@@ -30,14 +31,14 @@ public:
 	TriangleMatrix<T>& operator-= (const TriangleMatrix<T>& other) const;
 	TriangleMatrix<T>& operator*= (T val);
 
-	T& operator [] (size_t);
-	const T& operator [] (size_t) const;
+	MathVector<T>& operator [] (size_t);
+	const MathVector<T>& operator [] (size_t) const;
 
 	bool isUpperTriangular();
 	bool isLowerTriangular();
 
 	void status();
-	void input_tri_matrix();
+	void input_tri_matrix(size_t);
 	void print_tri_matrix();
 
 	friend std::ostream& operator<< <T>(std::ostream& out, const TriangleMatrix<T>& matr);
@@ -46,17 +47,28 @@ public:
 };
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix() : Matrix<T>(), _N(0) {}
+TriangleMatrix <T>::TriangleMatrix() : Matrix<T>() {}
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix(size_t N) : Matrix<T>(N, N), _N(N){
-	for (size_t i = 0; i < N; i++) {
-		//_data[i] = new MathVector<T>(N - i, i); //i - доп. поле индекса
+TriangleMatrix <T>::TriangleMatrix(size_t N) : Matrix<T>(N, N) {
+	for (size_t i = 0; i < this->_N; i++) {
+		(*this)[i] = MathVector<T>(N - i, i); //i - доп. поле индекса
 	}
 }
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix& other) : Matrix<T>(other), _N(other._N){}
+TriangleMatrix <T>::TriangleMatrix(const Matrix<T>& matr) : Matrix<T> (matr) {
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = 0; j < this->_N; j++) {
+			if (i > j) {
+				(*this)[i][j] = T();
+			}
+		}
+	}
+}
+
+template <typename T>
+TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix& other) : Matrix<T>(other) {}
 
 template <class T>
 bool TriangleMatrix<T>::isUpperTriangular() {
@@ -91,14 +103,12 @@ void TriangleMatrix<T>::status() {
 
 template <class T>
 TriangleMatrix<T> TriangleMatrix<T>::operator+ (const TriangleMatrix& other) {
-	std::cout << "operator+" << std::endl;
-	return *this;
+	return this->Matrix<T> :: operator+ (other);
 }
 
 template <class T>
 TriangleMatrix<T> TriangleMatrix<T>::operator- (const TriangleMatrix& other) {
-	std::cout << "operator-" << std::endl;
-	return *this;
+	return this->Matrix<T> :: operator- (other);
 }
 
 template <typename T>
@@ -115,7 +125,9 @@ TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator= (const TriangleMatrix& other) { 
-	return Matrix<T>::operator=(other);
+	Matrix<T>::operator=(other);
+	this->_N = other._N;
+	return *this;
 }
 
 template <typename T>
@@ -147,27 +159,38 @@ TriangleMatrix <T>& TriangleMatrix <T>::operator*= (T val) {
 }
 
 template <typename T>
-T& TriangleMatrix<T>::operator [] (size_t index) {
-	return Matrix<T>::operator[](index); //used start_index
+MathVector<T>& TriangleMatrix<T>::operator [] (size_t index) {
+	return this->Matrix<T>::operator[](index); //used start_index
 }
 
 template <typename T>
-const T& TriangleMatrix<T>::operator [] (size_t index) const {
-	return Matrix<T>::operator[](index);
+const MathVector<T>& TriangleMatrix<T>::operator [] (size_t index) const {
+	return this->Matrix<T>::operator[](index);
 }
 
 template <typename T>
-void TriangleMatrix <T>::input_tri_matrix() {
-	TriangleMatrix<T> matrix;
-	std::cout << "Enter elems: ";
-	std::cin >> matrix;
+void TriangleMatrix <T>::input_tri_matrix(size_t N) { 
+	this->resize(N, N);
+	for (size_t i = 0; i < N; i++) {
+		std::cout << "Row " << i + 1 << ": ";
+		MathVector<T> row_vector(N);
+		row_vector.input_math_vector();
+
+		for (size_t j = 0; j < N; j++) {
+			this->_data[i][j] = row_vector[j];
+		}
+	}
 }
 
 template <typename T>
 void TriangleMatrix <T>::print_tri_matrix() {
-	TriangleMatrix<T> matrix;
-	std::cout << "Print matrix: ";
-	std::cout << matrix;
+	std::cout << " ---- YOUR MATRIX ---- " << std::endl;
+	for (size_t i = 0; i < this->_N; ++i) {
+		for (size_t j = 0; j < this->_N; ++j) {
+			std::cout << _data[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
 }
 
 template <class T>

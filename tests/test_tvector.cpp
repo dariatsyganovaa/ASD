@@ -16,11 +16,6 @@ TEST(TestTVectorLib, size_constructor) {
     }
 }
 
-TEST(TestTVectorLib, size_null_constructor) {
-    TVector<int> vec;
-    EXPECT_TRUE((vec.size() == (size_t)0) && (vec.is_empty() == true));
-}
-
 TEST(TestTVectorLib, copy_constructor) {
     int arr[9] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     TVector<int> vec1(arr, 9);

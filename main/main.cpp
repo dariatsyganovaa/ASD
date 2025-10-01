@@ -16,7 +16,7 @@ void start_add_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
         std::cin >> N2 >> M2;
 
         if (N1 != N2 || M1 != M2) {
-            std::cout << "Error! The sizes of the matrices must match! ";
+            std::cout << "Error! The sizes of the matrices must match! " << std::endl;
             continue;
         }
         break;
@@ -26,8 +26,6 @@ void start_add_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
 
     matrix_1 += matrix_2;
     matrix_1.print_matrix();
-    /*Matrix<int> result = matrix_1 + matrix_2;
-    result.print_matrix();*/
     system("pause");
 }
 
@@ -41,7 +39,7 @@ void start_sub_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
         std::cin >> N2 >> M2;
 
         if (N1 != N2 || M1 != M2) {
-            std::cout << "Error! The sizes of the matrices must match! ";
+            std::cout << "Error! The sizes of the matrices must match! " << std::endl;
             continue;
         }
         break;
@@ -49,10 +47,8 @@ void start_sub_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     Matrix<int> matrix_2(N2, M2);
     matrix_2.input_matrix(N2, M2);
 
-    matrix_1 -= matrix_2;
+    matrix_1 = matrix_1 - matrix_2;
     matrix_1.print_matrix();
-    /*Matrix<int> result = matrix_1 - matrix_2;
-    result.print_matrix();*/
     system("pause");
 }
 
@@ -65,7 +61,7 @@ void start_mult_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
         std::cout << "Enter the size of 2-nd matrix: ";
         std::cin >> N2 >> M2;
         if (M1 != N2) {
-            std::cout << "Error! The number of cols in the 1-st matrix must match the number of rows in the 2-nd matrix! ";
+            std::cout << "Error! The number of cols in the 1-st matrix must match the number of rows in the 2-nd matrix! " << std::endl;
             continue;
         }
         break;
@@ -73,8 +69,8 @@ void start_mult_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     Matrix<int> matrix_2(N2, M2);
     matrix_2.input_matrix(N2, M2);
 
-    Matrix<int> result = matrix_1 * matrix_2;
-    result.print_matrix();
+    matrix_1 *= matrix_2;
+    matrix_1.print_matrix();
     system("pause");
 }
 
@@ -86,8 +82,8 @@ void start_matrix_scalar_mult(Matrix<int>& matrix_1) {
     std::cout << "Enter a scalar: ";
     std::cin >> scalar;
 
-    Matrix<int> result = matrix_1 * scalar;
-    result.print_matrix();
+    matrix_1 *= scalar;
+    matrix_1.print_matrix();
     system("pause");
 }
 
@@ -99,7 +95,7 @@ void start_matrix_vec_mult(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     while (1) {
         std::cout << "Enter a vector size: ";
         std::cin >> size;
-        if (M1 != size) {
+        if (N1 != size) {
             std::cout << "Error! The number of columns of the matrix must be equal to the size of the vector!"<< std::endl;
             continue;
         }
@@ -118,7 +114,7 @@ void start_trans_matrix(Matrix<int>& matrix_1) {
     system("cls");
     std::cout << "==== MATRIX TRANSPOSITION ====" << std::endl;
 
-    matrix_1.trans();
+    matrix_1 = matrix_1.trans();
     matrix_1.print_matrix();
     system("pause");
 }
@@ -128,7 +124,7 @@ void start_add_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
     std::cout << "==== TRIANGULAR MATRIX ADDITION ====" << std::endl;
 
     TriangleMatrix<int> tri_matrix_2(size);
-    tri_matrix_2.input_tri_matrix();
+    tri_matrix_2.input_tri_matrix(size);
 
     TriangleMatrix<int> result = tri_matrix_1 + tri_matrix_2;
     result.print_tri_matrix();
@@ -140,7 +136,7 @@ void start_sub_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
     std::cout << "==== TRIANGULAR MATRIX SUBTRACTION ====" << std::endl;
 
     TriangleMatrix<int> tri_matrix_2(size);
-    tri_matrix_2.input_tri_matrix();
+    tri_matrix_2.input_tri_matrix(size);
 
     TriangleMatrix<int> result = tri_matrix_1 - tri_matrix_2;
     result.print_tri_matrix();
@@ -152,7 +148,7 @@ void start_mult_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
     std::cout << "==== TRIANGULAR MATRIX MULTIPLICATION ====" << std::endl;
 
     TriangleMatrix<int> tri_matrix_2(size);
-    tri_matrix_2.input_tri_matrix();
+    tri_matrix_2.input_tri_matrix(size);
 
     TriangleMatrix<int> result = tri_matrix_1 * tri_matrix_2;
     result.print_tri_matrix();
@@ -241,12 +237,13 @@ void TriangleMatrixOperations() {
     std::cin >> size;
 
     TriangleMatrix<int> tri_matrix_1(size);
-    tri_matrix_1.input_tri_matrix();
+    tri_matrix_1.input_tri_matrix(size);
     system("pause");
 
     while (1) {
         system("cls");
         std::cout << "==== TRIANGULAR MATRIX CALCULATOR ====" << std::endl;
+        tri_matrix_1.print_tri_matrix();
         std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Status \n0. Back to main menu\nYour: ";
 
         int user;
