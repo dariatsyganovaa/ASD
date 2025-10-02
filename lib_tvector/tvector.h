@@ -859,23 +859,55 @@ void swap(TVector<T>& vec, size_t i, size_t j) {
     vec._states[j] = temp_state;
 }
 
+//template<typename T>
+//void hoara_sort_rec(TVector<T>& vec, int left, int right) {
+//    if (left < right) {
+//        int pivot = left + (right - left) / 2;
+//        T pivot_value = vec._data[pivot];
+//        int i = left, j = right;
+//        while (i <= j) {
+//            while (vec._states[i] == busy && vec._data[i] < pivot_value) i++;
+//            while (vec._states[j] == busy && vec._data[j] > pivot_value) j--;
+//            if (i <= j) {
+//                if (vec._states[i] == busy && vec._states[j] == busy) {
+//                    swap(vec, i, j);
+//                }
+//                i++;
+//                j--;
+//            }
+//        }
+//        hoara_sort_rec(vec, left, j);
+//        hoara_sort_rec(vec, i, right);
+//    }
+//}
+
 template<typename T>
 void hoara_sort_rec(TVector<T>& vec, int left, int right) {
     if (left < right) {
         int pivot = left + (right - left) / 2;
         T pivot_value = vec._data[pivot];
         int i = left, j = right;
-        while (i <= j) {
-            while (vec._states[i] == busy && vec._data[i] < pivot_value) i++;
-            while (vec._states[j] == busy && vec._data[j] > pivot_value) j--;
-            if (i <= j) {
-                if (vec._states[i] == busy && vec._states[j] == busy) {
-                    swap(vec, i, j);
-                }
+
+        while (true) {
+            while ((i <= j) && (vec._states[i] == busy || vec._data[i] < pivot_value)) {
+                if (vec._states[i] == busy && vec._data[i] >= pivot_value) break;
                 i++;
+            }
+
+            while ((i <= j) && (vec._states[j] == busy || vec._data[j] > pivot_value)) {
+                if (vec._states[j] == busy && vec._data[j] <= pivot_value) break;
                 j--;
             }
+
+            if (i > j) break;
+
+            if (vec._states[i] == busy && vec._states[j] == busy) {
+                swap(vec, i, j);
+            }
+
+            i++; j--;
         }
+
         hoara_sort_rec(vec, left, j);
         hoara_sort_rec(vec, i, right);
     }

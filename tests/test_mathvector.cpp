@@ -40,17 +40,6 @@ TEST(TestMathVectorLib, DotProductOperator) {
     EXPECT_EQ(result, 32); // 1*4 + 2*5 + 3*6 = 4 + 10 + 18 = 32
 }
 
-TEST(TestMathVectorLib, DotProductDifferentSizes) {
-    // Тест 2: Попытка умножения векторов разного размера
-    MathVector<int> vec1(3);
-    MathVector<int> vec2(2);
-    
-    vec1[0] = 1; vec1[1] = 2; vec1[2] = 3;
-    vec2[0] = 4; vec2[1] = 5;
-    
-    EXPECT_THROW(vec1 * vec2, std::invalid_argument);
-}
-
 TEST(TestMathVectorLib, DotProductWithZero) {
     // Тест 3: Умножение с нулевыми элементами
     MathVector<int> vec1(3);

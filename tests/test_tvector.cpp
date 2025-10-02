@@ -480,201 +480,666 @@ TEST(TestTVectorLib, erase_elem) {
         EXPECT_EQ(vec.states()[i], busy);
     }
 
-    EXPECT_EQ(vec.states()[index], deleted);
+    for (size_t i = index; i < size; i++) {
+        if (i < size - 1) {
+            EXPECT_EQ(vec[i], arr[i + 1]);
+        }
+        if (i == index) {
+            EXPECT_EQ(vec.states()[i], deleted);
+        }
+        else {
+            EXPECT_EQ(vec.states()[i], busy);
+        }
+    }
+}
 
-    for (size_t i = index + 1; i < size; i++) {
-        EXPECT_EQ(vec[i - 1], arr[i]);//index?
+TEST(TestTVectorLib, erase_elems) {
+    const int size = 10;
+    int index = 2;
+    int count_of_elems = 4;
+
+    int arr[size];
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = i + 1;
+    }
+
+    TVector<int> vec(arr, size);
+    vec.erase_elems(index, count_of_elems);
+
+    EXPECT_EQ(vec.size(), size - count_of_elems);
+
+    for (size_t i = 0; i < index; i++) {
+        EXPECT_EQ(vec[i], arr[i]);
+        EXPECT_EQ(vec.states()[i], busy);
+    }
+
+    //EXPECT_EQ(vec.states()[index], deleted);
+
+    for (size_t i = index; i < size - count_of_elems; i++) {
+        EXPECT_EQ(vec[i], arr[i + count_of_elems]);
         EXPECT_EQ(vec.states()[i], busy);
     }
 }
 
-TEST(TestTVectorLib, EraseElements) {
-    // Arrange
-    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec.erase_elems(4, 4));
+TEST(TestTVectorLib, erase_elem_in_empty_vec) {
+    TVector<int> vec1;
+    ASSERT_ANY_THROW(vec1.erase_elem(2));
 }
 
-// Тесты специальных методов
-TEST(TestTVectorLib, Emplace) {
-    // Arrange
-    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec.emplace(6, 111));
+TEST(TestTVectorLib, erase_elems_in_empty_vec) {
+    TVector<int> vec1;
+    ASSERT_ANY_THROW(vec1.erase_elems(4, 2));
 }
 
-TEST(TestTVectorLib, Assign) {
-    // Arrange
+TEST(TestTVectorLib, erase_elem_pos_out_of_range) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    ASSERT_ANY_THROW(vec1.erase_elem(16));
+}
+
+TEST(TestTVectorLib, erase_elems_pos_out_of_range) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    ASSERT_ANY_THROW(vec1.erase_elems(-1, 10));
+}
+
+TEST(TestTVectorLib, emplace) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.emplace(6, 111);
+    int expected_res[14] = { 1, 2, 3, 4, 5, 6, 111, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec2(expected_res, 14);
+
+    EXPECT_EQ(vec1, vec2);
+}
+
+TEST(TestTVectorLib, emplace_in_empty_vec) {
+    TVector<int> vec1;
+    ASSERT_ANY_THROW(vec1.emplace(1, 111));
+}
+
+TEST(TestTVectorLib, emplace_pos_out_of_range) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    ASSERT_ANY_THROW(vec1.emplace(15, 111));
+}
+
+TEST(TestTVectorLib, emplace_after_pop_front_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.pop_front_elem();
+    vec1.emplace(1, 111);
+
+    int expected_result[13] = { 2, 111, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+
+    EXPECT_EQ(vec1.size(), 13);
+    for (size_t i = 0; i < 13; i++) {
+        EXPECT_EQ(vec1[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, assign) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
     TVector<int> vec1(arr, 14);
     TVector<int> vec2(40);
+    vec2.assign(vec1);
 
-    // Act & Assert
-    ASSERT_NO_THROW(vec2.assign(vec1));
+    for (size_t i = 0; i < 14; i++) {
+        EXPECT_EQ(vec2[i], arr[i]);
+    }
 }
 
-TEST(TestTVectorLib, Clear) {
-    // Arrange
+TEST(TestTVectorLib, assign_in_empty_vec) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
+    TVector<int> vec1(arr, 14);
+    TVector<int> vec2;
+    vec2.assign(vec1);
 
-    // Act & Assert
-    ASSERT_NO_THROW(vec.clear());
+    for (size_t i = 0; i < 14; i++) {
+        EXPECT_EQ(vec2[i], arr[i]);
+    }
 }
 
-TEST(TestTVectorLib, ShrinkToFit) {
-    // Arrange
-    TVector<int> vec(16);
-    vec.resize(7);
+TEST(TestTVectorLib, assign_with_null_size) {
+    TVector<int> vec1;
+    TVector<int> vec2(20);
+    vec2.assign(vec1);
 
-    // Act & Assert
-    ASSERT_NO_THROW(vec.shrink_to_fit());
+    EXPECT_EQ(vec2.size(), 0);
 }
 
-TEST(TestTVectorLib, Reserve) {
-    // Arrange
+TEST(TestTVectorLib, assign_to_large_vec) {
+    const size_t large_size = 1000000;
+    int* large_arr = new int[large_size];
+    for (size_t i = 0; i < large_size; i++) {
+        large_arr[i] = i + 1;
+    }
+
+    TVector<int> vec1(large_arr, large_size);
+    TVector<int> vec2;
+    vec2.assign(vec1);
+
+    EXPECT_EQ(vec2.size(), large_size);
+
+    for (size_t i = 0; i < large_size; i += 100000) {
+        EXPECT_EQ(vec2[i], large_arr[i]);
+    }
+
+    delete[] large_arr;
+}
+
+TEST(TestTVectorLib, repeat_assign) {
+    int arr1[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int arr2[4] = { 11, 12, 13, 14 };
+
+    TVector<int> vec11(arr1, 10);
+    TVector<int> vec12(arr2, 4);
+    TVector<int> vec2(5);
+
+    vec2.assign(vec11);
+    vec2.assign(vec12);
+
+    EXPECT_EQ(vec2.size(), 4);
+
+    for (size_t i = 0; i < 4; i++) {
+        EXPECT_EQ(vec2[i], arr2[i]);
+    }
+}
+
+TEST(TestTVectorLib, at) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec.reserve(17));
+    TVector<int> vec1(arr, 14);
+    EXPECT_EQ(vec1.at(0), 1);
 }
 
-TEST(TestTVectorLib, Resize) {
-    // Arrange
+TEST(TestTVectorLib, at_index_out_of_range) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec.resize(25));
+    TVector<int> vec1(arr, 14);
+    ASSERT_ANY_THROW(vec1.at(15));
 }
 
-TEST(TestTVectorLib, ResizeWithValue) {
-    // Arrange
+TEST(TestTVectorLib, at_with_an_invalid_elem) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec.resize(25, 111));
+    TVector<int> vec1(arr, 14);
+    vec1.erase_elems(5, 10);
+    ASSERT_ANY_THROW(vec1.at(9));
 }
 
-// Тесты операторов
-TEST(TestTVectorLib, AssignmentOperator) {
-    // Arrange
+TEST(TestTVectorLib, at_in_empty_vec) {
+    TVector<int> vec1;
+    ASSERT_ANY_THROW(vec1.at(0));
+}
+
+TEST(TestTVectorLib, clear) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.pop_front_elems(2);
+    vec1.clear();
+    EXPECT_EQ(vec1.size(), 0);
+}
+
+TEST(TestTVectorLib, shrink_to_fit) {
+    TVector<int> vec1(16);
+    vec1.resize(7);
+    vec1.shrink_to_fit();
+    EXPECT_EQ(vec1.capacity(), 7);
+}
+
+TEST(TestTVectorLib, shrink_to_fit_with_null_size) {
+    TVector<int> vec1;
+    vec1.shrink_to_fit();
+    EXPECT_EQ(vec1.size(), 0);
+}
+
+TEST(TestTVectorLib, reserve) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.reserve(17);
+    EXPECT_EQ(vec1.capacity(), 17);
+}
+
+TEST(TestTVectorLib, reserve_return) {
+    TVector<int> vec1(40);
+    vec1.reserve(16);
+    EXPECT_EQ(vec1.capacity(), 45);
+}
+
+TEST(TestTVectorLib, reserve_in_empty_vec) {
+    TVector<int> vec1;
+    vec1.reserve(20);
+    EXPECT_EQ(vec1.capacity(), 20);
+    EXPECT_NE(vec1.data(), nullptr);
+    EXPECT_EQ(vec1.size(), 0);
+
+    for (size_t i = 0; i < 20; i++) {
+        EXPECT_EQ(vec1.states()[i], empty);
+    }
+}
+
+TEST(TestTVectorLib, resize_increasing_the_size) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.resize(25);
+
+    EXPECT_EQ(vec1.size(), 25);
+
+    for (size_t i = 0; i < 4; i++) {
+        EXPECT_EQ(vec1[i], arr[i]);
+    }
+}
+
+TEST(TestTVectorLib, resize_reducing_the_size) {
+    int arr[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec1(arr, 16);
+    vec1.resize(5);
+    EXPECT_EQ(vec1.size(), 5);
+}
+
+TEST(TestTVectorLib, resize_increasing_the_size_with_value) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.resize(25, 111);
+    EXPECT_EQ(vec1.size(), 25);
+}
+
+TEST(TestTVectorLib, resize_in_empty_vec) {
+    TVector<int> vec1;
+    vec1.resize(5);
+    EXPECT_EQ(vec1.size(), 5);
+}
+
+TEST(TestTVectorLib, resize_in_empty_vec_with_value) {
+    TVector<int> vec1;
+    vec1.resize(5, 111);
+    EXPECT_EQ(vec1.size(), 5);
+    for (size_t i = 0; i < 5; i++) {
+        EXPECT_EQ(vec1.data()[i], 111);
+    }
+}
+
+TEST(TestTVectorLib, the_assignment_operator) {
     int arr[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
     TVector<int> vec1(20);
     TVector<int> vec2(arr, 16);
+    vec1 = vec2;
 
-    // Act & Assert
-    ASSERT_NO_THROW(vec1 = vec2);
+    EXPECT_EQ(vec1.size(), 16);
+    for (size_t i = 0; i < 16; i++) {
+        EXPECT_EQ(vec1.data()[i], arr[i]);
+    }
+    for (size_t i = 0; i < 16; i++) {
+        EXPECT_EQ(vec1.states()[i], busy);
+    }
 }
 
-TEST(TestTVectorLib, IndexingOperator) {
-    // Arrange
+TEST(TestTVectorLib, the_assignment_operator_for_empty_vec) {
     int arr[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-    TVector<int> vec(arr, 16);
-
-    // Act & Assert
-    ASSERT_NO_THROW(vec[0]);
+    TVector<int> vec1(arr, 16);
+    TVector<int> vec2;
+    vec1 = vec2;
+    EXPECT_EQ(vec1.size(), 0);
 }
 
-// Тесты алгоритмов поиска
-TEST(TestTVectorLib, FindFirstElement) {
-    // Arrange
+TEST(TestTVectorLib, comparison_operator) {
+    int arr[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec1(arr, 16);
+    TVector<int> vec2(vec1);
+    EXPECT_TRUE(vec1 == vec2);
+    EXPECT_FALSE(vec1 != vec2);
+}
+
+TEST(TestTVectorLib, comparison_operator_for_empty_vec) {
+    TVector<int> vec1;
+    TVector<int> vec2;
+    EXPECT_TRUE(vec1 == vec2);
+    EXPECT_FALSE(vec1 != vec2);
+}
+
+TEST(TestTVectorLib, comparison_operator_after_push) {
+    int arr1[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec1(arr1, 16);
+    int arr2[17] = { 111, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec2(arr2, 17);
+    vec1.push_front_elem(111);
+    EXPECT_TRUE(vec1 == vec2);
+    EXPECT_EQ(vec1.size(), 17);
+    EXPECT_EQ(vec2.size(), 17);
+}
+
+TEST(TestTVectorLib, indexing_operator) {
+    int arr1[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec1(arr1, 16);
+    int expected_res = 1;
+    int actual_res = vec1[0];
+    EXPECT_EQ(expected_res, actual_res);
+}
+
+TEST(TestTVectorLib, indexing_operator_modification) {
+    int arr1[3] = { 1, 2, 3 };
+    TVector<int> vec1(arr1, 3);
+    vec1[1] = 100;
+    EXPECT_EQ(vec1[0], 1);
+    EXPECT_EQ(vec1[1], 100);
+    EXPECT_EQ(vec1[2], 3);
+}
+
+TEST(TestTVectorLib, find_first_elem) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(find_first_elem(vec, 6));
+    TVector<int> vec1(arr, 14);
+    int actual_res = find_first_elem(vec1, 6);
+    int expected_res = 5;
+    EXPECT_EQ(expected_res, actual_res);
 }
 
-TEST(TestTVectorLib, FindLastElement) {
-    // Arrange
-    int arr[14] = { 1, 2, 3, 4, 5, 10, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-
-    // Act & Assert
-    ASSERT_NO_THROW(find_last_elem(vec, 10));
+TEST(TestTVectorLib, not_find_first_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    int actual_res = find_first_elem(vec1, 111);
+    int expected_res = -1;
+    EXPECT_EQ(expected_res, actual_res);
 }
 
-TEST(TestTVectorLib, FindElements) {
-    // Arrange
+TEST(TestTVectorLib, find_last_elem) {
     int arr[14] = { 1, 2, 3, 4, 5, 10, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
+    TVector<int> vec1(arr, 14);
+    int actual_res = find_last_elem(vec1, 10);
+    int expected_res = 9;
+    EXPECT_EQ(expected_res, actual_res);
+}
+
+TEST(TestTVectorLib, not_find_last_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    int actual_res = find_last_elem(vec1, 111);
+    int expected_res = -1;
+    EXPECT_EQ(expected_res, actual_res);
+}
+
+TEST(TestTVectorLib, find_elems) {
+    int arr[14] = { 1, 2, 3, 4, 5, 10, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
     int count = 0;
-
-    // Act & Assert
-    ASSERT_NO_THROW(find_elems(vec, 10, count));
+    int* actual_res = find_elems(vec1, 10, count);
+    int expected_res[2] = { 5, 9 };
+    for (int i = 0; i < 2; i++) {
+        EXPECT_EQ(actual_res[i], expected_res[i]);
+    }
 }
 
-TEST(TestTVectorLib, Randomize) {
-    // Arrange
+TEST(TestTVectorLib, not_find_elems) {
+    int arr[14] = { 1, 2, 3, 4, 5, 10, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    int count = 0;
+    int* actual_res = find_elems(vec1, 111, count);
+
+    EXPECT_EQ(actual_res, nullptr);
+    EXPECT_EQ(count, 0);
+}
+
+TEST(TestTVectorLib, find_first_elem_in_empty_vec) {
+    TVector<int> vec1;
+    ASSERT_ANY_THROW(find_first_elem(vec1, 6));
+}
+
+TEST(TestTVectorLib, find_last_elem_in_empty_vec) {
+    TVector<int> vec1;
+    ASSERT_ANY_THROW(find_last_elem(vec1, 6));
+}
+
+TEST(TestTVectorLib, find_elems_in_empty_vec) {
+    TVector<int> vec1;
+    int count = 0;
+    ASSERT_ANY_THROW(find_elems(vec1, 6, count));
+}
+
+TEST(TestTVectorLib, randomize) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
+    TVector<int> vec1(arr, 14);
+    randomize(vec1);
 
-    // Act & Assert
-    ASSERT_NO_THROW(randomize(vec));
+    EXPECT_EQ(vec1.size(), 14);
+    EXPECT_EQ(vec1.capacity(), 15);
 }
 
-TEST(TestTVectorLib, HoaraSort) {
-    // Arrange
-    int arr[32] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                   17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 111, 222, 333, 444 };
-    TVector<int> vec(arr, 32);
-    randomize(vec);
+TEST(TestTVectorLib, randomize_in_empty_vec) {
+    TVector<int> vec1;
+    randomize(vec1);
 
-    // Act & Assert
-    ASSERT_NO_THROW(hoara_sort(vec));
+    EXPECT_EQ(vec1.size(), 0);
+    EXPECT_EQ(vec1.capacity(), 0);
 }
 
-// Тесты с разными типами данных
-TEST(TestTVectorLib, StringVector) {
-    // Arrange
-    // Act & Assert
-    ASSERT_NO_THROW(TVector<std::string> vec);
+TEST(TestTVectorLib, randomize_one_elem) {
+    TVector<int> vec1(1);
+    randomize(vec1);
+
+    EXPECT_EQ(vec1.size(), 1);
+    EXPECT_EQ(vec1.capacity(), 15);
 }
 
-//TEST(TestTVectorLib, PushBackStringElements) {
-//    // Arrange
-//    TVector<std::string> vec;
-//    std::string items[3] = { "a", "b", "c" };
-//
-//    // Act & Assert
-//    ASSERT_NO_THROW(vec.push_back_elems(items, 3));
-//}
-
-// Комплексные тесты
-TEST(TestTVectorLib, MultipleOperations) {
-    // Arrange
+TEST(TestTVectorLib, pop_front_elem_after_push_front_elem) {
     int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
+    int expected_result[15] = { 2, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 15);
+    vec1.push_front_elem(4);
+    vec1.pop_front_elem();
 
-    // Act & Assert
-    ASSERT_NO_THROW({
-        vec.push_back_elem(111);
-        vec.push_front_elem(222);
-        vec.insert_elem(333, 5);
-        vec.pop_back_elem();
-        vec.pop_front_elem();
-        vec.erase_elem(3);
-        });
+    EXPECT_EQ(vec1.size(), 14);
+
+    for (size_t i = 0; i < 15; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
 }
 
-TEST(TestTVectorLib, LargeVectorOperations) {
-    // Arrange
-    const size_t large_size = 1000;
-    TVector<int> vec(large_size);
+TEST(TestTVectorLib, pop_back_elem_after_push_back_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int expected_result[15] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 15);
+    vec1.push_back_elem(4);
+    vec1.pop_back_elem();
 
-    // Act & Assert
-    ASSERT_NO_THROW({
-        for (size_t i = 0; i < large_size; i++) {
-            vec.emplace(i, i * 2);
+    EXPECT_EQ(vec1.size(), 14);
+
+    for (size_t i = 0; i < 15; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, erase_elem_after_insert_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int expected_result[15] = { 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 15);
+    vec1.insert_elem(4, 4);
+    vec1.erase_elem(4);
+
+    EXPECT_EQ(vec1.size(), 14);
+
+    for (size_t i = 0; i < 15; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, pop_front_elems_after_push_front_elems) {
+    int arr1[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    int arr2[2] = { 1, 2 };
+    int expected_result[18] = { 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    TVector<int> vec1(arr1, 16), vec2(expected_result, 18);
+    vec1.push_front_elems(arr2, 2);
+    vec1.pop_front_elems(2);
+
+    EXPECT_EQ(vec1.size(), 16);
+
+    for (size_t i = 0; i < 18; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, pop_back_elems_after_push_back_elems) {
+    int arr1[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    int arr2[2] = { 1, 2 };
+    int expected_result[18] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 };
+    TVector<int> vec1(arr1, 16), vec2(expected_result, 18);
+    vec1.push_back_elems(arr2, 2);
+    vec1.pop_back_elems(2);
+
+    EXPECT_EQ(vec1.size(), 16);
+
+    for (size_t i = 0; i < 18; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, erase_elems_after_insert_elems) {
+    int arr1[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    int arr2[2] = { 1, 2 };
+    int expected_result[18] = { 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    TVector<int> vec1(arr1, 16);
+    vec1.insert_elems(3, arr2, 2);
+    vec1.erase_elems(3, 2);
+
+    EXPECT_EQ(vec1.size(), 16);
+
+    for (size_t i = 0; i < 18; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, pop_front_elem_after_emplace_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int expected_result[14] = { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 14);
+    vec1.emplace(1, 5);
+    vec1.pop_front_elem();
+
+    EXPECT_EQ(vec1.size(), 13);
+
+    for (int i = 0; i < 14; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, pop_back_elem_after_emplace_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int expected_result[14] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 14);
+    vec1.emplace(13, 5);
+    vec1.pop_back_elem();
+
+    EXPECT_EQ(vec1.size(), 13);
+
+    for (int i = 0; i < 14; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, erase_elem_after_emplace_elem) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int expected_result[14] = { 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 14);
+    vec1.emplace(3, 5);
+    vec1.erase_elem(3);
+
+    EXPECT_EQ(vec1.size(), 13);
+
+    for (int i = 0; i < 14; i++) {
+        EXPECT_EQ(vec1.states()[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, find_elems_after_pop_elem) {
+    int arr[20] = { 1, 2, 3, 4, 1, 6, 7, 8, 9, 10, 11, 12, 1, 14, 15, 18, 1, 21, 11, 1 };
+    TVector<int> vec1(arr, 20);
+    vec1.erase_elems(4, 3);
+
+    int expected_result[4] = { 0, 9, 13, 16 };
+    int count = 0;
+    int* actual_result = find_elems(vec1, 1, count);
+
+    EXPECT_EQ(count, 4);
+
+    for (int i = 0; i < count; i++) {
+        EXPECT_EQ(actual_result[i], expected_result[i]);
+    }
+}
+
+TEST(TestTVectorLib, emplace_after_erase_elem) {
+    int arr[20] = { 1, 2, 3, 4, 1, 6, 7, 8, 9, 10, 11, 12, 1, 14, 15, 18, 1, 21, 11, 1 };
+    TVector<int> vec1(arr, 20);
+    vec1.erase_elems(4, 2);
+    vec1.emplace(3, 111);
+    int expected_result[18] = { 1, 2, 3, 111, 7, 8, 9, 10, 11, 12, 1, 14, 15, 18, 1, 21, 11, 1 };
+    TVector<int> vec2(expected_result, 18);
+
+    EXPECT_EQ(vec1, vec2);
+    EXPECT_EQ(vec1.size(), 18);
+}
+
+TEST(TestTVectorLib, push_front_elem_after_pop_front_elem) {
+    int arr[20] = { 1, 2, 3, 4, 1, 6, 7, 8, 9, 10, 11, 12, 1, 14, 15, 18, 1, 21, 11, 1 };
+    TVector<int> vec1(arr, 20);
+    vec1.pop_front_elem();
+    vec1.push_front_elem(111);
+
+    EXPECT_EQ(vec1.size(), 20);
+    EXPECT_EQ(vec1[0], 111);
+}
+
+TEST(TestTVectorLib, find_elems_after_emplace) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    TVector<int> vec1(arr, 14);
+    vec1.emplace(4, 111);
+    int count = 0;
+    int* actual_res = find_elems(vec1, 5, count);
+
+    EXPECT_EQ(actual_res, nullptr);
+    EXPECT_EQ(count, 0);
+}
+
+TEST(TestTVectorLib, accessing_an_elem_using_an_iterator) {
+    int arr[32] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 111, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    TVector<int> vec1(arr, 32);
+    auto it = vec1.begin();
+    EXPECT_EQ(*it, 1);
+}
+
+TEST(TestTVectorLib, hoara_sort) {
+    int arr[32] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 111, 222, 333, 444 };
+
+    TVector<int> vec1(arr, 32);
+    randomize(vec1);
+    hoara_sort(vec1);
+
+    for (size_t i = 1; i < 32; i++) {
+        if (vec1.states()[i] == busy && vec1.states()[i - 1] == busy) {
+            EXPECT_GE(vec1[i], vec1[i - 1]);
         }
-        vec.resize(large_size * 2);
-        vec.shrink_to_fit();
-        });
+    }
+}
+
+TEST(TestTVectorLib, hoara_sort_after_erase_elem) {
+    int arr[32] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 111, 222, 333, 444 };
+
+    TVector<int> vec1(arr, 32);
+    vec1.erase_elem(5); 
+    
+    EXPECT_EQ(vec1.size(), 31);
+    randomize(vec1);
+    hoara_sort(vec1);
+
+    for (size_t i = 1; i < 31; i++) {
+        if (vec1.states()[i] == busy && vec1.states()[i - 1] == busy) {
+            EXPECT_GE(vec1[i], vec1[i - 1]);
+        }
+    }
+}
+
+TEST(TestTVectorLib, push_back_after_erase_elems) {
+    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int expected_result[13] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 111 };
+    TVector<int> vec1(arr, 14), vec2(expected_result, 13);
+    vec1.erase_elems(13, 2);
+    vec1.push_back_elem(111);
+    for (int i = 0; i < 13; i++) {
+        EXPECT_EQ(vec1[i], vec2[i]);
+    }
 }
