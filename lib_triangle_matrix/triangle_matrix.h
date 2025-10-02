@@ -18,6 +18,10 @@ public:
 	TriangleMatrix(const Matrix<T>&);
 	TriangleMatrix(const TriangleMatrix&);
 
+	size_t get_size() {
+		return this->_N;
+	}
+
 	TriangleMatrix<T> operator+ (const TriangleMatrix& other);
 	TriangleMatrix<T> operator- (const TriangleMatrix& other);
 	TriangleMatrix<T> operator* (TriangleMatrix<T> matr);

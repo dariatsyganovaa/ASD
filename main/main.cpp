@@ -6,7 +6,7 @@
 
 #include "../lib_triangle_matrix/triangle_matrix.h"
 
-void start_add_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
+void start_add_matrix(Matrix<int>& matrix_1) {
     system("cls");
     std::cout << "==== MATRIX ADDITION ====" << std::endl;
 
@@ -15,7 +15,7 @@ void start_add_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
         std::cout << "Enter the size of 2-nd matrix: ";
         std::cin >> N2 >> M2;
 
-        if (N1 != N2 || M1 != M2) {
+        if (matrix_1.get_rows() != N2 || matrix_1.get_cols() != M2) {
             std::cout << "Error! The sizes of the matrices must match! " << std::endl;
             continue;
         }
@@ -29,7 +29,7 @@ void start_add_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     system("pause");
 }
 
-void start_sub_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
+void start_sub_matrix(Matrix<int>& matrix_1) {
     system("cls");
     std::cout << "==== MATRIX SUBTRACTION ====" << std::endl;
 
@@ -38,7 +38,7 @@ void start_sub_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
         std::cout << "Enter the size of 2-nd matrix: ";
         std::cin >> N2 >> M2;
 
-        if (N1 != N2 || M1 != M2) {
+        if (matrix_1.get_rows() != N2 || matrix_1.get_cols() != M2) {
             std::cout << "Error! The sizes of the matrices must match! " << std::endl;
             continue;
         }
@@ -52,7 +52,7 @@ void start_sub_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     system("pause");
 }
 
-void start_mult_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
+void start_mult_matrix(Matrix<int>& matrix_1) {
     system("cls");
     std::cout << "==== MATRIX MULTIPLICATION ====" << std::endl;
 
@@ -60,7 +60,7 @@ void start_mult_matrix(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     while (1) {
         std::cout << "Enter the size of 2-nd matrix: ";
         std::cin >> N2 >> M2;
-        if (M1 != N2) {
+        if (matrix_1.get_cols() != N2) {
             std::cout << "Error! The number of cols in the 1-st matrix must match the number of rows in the 2-nd matrix! " << std::endl;
             continue;
         }
@@ -87,7 +87,7 @@ void start_matrix_scalar_mult(Matrix<int>& matrix_1) {
     system("pause");
 }
 
-void start_matrix_vec_mult(Matrix<int>& matrix_1, size_t N1, size_t M1) {
+void start_matrix_vec_mult(Matrix<int>& matrix_1) {
     system("cls");
     std::cout << "==== MATRIX MULTIPLICATION BY A VECTOR ====" << std::endl;
 
@@ -95,7 +95,7 @@ void start_matrix_vec_mult(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     while (1) {
         std::cout << "Enter a vector size: ";
         std::cin >> size;
-        if (N1 != size) {
+        if (matrix_1.get_rows() != size) {
             std::cout << "Error! The number of columns of the matrix must be equal to the size of the vector!"<< std::endl;
             continue;
         }
@@ -105,8 +105,8 @@ void start_matrix_vec_mult(Matrix<int>& matrix_1, size_t N1, size_t M1) {
     MathVector<int> vec(size);
     vec.input_math_vector();
 
-    MathVector<int> result = matrix_1 * vec;
-    result.print_math_vector();
+    matrix_1 = matrix_1 * vec;
+    matrix_1.print_matrix();
     system("pause");
 }
 
@@ -200,15 +200,15 @@ void MatrixOperations() {
 
         switch (user) {
         case 1: {
-            start_add_matrix(matrix_1, N1, M1);
+            start_add_matrix(matrix_1);
             break;
         }
         case 2: {
-            start_sub_matrix(matrix_1, N1, M1);
+            start_sub_matrix(matrix_1);
             break;
         } 
         case 3: {
-            start_mult_matrix(matrix_1, N1, M1);
+            start_mult_matrix(matrix_1);
             break;
         }
         case 4: {
@@ -216,7 +216,7 @@ void MatrixOperations() {
             break;
         }
         case 5: {
-            start_matrix_vec_mult(matrix_1, N1, M1);
+            start_matrix_vec_mult(matrix_1);
             break;
         }
         case 6: {

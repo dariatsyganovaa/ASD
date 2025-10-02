@@ -17,7 +17,7 @@ public:
 	Matrix ();
 	Matrix (size_t, size_t);
 	Matrix(const MathVector <MathVector <T>>&);
-	Matrix(const Matrix&);
+	Matrix(const Matrix<T>&);
 
 	size_t get_rows() {
 		return _N;
@@ -32,6 +32,7 @@ public:
 	Matrix<T> operator* (T val);
 	MathVector<T> operator* (const MathVector<T>& vec) const;
 
+	Matrix<T>& operator=(const MathVector<T>& other);
 	Matrix<T>& operator=(const Matrix<T>& other);
 	bool operator==(const Matrix<T>&) const;
 	bool operator!=(const Matrix<T>&) const;
@@ -69,12 +70,12 @@ template <typename T>
 Matrix <T>::Matrix(const Matrix& other) : MathVector <MathVector <T>>(other), _N(other._N), _M(other._M) {}
 
 template <typename T>
-Matrix<T> Matrix <T>::operator+ (const Matrix& other) const {
+Matrix<T> Matrix <T>::operator+ (const Matrix<T>& other) const {
 	return this->MathVector <MathVector <T>> :: operator+ (other);
 }
 
 template <typename T>
-Matrix<T> Matrix <T>::operator- (const Matrix& other) const {
+Matrix<T> Matrix <T>::operator- (const Matrix<T>& other) const {
 	return this->MathVector <MathVector <T>> :: operator- (other);
 }
 
@@ -110,7 +111,7 @@ Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
 }
 
 template <typename T>
-Matrix <T>& Matrix <T>::operator= (const Matrix& other) {
+Matrix <T>& Matrix <T>::operator= (const Matrix<T>& other) {
 	this->MathVector <MathVector <T>> :: operator= (other);
 	this->_N = other._N;
 	this->_M = other._M;
@@ -118,17 +119,27 @@ Matrix <T>& Matrix <T>::operator= (const Matrix& other) {
 }
 
 template <typename T>
-bool Matrix <T>::operator== (const Matrix& other) const {
+Matrix <T>& Matrix <T>::operator= (const MathVector<T>& other) {  
+	*this = Matrix<T>(_N, 1);
+	for (size_t i = 0; i < _N; i++) {
+		(*this)[i] = MathVector<T>(1);
+		(*this)[i][0] = other[i];
+	}
+	return *this;
+}
+
+template <typename T>
+bool Matrix <T>::operator== (const Matrix<T>& other) const {
 	return this->MathVector <MathVector <T>> :: operator== (other);
 }
 
 template <typename T>
-bool Matrix <T>::operator!= (const Matrix& other) const {
+bool Matrix <T>::operator!= (const Matrix<T>& other) const {
 	return this->MathVector <MathVector <T>> :: operator!= (other);
 }
 
 template <typename T>
-Matrix <T>& Matrix <T>::operator+= (const Matrix& other) {
+Matrix <T>& Matrix <T>::operator+= (const Matrix<T>& other) {
 	for (size_t i = 0; i < _N; i++) {
 		for (size_t j = 0; j < _M; j++) {
 			(*this)[i][j] += other[i][j];
@@ -138,7 +149,7 @@ Matrix <T>& Matrix <T>::operator+= (const Matrix& other) {
 }
 
 template <typename T>
-Matrix <T>& Matrix <T>::operator-= (const Matrix& other) {
+Matrix <T>& Matrix <T>::operator-= (const Matrix<T>& other) {
 	for (size_t i = 0; i < _N; i++) {
 		for (size_t j = 0; j < _M; j++) {
 			(*this)[i][j] -= other[i][j];
@@ -148,7 +159,7 @@ Matrix <T>& Matrix <T>::operator-= (const Matrix& other) {
 }
 
 template <typename T>
-Matrix <T>& Matrix <T>::operator*= (const Matrix& other) {
+Matrix <T>& Matrix <T>::operator*= (const Matrix<T>& other) {
 	Matrix<T> result(_N, other._M);
 	Matrix<T> matr_t = other.trans();
 
@@ -184,8 +195,8 @@ const MathVector<T>& Matrix<T>::operator [] (size_t index) const {
 template <typename T>
 Matrix<T> Matrix <T>::trans() const{
 	Matrix <T> matrix(_M, _N);
-	for (size_t i = 0; i < _N; i++) {
-		for (size_t j = 0; j < _M; j++) {
+	for (size_t i = 0; i < _M; i++) {
+		for (size_t j = 0; j < _N; j++) {
 			matrix[i][j] = (*this)[j][i];
 		}
 	}
@@ -197,11 +208,11 @@ void Matrix<T>::input_matrix(size_t N, size_t M) {
 	this->resize(N, M);
 	for (size_t i = 0; i < N; i++) {
 		std::cout << "Row " << i + 1 << ": ";
-		MathVector<T> row_vector(M);
-		row_vector.input_math_vector();
+		MathVector<T> row(M);
+		row.input_math_vector();
 
 		for (size_t j = 0; j < M; j++) {
-			this->_data[i][j] = row_vector[j]; 
+			this->_data[i][j] = row[j]; 
 		}
 	}
 }

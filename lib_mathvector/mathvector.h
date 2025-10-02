@@ -144,17 +144,17 @@ MathVector <T>& MathVector <T>::operator*= (T val) {
 
 template <typename T>
 T& MathVector<T>::operator[] (size_t index) {
-	if (index - _start_index < 0) {
+	/*if (index - _start_index < 0) {
 		throw std::out_of_range("Index out of bounds");
-	}
+	}*/
 	return _data[index - _start_index];
 }
 
 template <typename T>
 const T& MathVector<T>::operator[] (size_t index) const {
-	if (index - _start_index < 0) {
+	/*if (index - _start_index < 0) {
 		return T();
-	}
+	}*/
 	return _data[index - _start_index];
 }
 
@@ -170,7 +170,7 @@ template <typename T>
 void MathVector<T>::print_math_vector() {
 	std::cout << ("Elements of the vector: ") << std::endl;
 	for (size_t i = 0; i < _size; i++) {
-		std::cout << _data[i] << std::endl;
+		std::cout << (*this)[i] << std::endl;
 	}
 }
 
