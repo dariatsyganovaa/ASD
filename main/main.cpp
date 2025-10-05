@@ -119,6 +119,33 @@ void start_trans_matrix(Matrix<int>& matrix_1) {
     system("pause");
 }
 
+void start_comparison_of_matrices(Matrix<int>& matrix_1) {
+    system("cls");
+    std::cout << "==== COMPARISON OF MATRICES ====" << std::endl;
+
+    size_t N2, M2;
+    while (1) {
+        std::cout << "Enter the size of 2-nd matrix: ";
+        std::cin >> N2 >> M2;
+        if (matrix_1.get_rows() != N2 || matrix_1.get_cols() != M2) {
+            std::cout << "Error! The sizes of the matrices must match! " << std::endl;
+            continue;
+        }
+        break;
+    }
+    Matrix<int> matrix_2(N2, M2);
+    matrix_2.input_matrix(N2, M2);
+
+    bool isComp = (matrix_1 == matrix_2);
+    if (isComp == true) {
+        std::cout << "The matrices are equal! " << std::endl;
+    }
+    else {
+        std::cout << "The matrices are not equal! " << std::endl;
+    }
+    system("pause");
+}
+
 void start_add_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX ADDITION ====" << std::endl;
@@ -191,7 +218,7 @@ void MatrixOperations() {
         std::cout << "==== MATRIX CALCULATOR ====" << std::endl;
         matrix_1.print_matrix();
 
-        std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Mult by a vector \n6. Transposition \n0. Back to main menu\nYour: ";
+        std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Mult by a vector \n6. Transposition \n7. Comparison \n0. Back to main menu\nYour: ";
 
         int user;
         std::cin >> user;
@@ -221,6 +248,10 @@ void MatrixOperations() {
         }
         case 6: {
             start_trans_matrix(matrix_1);
+            break;
+        }
+        case 7: {
+            start_comparison_of_matrices(matrix_1);
             break;
         }
         default:

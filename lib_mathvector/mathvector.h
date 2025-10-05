@@ -12,6 +12,7 @@ public:
 	MathVector();
 	MathVector(size_t);
 	MathVector(size_t, size_t);
+	MathVector(const T*, size_t);
 	MathVector(const MathVector<T>&);
 
 	size_t start_index() const noexcept;
@@ -45,6 +46,9 @@ MathVector <T>::MathVector(size_t size) : TVector <T>(size), _start_index(0) {}
 
 template <typename T>
 MathVector <T>::MathVector(size_t size, size_t start_index) : TVector <T>(size), _start_index(start_index) {}
+
+template<class T>
+MathVector<T>::MathVector(const T* arr, size_t size) : TVector <T>(arr, size), _start_index(0) {}
 
 template <typename T>
 MathVector <T>::MathVector(const MathVector& other) : TVector <T>(other), _start_index(other._start_index) {}
@@ -87,6 +91,9 @@ MathVector <T> MathVector <T>::operator* (T val) {
 
 template <typename T>
 T MathVector <T>::operator* (const MathVector<T>& vec) const {
+	if (_size != vec._size) {
+		throw std::invalid_argument("MathVector::operator-: the sizes of the vectors must match!");
+	}
 	T result = T();
 	for (size_t i = 0; i < _size; i++) {
 		result += (*this)[i] * vec[i];
@@ -102,16 +109,25 @@ MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
 
 template <typename T>
 bool MathVector <T>::operator== (const MathVector& other) const {
-	return TVector<T>::operator==(other);
+	if (_size != other._size) return false;
+
+	for (size_t i = 0; i < _size; i++) {
+		if ((*this)[i] != other[i]) return false;
+	}
+
+	return true;
 }
 
 template <typename T>
 bool MathVector <T>::operator!= (const MathVector& other) const {
-	return TVector<T>::operator!=(other);
+	return !(*this == other);
 }
 
 template <typename T>
 MathVector <T>& MathVector <T>::operator+= (const MathVector& other) {
+	if (_size != other._size) {
+		throw std::invalid_argument("MathVector::operator+=: the sizes of the vectors must match!");
+	}
 	for (size_t i = 0; i < _size; i++) {
 		(*this)[i] += other[i];
 	}
@@ -120,6 +136,9 @@ MathVector <T>& MathVector <T>::operator+= (const MathVector& other) {
 
 template <typename T>
 MathVector <T>& MathVector <T>::operator-= (const MathVector& other) {
+	if (_size != other._size) {
+		throw std::invalid_argument("MathVector::operator-=: the sizes of the vectors must match!");
+	}
 	for (size_t i = 0; i < _size; i++) {
 		(*this)[i] -= other[i];
 	}
@@ -128,6 +147,9 @@ MathVector <T>& MathVector <T>::operator-= (const MathVector& other) {
 
 template <typename T>
 MathVector <T>& MathVector <T>::operator*= (const MathVector& other) {
+	if (_size != other._size) {
+		throw std::invalid_argument("MathVector::operator*=: the sizes of the vectors must match!");
+	}
 	for (size_t i = 0; i < _size; i++) {
 		_data[i] *= other._data[i];
 	}

@@ -130,12 +130,12 @@ Matrix <T>& Matrix <T>::operator= (const MathVector<T>& other) {
 
 template <typename T>
 bool Matrix <T>::operator== (const Matrix<T>& other) const {
-	return this->MathVector <MathVector <T>> :: operator== (other);
+	return MathVector <MathVector <T>> :: operator== (other);
 }
 
 template <typename T>
 bool Matrix <T>::operator!= (const Matrix<T>& other) const {
-	return this->MathVector <MathVector <T>> :: operator!= (other);
+	return MathVector <MathVector <T>> :: operator!= (other);
 }
 
 template <typename T>

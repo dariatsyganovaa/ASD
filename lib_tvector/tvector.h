@@ -122,6 +122,7 @@ TVector<T>::TVector(size_t size) {
         _data = new T[_capacity];
         _states = new State[_capacity];
         for (size_t i = 0; i < _capacity; i++) {
+            _data[i] = T();
             _states[i] = empty;
         }
     }
@@ -590,7 +591,7 @@ void TVector<T>::resize(size_t new_size) {
     else if (new_size > _size) {
         reserve(new_size);
         for (size_t i = _size; i < new_size; i++) {
-            _data[i] = T(); // ???????? ?? ????????? ??? ???? T
+            _data[i] = T(); 
             _states[i] = busy;
         }
         _size = new_size;

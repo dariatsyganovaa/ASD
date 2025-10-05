@@ -64,7 +64,7 @@ template <typename T>
 TriangleMatrix <T>::TriangleMatrix(const Matrix<T>& matr) : Matrix<T> (matr) {
 	for (size_t i = 0; i < this->_N; i++) {
 		for (size_t j = 0; j < this->_N; j++) {
-			if (i > j) {
+			if (i < j) {
 				(*this)[i][j] = T();
 			}
 		}
@@ -117,14 +117,30 @@ TriangleMatrix<T> TriangleMatrix<T>::operator- (const TriangleMatrix& other) {
 
 template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator* (TriangleMatrix<T> matr) {
-	std::cout << "operator* matr" << std::endl;
-	return *this;
+	TriangleMatrix<T> result(_N);
+	TriangleMatrix<T> matr_t = matr.trans();
+
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = 0; j < this->_N; j++) {
+			int count = j - i + 1;
+			if (count == 1) {
+				result[i][j] = (*this)[i] * matr_t[i];
+			}
+			for (size_t l = j; l <= j; l++) {
+				result[i][l] = (*this)[i] * matr_t[l];
+			}
+		}
+	}
+	return result;
 }
 
 template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
-	std::cout << "operator* val" << std::endl;
-	return *this;
+	TriangleMatrix<T> result(this->_N);
+	for (size_t i = 0; i < this->_N; i++) {
+		result[i] = (*this)[i] * val;
+	}
+	return result;
 }
 
 template <typename T>
@@ -146,19 +162,35 @@ bool TriangleMatrix <T>::operator!= (const TriangleMatrix& other) const {
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) const {
-	std::cout << "operator +=" << std::endl;
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = 0; j < this->_N; j++) {
+			(*this)[i][j] += other[i][j];
+		}
+	}
 	return *this;
 }
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) const {
-	std::cout << "operator -=" << std::endl;
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = 0; j < this->_N; j++) {
+			(*this)[i][j] -= other[i][j];
+		}
+	}
 	return *this;
 }
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator*= (T val) {
-	std::cout << "operator *=" << std::endl;
+	Matrix<T> result(this->_N);
+	Matrix<T> matr_t = other.trans();
+
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = 0; j < this->_N; j++) {
+			result[i][j] = (*this)[i] * matr_t[j];
+		}
+	}
+	*this = result;
 	return *this;
 }
 
