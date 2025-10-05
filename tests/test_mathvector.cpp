@@ -277,39 +277,27 @@ TEST(TestMathVectorLib, operator_comparison) {
     MathVector<int> vec1(arr1, 5);
     MathVector<int> vec2(arr2, 5);
 
-    EXPECT_EQ(vec1.size(), vec2.size());
-
-    for (size_t i = 0; i < vec1.size(); i++) {
-        EXPECT_EQ(vec1[i], vec2[i]);
-    }
+    EXPECT_TRUE(vec1 == vec2);
 }
 
-TEST(TestMathVectorLib, operator_not_comparison) {
+TEST(TestMathVectorLib, operator_comparison_not_equal) {
     int arr1[5] = { 5, 4, 1, 2, 3 };
     int arr2[5] = { 1, 2, 3, 4, 5 };
 
     MathVector<int> vec1(arr1, 5);
     MathVector<int> vec2(arr2, 5);
 
-    EXPECT_EQ(vec1.size(), vec2.size());
-
-    for (size_t i = 0; i < vec1.size(); i++) {
-        EXPECT_NE(vec1[i], vec2[i]);
-    }
+    EXPECT_TRUE(vec1 != vec2);
 }
 
-TEST(TestMathVectorLib, operator_not_comparison_with_negative_values) {
+TEST(TestMathVectorLib, operator_comparison_not_equal_with_negative_values) {
     int arr1[5] = { 1, 2, 3, 4, 5 };
     int arr2[5] = { -1, -2, -3, -4, -5 };
 
     MathVector<int> vec1(arr1, 5);
     MathVector<int> vec2(arr2, 5);
 
-    EXPECT_EQ(vec1.size(), vec2.size());
-
-    for (size_t i = 0; i < vec1.size(); i++) {
-        EXPECT_NE(vec1[i], vec2[i]);
-    }
+    EXPECT_TRUE(vec1 != vec2);
 }
 
 TEST(TestMathVectorLib, addition_assignment_operator) {

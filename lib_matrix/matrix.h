@@ -14,8 +14,8 @@ protected:
 	size_t _N;
 	size_t _M;
 public:
-	Matrix ();
-	Matrix (size_t, size_t);
+	Matrix();
+	Matrix(size_t, size_t);
 	Matrix(const MathVector <MathVector <T>>&);
 	Matrix(const Matrix<T>&);
 
@@ -90,6 +90,12 @@ Matrix<T> Matrix<T>::operator* (T val){
 
 template <typename T>
 MathVector <T> Matrix<T>::operator* (const MathVector<T>& vec) const {
+	if (_N == 0 || _M == 0 || vec.size() == 0) {
+		throw std::invalid_argument("Matrix::operator*: empty vector or matrix!");
+	}
+	if (_M != vec.size()) {
+		throw std::invalid_argument("Matrix::operator*: incompatible sizes!");
+	}
 	MathVector <T> result(_N);
 	for (size_t i = 0; i < _N; i++) {
 		result[i] = (*this)[i] * vec;
@@ -99,6 +105,12 @@ MathVector <T> Matrix<T>::operator* (const MathVector<T>& vec) const {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
+	if (_N == 0 || _M == 0 || matr._N == 0 || matr._M == 0) {
+		throw std::invalid_argument("Matrix::operator*: can't mult empty matrices!");
+	}
+	if (_M != matr._N) {
+		throw std::invalid_argument("Matrix::operator*: incompatible matrix sizes!");
+	}
 	Matrix<T> result(_N, matr._M);
 	Matrix<T> matr_t = matr.trans();
 
@@ -140,6 +152,9 @@ bool Matrix <T>::operator!= (const Matrix<T>& other) const {
 
 template <typename T>
 Matrix <T>& Matrix <T>::operator+= (const Matrix<T>& other) {
+	if (_N != other._N || _M != other._M) {
+		throw std::invalid_argument("Matrix::operator+=: matrix sizes must match!");
+	}
 	for (size_t i = 0; i < _N; i++) {
 		for (size_t j = 0; j < _M; j++) {
 			(*this)[i][j] += other[i][j];
@@ -150,6 +165,9 @@ Matrix <T>& Matrix <T>::operator+= (const Matrix<T>& other) {
 
 template <typename T>
 Matrix <T>& Matrix <T>::operator-= (const Matrix<T>& other) {
+	if (_N != other._N || _M != other._M) {
+		throw std::invalid_argument("Matrix::operator-=: matrix sizes must match!");
+	}
 	for (size_t i = 0; i < _N; i++) {
 		for (size_t j = 0; j < _M; j++) {
 			(*this)[i][j] -= other[i][j];
@@ -160,6 +178,12 @@ Matrix <T>& Matrix <T>::operator-= (const Matrix<T>& other) {
 
 template <typename T>
 Matrix <T>& Matrix <T>::operator*= (const Matrix<T>& other) {
+	if (_N == 0 || _M == 0 || other._N == 0 || other._M == 0) {
+		throw std::invalid_argument("Matrix::operator*=: can't mult empty matrices!");
+	}
+	if (_M != other._N) {
+		throw std::invalid_argument("Matrix::operator*=: incompatible matrix sizes!");
+	}
 	Matrix<T> result(_N, other._M);
 	Matrix<T> matr_t = other.trans();
 
