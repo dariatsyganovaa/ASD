@@ -11,39 +11,32 @@ template <typename T> std::istream& operator>>(std::istream& in, TriangleMatrix<
 
 template <class T>
 class TriangleMatrix : public Matrix<T> {
-	//size_t _N;
 public:
 	TriangleMatrix();
 	TriangleMatrix(size_t);
 	TriangleMatrix(const Matrix<T>&);
 	TriangleMatrix(const TriangleMatrix&);
 
-	size_t get_size() {
+	size_t get_size() const {
 		return this->_N;
 	}
 
-	TriangleMatrix<T> operator+ (const TriangleMatrix& other);
-	TriangleMatrix<T> operator- (const TriangleMatrix& other);
-	TriangleMatrix<T> operator* (TriangleMatrix<T> matr);
+	TriangleMatrix<T> operator+ (const TriangleMatrix<T>& other);
+	TriangleMatrix<T> operator- (const TriangleMatrix<T>& other);
+	TriangleMatrix<T> operator* (const TriangleMatrix<T>& matr);
 	TriangleMatrix<T> operator* (T val);
 
 	TriangleMatrix<T>& operator=(const TriangleMatrix<T>& other);
 	bool operator==(const TriangleMatrix<T>&) const;
 	bool operator!=(const TriangleMatrix<T>&) const;
 
-	TriangleMatrix<T>& operator+= (const TriangleMatrix<T>& other) const;
-	TriangleMatrix<T>& operator-= (const TriangleMatrix<T>& other) const;
+	TriangleMatrix<T>& operator+= (const TriangleMatrix<T>& other);
+	TriangleMatrix<T>& operator-= (const TriangleMatrix<T>& other);
+	TriangleMatrix<T>& operator*= (const TriangleMatrix<T>& other);
 	TriangleMatrix<T>& operator*= (T val);
 
 	MathVector<T>& operator [] (size_t);
 	const MathVector<T>& operator [] (size_t) const;
-
-	bool isUpperTriangular();
-	bool isLowerTriangular();
-
-	void status();
-	void input_tri_matrix(size_t);
-	void print_tri_matrix();
 
 	friend std::ostream& operator<< <T>(std::ostream& out, const TriangleMatrix<T>& matr);
 	friend std::istream& operator>> <T>(std::istream& in, TriangleMatrix<T>& matr);
@@ -51,84 +44,78 @@ public:
 };
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix() : Matrix<T>() {}
+TriangleMatrix <T>::TriangleMatrix() : Matrix<T>(){}
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix(size_t N) : Matrix<T>(N, N) {
-	for (size_t i = 0; i < this->_N; i++) {
+TriangleMatrix <T>::TriangleMatrix(size_t N) : Matrix<T>(N, N){
+	for (size_t i = 0; i < N; i++) {
 		(*this)[i] = MathVector<T>(N - i, i); //i - доп. поле индекса
 	}
 }
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix(const Matrix<T>& matr) : Matrix<T> (matr) {
+TriangleMatrix <T>::TriangleMatrix(const Matrix<T>& matr) : Matrix<T>(matr.get_rows(), matr.get_cols()) {
+	if (matr.get_rows() != matr.get_cols()) {
+		throw std::invalid_argument("TriangleMatrix requires a square matrix!");
+	}
 	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = 0; j < this->_N; j++) {
-			if (i < j) {
-				(*this)[i][j] = T();
-			}
+		_data[i] = MathVector<T>(this->_N - i, i);
+		for (size_t j = i; j < this->_N; j++) {
+			_data[i][j] = matr[i][j];
 		}
 	}
 }
 
 template <typename T>
-TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix& other) : Matrix<T>(other) {}
+TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix<T>& other) : Matrix<T>(other) {}
+
 
 template <class T>
-bool TriangleMatrix<T>::isUpperTriangular() {
-	std::cout << "checking upper triangular matrix" << std::endl;
-	return true;
+TriangleMatrix<T> TriangleMatrix<T>::operator+(const TriangleMatrix<T>& other) {
+	if (this->_N != other._N) {
+		throw std::invalid_argument("TriangleMatrix sizes must match for addition");
+	}
+
+	TriangleMatrix<T> result(this->_N);
+
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = i; j < this->_N; j++) {
+			result[i][j] = (*this)[i][j] + other[i][j];
+		}
+	}
+	return result;
 }
 
 template <class T>
-bool TriangleMatrix<T>::isLowerTriangular() {
-	std::cout << "checking lower triangular matrix" << std::endl;
-	return true;
-}
-
-template <class T>
-void TriangleMatrix<T>::status() {
-	bool isUpper = isUpperTriangular();
-	bool isLower = isLowerTriangular();
-
-	if (isUpper && isLower) {
-		std::cout << "Diagonal matrix" << std::endl;
+TriangleMatrix<T> TriangleMatrix<T>::operator-(const TriangleMatrix<T>& other) {
+	if (this->_N != other._N) {
+		throw std::invalid_argument("TriangleMatrix sizes must match for subtraction");
 	}
-	else if (isUpper) {
-		std::cout << "Upper triangular matrix" << std::endl;
-	}
-	else if (isLower) {
-		std::cout << "Lower triangular matrix" << std::endl;
-	}
-	else {
-		std::cout << "Not a triangular matrix" << std::endl;
-	}
-} 
 
-template <class T>
-TriangleMatrix<T> TriangleMatrix<T>::operator+ (const TriangleMatrix& other) {
-	return this->Matrix<T> :: operator+ (other);
-}
-
-template <class T>
-TriangleMatrix<T> TriangleMatrix<T>::operator- (const TriangleMatrix& other) {
-	return this->Matrix<T> :: operator- (other);
+	TriangleMatrix<T> result(this->_N);
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = i; j < this->_N; j++) {
+			result[i][j] = (*this)[i][j] - other[i][j];
+		}
+	}
+	return result;
 }
 
 template <typename T>
-TriangleMatrix<T> TriangleMatrix<T>::operator* (TriangleMatrix<T> matr) {
-	TriangleMatrix<T> result(_N);
-	TriangleMatrix<T> matr_t = matr.trans();
+TriangleMatrix<T> TriangleMatrix<T>::operator*(const TriangleMatrix<T>& other) {
+	if (this->_N != other._N) {
+		throw std::invalid_argument("TriangleMatrix sizes must match");
+	}
+
+	TriangleMatrix<T> result(this->_N);
 
 	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = 0; j < this->_N; j++) {
-			int count = j - i + 1;
-			if (count == 1) {
-				result[i][j] = (*this)[i] * matr_t[i];
+		for (size_t j = i; j < this->_N; j++) { 
+			T sum = T();
+			for (size_t k = i; k <= j; k++) {    
+				sum += (*this)[i][k] * other[k][j];
 			}
-			for (size_t l = j; l <= j; l++) {
-				result[i][l] = (*this)[i] * matr_t[l];
-			}
+			result[i][j] = sum;
 		}
 	}
 	return result;
@@ -138,7 +125,9 @@ template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 	TriangleMatrix<T> result(this->_N);
 	for (size_t i = 0; i < this->_N; i++) {
-		result[i] = (*this)[i] * val;
+		for (size_t j = i; j < this->_N; j++) {
+			result[i][j] = (*this)[i][j] * val;
+		}
 	}
 	return result;
 }
@@ -146,7 +135,6 @@ TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator= (const TriangleMatrix& other) { 
 	Matrix<T>::operator=(other);
-	this->_N = other._N;
 	return *this;
 }
 
@@ -157,87 +145,80 @@ bool TriangleMatrix <T>::operator== (const TriangleMatrix& other) const {
 
 template <typename T>
 bool TriangleMatrix <T>::operator!= (const TriangleMatrix& other) const {
-	return Matrix<T>::operator!=(other);
+	return !(*this == other);
 }
 
 template <typename T>
-TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) const {
-	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = 0; j < this->_N; j++) {
-			(*this)[i][j] += other[i][j];
-		}
-	}
+TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) {
+	*this = *this + other;
 	return *this;
 }
 
 template <typename T>
-TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) const {
-	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = 0; j < this->_N; j++) {
-			(*this)[i][j] -= other[i][j];
-		}
-	}
+TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) {
+	*this = *this - other;
+	return *this;
+}
+
+template <typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator*= (const TriangleMatrix<T>& other) {
+	*this = *this * other;
 	return *this;
 }
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator*= (T val) {
-	Matrix<T> result(this->_N);
-	Matrix<T> matr_t = other.trans();
-
 	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = 0; j < this->_N; j++) {
-			result[i][j] = (*this)[i] * matr_t[j];
+		for (size_t j = i; j < this->_N; j++) {
+			(*this)[i][j] *= val;
 		}
 	}
-	*this = result;
 	return *this;
 }
 
 template <typename T>
 MathVector<T>& TriangleMatrix<T>::operator [] (size_t index) {
-	return this->Matrix<T>::operator[](index); //used start_index
+	return Matrix<T>::operator[](index); 
 }
 
 template <typename T>
 const MathVector<T>& TriangleMatrix<T>::operator [] (size_t index) const {
-	return this->Matrix<T>::operator[](index);
-}
-
-template <typename T>
-void TriangleMatrix <T>::input_tri_matrix(size_t N) { 
-	this->resize(N, N);
-	for (size_t i = 0; i < N; i++) {
-		std::cout << "Row " << i + 1 << ": ";
-		MathVector<T> row_vector(N);
-		row_vector.input_math_vector();
-
-		for (size_t j = 0; j < N; j++) {
-			this->_data[i][j] = row_vector[j];
-		}
-	}
-}
-
-template <typename T>
-void TriangleMatrix <T>::print_tri_matrix() {
-	std::cout << " ---- YOUR MATRIX ---- " << std::endl;
-	for (size_t i = 0; i < this->_N; ++i) {
-		for (size_t j = 0; j < this->_N; ++j) {
-			std::cout << _data[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
+	return Matrix<T>::operator[](index);
 }
 
 template <class T>
 std::ostream& operator<< (std::ostream& out, const TriangleMatrix<T>& matr) {
-	std::cout << "operator<<" << std::endl;
+	out << " ---- UPPER TRIANGULAR MATRIX ---- " << std::endl;
+	for (size_t i = 0; i < matr.get_size(); ++i) {
+		for (size_t j = 0; j < matr.get_size(); ++j) {
+			if (j < i) {
+				out << "0 ";
+			}
+			else {
+				out << matr[i][j] << " ";
+			}
+		}
+		out << std::endl;
+	}
 	return out;
 }
 
 template <class T>
 std::istream& operator>> (std::istream& in, TriangleMatrix<T>& matr) {
-	std::cout << "operator>>" << std::endl;
+	size_t N;
+	std::cout << "Enter the size of triangular matrix: ";
+	in >> N;
+
+	matr = TriangleMatrix<T>(N);
+	for (size_t i = 0; i < N; i++) {
+		std::cout << "Row " << i + 1 << ": ";
+		MathVector<T> row(N - i, i);
+		row.input_math_vector();
+
+		for (size_t j = i; j < N; j++) {
+			matr[i][j] = row[j];
+		}
+	}
 	return in;
 }
 #endif  // LIB_TRIANGLEMATRIX_TRIANGLEMATRIX_H_

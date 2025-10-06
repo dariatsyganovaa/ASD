@@ -92,7 +92,7 @@ MathVector <T> MathVector <T>::operator* (T val) {
 template <typename T>
 T MathVector <T>::operator* (const MathVector<T>& vec) const {
 	if (_size != vec._size) {
-		throw std::invalid_argument("MathVector::operator-: the sizes of the vectors must match!");
+		throw std::invalid_argument("MathVector::operator*: the sizes of the vectors must match!");
 	}
 	T result = T();
 	for (size_t i = 0; i < _size; i++) {
@@ -103,7 +103,10 @@ T MathVector <T>::operator* (const MathVector<T>& vec) const {
 
 template <typename T>
 MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
-	TVector<T>::operator=(other);
+	if (this != &other) {
+		TVector<T>::operator=(other);
+		_start_index = other._start_index; 
+	}
 	return *this;
 }
 

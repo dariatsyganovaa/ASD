@@ -146,39 +146,39 @@ void start_comparison_of_matrices(Matrix<int>& matrix_1) {
     system("pause");
 }
 
-void start_add_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
+void start_add_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX ADDITION ====" << std::endl;
 
-    TriangleMatrix<int> tri_matrix_2(size);
-    tri_matrix_2.input_tri_matrix(size);
+    TriangleMatrix<int> tri_matrix_2;
+    std::cin >> tri_matrix_2;
 
-    TriangleMatrix<int> result = tri_matrix_1 + tri_matrix_2;
-    result.print_tri_matrix();
+    tri_matrix_1 += tri_matrix_2;
+    std::cout << tri_matrix_1;
     system("pause");
 }
 
-void start_sub_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
+void start_sub_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX SUBTRACTION ====" << std::endl;
 
-    TriangleMatrix<int> tri_matrix_2(size);
-    tri_matrix_2.input_tri_matrix(size);
+    TriangleMatrix<int> tri_matrix_2;
+    std::cin >> tri_matrix_2;
 
-    TriangleMatrix<int> result = tri_matrix_1 - tri_matrix_2;
-    result.print_tri_matrix();
+    tri_matrix_1 -= tri_matrix_2;
+    std::cout << tri_matrix_1;
     system("pause");
 }
 
-void start_mult_tri_matrix(TriangleMatrix<int>& tri_matrix_1, int size) {
+void start_mult_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX MULTIPLICATION ====" << std::endl;
 
-    TriangleMatrix<int> tri_matrix_2(size);
-    tri_matrix_2.input_tri_matrix(size);
+    TriangleMatrix<int> tri_matrix_2;
+    std::cin >> tri_matrix_2;
 
-    TriangleMatrix<int> result = tri_matrix_1 * tri_matrix_2;
-    result.print_tri_matrix();
+    tri_matrix_1 *= tri_matrix_2;
+    std::cout << tri_matrix_1;
     system("pause");
 }
 
@@ -190,15 +190,25 @@ void start_tri_matrix_scalar_mult(TriangleMatrix<int>& tri_matrix_1) {
     std::cout << "Enter a scalar: ";
     std::cin >> scalar;
 
-    TriangleMatrix<int> result = tri_matrix_1 * scalar;
-    result.print_tri_matrix();
+    tri_matrix_1 *= scalar;
+    std::cout << tri_matrix_1;
     system("pause");
 }
 
-void start_type_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
+void start_comparison_of_tri_matrices(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
-    std::cout << "==== TRIANGULAR MATRIX TYPE ====" << std::endl;
-    tri_matrix_1.status();
+    std::cout << "==== COMPARISON OF MATRICES ====" << std::endl;
+
+    TriangleMatrix<int> tri_matrix_2;
+    std::cin >> tri_matrix_2;
+
+    bool isComp = (tri_matrix_1 == tri_matrix_2);
+    if (isComp == true) {
+        std::cout << "The matrices are equal! " << std::endl;
+    }
+    else {
+        std::cout << "The matrices are not equal! " << std::endl;
+    }
     system("pause");
 }
 
@@ -263,19 +273,22 @@ void MatrixOperations() {
 }
 
 void TriangleMatrixOperations() {
-    int size;
-    std::cout << "Enter the size of triangular matrix: ";
-    std::cin >> size;
+    TriangleMatrix<int> tri_matrix_1;
+    std::cin >> tri_matrix_1;
 
-    TriangleMatrix<int> tri_matrix_1(size);
-    tri_matrix_1.input_tri_matrix(size);
+    if (tri_matrix_1.get_size() == 0) {
+        std::cout << "Error: Matrix input failed!" << std::endl;
+        system("pause");
+        return;
+    }
+
     system("pause");
 
     while (1) {
         system("cls");
         std::cout << "==== TRIANGULAR MATRIX CALCULATOR ====" << std::endl;
-        tri_matrix_1.print_tri_matrix();
-        std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Status \n0. Back to main menu\nYour: ";
+        std::cout << tri_matrix_1;
+        std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Comparison \n0. Back to main menu\nYour: ";
 
         int user;
         std::cin >> user;
@@ -284,15 +297,15 @@ void TriangleMatrixOperations() {
 
         switch (user) {
         case 1: {
-            start_add_tri_matrix(tri_matrix_1, size);
+            start_add_tri_matrix(tri_matrix_1);
             break;
         }
         case 2: {
-            start_sub_tri_matrix(tri_matrix_1, size);
+            start_sub_tri_matrix(tri_matrix_1);
             break;
         }
         case 3: {
-            start_mult_tri_matrix(tri_matrix_1, size);
+            start_mult_tri_matrix(tri_matrix_1);
             break;
         }
         case 4: {
@@ -300,7 +313,7 @@ void TriangleMatrixOperations() {
             break;
         }
         case 5: {
-            start_type_tri_matrix(tri_matrix_1);
+            start_comparison_of_tri_matrices(tri_matrix_1);
             break;
         }
         default:

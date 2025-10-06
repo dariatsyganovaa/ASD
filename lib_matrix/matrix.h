@@ -19,10 +19,10 @@ public:
 	Matrix(const MathVector <MathVector <T>>&);
 	Matrix(const Matrix<T>&);
 
-	size_t get_rows() {
+	size_t get_rows() const{
 		return _N;
 	}
-	size_t get_cols() {
+	size_t get_cols() const{
 		return _M;
 	}
 
