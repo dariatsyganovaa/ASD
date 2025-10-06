@@ -31,6 +31,7 @@ public:
 	MathVector<T>& operator*= (const MathVector<T>& other);
 	MathVector<T>& operator*= (T val);
 	
+	T& at(size_t);
 	T& operator [] (size_t);
 	const T& operator [] (size_t) const;
 
@@ -167,19 +168,21 @@ MathVector <T>& MathVector <T>::operator*= (T val) {
 	return *this;
 }
 
+template<typename T>
+T& MathVector<T>::at(size_t index) {
+	if (index - _start_index < 0) {
+		throw std::out_of_range("MathVector::at: index out of bounds");
+	}
+	return _data[index - _start_index];
+}
+
 template <typename T>
 T& MathVector<T>::operator[] (size_t index) {
-	/*if (index - _start_index < 0) {
-		throw std::out_of_range("Index out of bounds");
-	}*/
 	return _data[index - _start_index];
 }
 
 template <typename T>
 const T& MathVector<T>::operator[] (size_t index) const {
-	/*if (index - _start_index < 0) {
-		return T();
-	}*/
 	return _data[index - _start_index];
 }
 
