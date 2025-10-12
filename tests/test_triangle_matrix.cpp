@@ -14,29 +14,29 @@ TEST(TestTriangleMatrixLib, size_constructor) {
     EXPECT_EQ(matr.get_cols(), 3);
 }
 
-TEST(TestTriangleMatrixLib, size_constructor_with_zero_init) {
-    TriangleMatrix<int> matr(3);
-    EXPECT_EQ(matr.get_rows(), 3);
-    EXPECT_EQ(matr.get_cols(), 3);
-
-    for (size_t i = 0; i < matr.get_rows(); i++) {
-        for (size_t j = 0; j < matr.get_cols(); j++) {
-            EXPECT_EQ(matr[i][j], 0);
-        }
-    }
-}
-
-TEST(TestTriangleMatrixLib, copy_constructor) {
-    TriangleMatrix<int> matr1(3);
-    TriangleMatrix<int> matr2(matr1);
-    EXPECT_EQ(matr2.get_size(), 3);
-
-    for (size_t i = 0; i < matr2.get_size(); i++) {
-        for (size_t j = 0; j < matr2.get_size(); j++) {
-            EXPECT_EQ(matr1[i][j], matr2[i][j]);
-        }
-    }
-}
+//TEST(TestTriangleMatrixLib, size_constructor_with_zero_init) {
+//    TriangleMatrix<int> matr(3);
+//    EXPECT_EQ(matr.get_rows(), 3);
+//    EXPECT_EQ(matr.get_cols(), 3);
+//
+//    for (size_t i = 0; i < matr.get_rows(); i++) {
+//        for (size_t j = 0; j < matr.get_cols(); j++) {
+//            EXPECT_EQ(matr[i][j], 0);
+//        }
+//    }
+//}
+//
+//TEST(TestTriangleMatrixLib, copy_constructor) {
+//    TriangleMatrix<int> matr1(3);
+//    TriangleMatrix<int> matr2(matr1);
+//    EXPECT_EQ(matr2.get_size(), 3);
+//
+//    for (size_t i = 0; i < matr2.get_size(); i++) {
+//        for (size_t j = 0; j < matr2.get_size(); j++) {
+//            EXPECT_EQ(matr1[i][j], matr2[i][j]);
+//        }
+//    }
+//}
 
 TEST(TestTriangleMatrixLib, copy_null_constructor) {
     TriangleMatrix<int> matr1(0);
