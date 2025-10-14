@@ -66,18 +66,20 @@ TEST(TestPointLib, equality_of_points) {
     // Arrange
     Point p1(6, 2);
     Point p2(6, 2);
-
+    Point p3(1, 3);
     // Act & Assert
     EXPECT_TRUE(p1 == p2);
+    EXPECT_FALSE(p1 == p3);
 }
 
 TEST(TestPointLib, not_equality_of_points) {
     // Arrange
     Point p1(6, 2);
     Point p2(7, 0);
-
+    Point p3(6, 2);
     // Act & Assert
     EXPECT_TRUE(p1 != p2);
+    EXPECT_FALSE(p1 != p3);
 }
 
 TEST(TestPointLib, assignment_of_points) {

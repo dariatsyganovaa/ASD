@@ -24,7 +24,7 @@ float Point3D::distance(const Point3D& other) const {
 }
 
 bool Point3D::operator == (const Point3D& other) const {
-	return (_x == other._x) && (_y == other._y) && (_z == other._z);
+	return this->Point::operator==(other) && (_z == other._z);
 }
 
 bool Point3D::operator != (const Point3D& other) const {
@@ -33,8 +33,7 @@ bool Point3D::operator != (const Point3D& other) const {
 
 Point3D& Point3D::operator = (const Point3D& other) {
 	if (this != &other) {
-		_x = other._x;
-		_y = other._y;
+		this->Point::operator=(other);
 		_z = other._z;
 	}
 	return *this;
