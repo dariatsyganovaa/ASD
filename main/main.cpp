@@ -182,6 +182,29 @@ void start_mult_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     system("pause");
 }
 
+void start_tri_matrix_vec_mult(TriangleMatrix<int>& tri_matrix_1) {
+    system("cls");
+    std::cout << "==== TRIANGULAR MATRIX MULTIPLICATION BY A VECTOR ====" << std::endl;
+
+    int size;
+    while (1) {
+        std::cout << "Enter a vector size: ";
+        std::cin >> size;
+        if (tri_matrix_1.get_size() != size) {
+            std::cout << "Error! The number of columns of the matrix must be equal to the size of the vector!" << std::endl;
+            continue;
+        }
+        break;
+    }
+
+    MathVector<int> vec(size);
+    vec.input_math_vector();
+
+    tri_matrix_1 = tri_matrix_1 * vec;
+    tri_matrix_1.print_matrix();
+    system("pause");
+}
+
 void start_tri_matrix_scalar_mult(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX MULTIPLICATION BY A SCALAR ====" << std::endl;
@@ -288,7 +311,7 @@ void TriangleMatrixOperations() {
         system("cls");
         std::cout << "==== TRIANGULAR MATRIX CALCULATOR ====" << std::endl;
         std::cout << tri_matrix_1;
-        std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Comparison \n0. Back to main menu\nYour: ";
+        std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Mult by a vector \n6. Comparison \n0. Back to main menu\nYour: ";
 
         int user;
         std::cin >> user;
@@ -313,6 +336,10 @@ void TriangleMatrixOperations() {
             break;
         }
         case 5: {
+            start_tri_matrix_vec_mult(tri_matrix_1);
+            break;
+        }
+        case 6: {
             start_comparison_of_tri_matrices(tri_matrix_1);
             break;
         }
@@ -353,3 +380,56 @@ int main() {
 }
 
 #endif  // MATRIX
+
+//#define STACK
+#ifdef STACK
+
+#include "../lib_stack/stack.h"
+#include <string>
+
+int main() {
+    std::string str;
+    std::cout << "Enter the bracket sequence: ";
+    std::cin >> str;
+    
+    Stack<char> stack(str.length());
+    bool isCorrect = true;
+
+    for (size_t i = 0; i < str.length(); i++) {
+        char c = str[i];
+
+        if (c == '{' || c == '[' || c == '(') {
+            stack.push(c);
+        }
+        else if (c == '}' || c == ']' || c == ')') {
+            if (stack.is_empty()) {
+                isCorrect = false;
+                break;
+            }
+            char top = stack.top();
+            if ((c == '}' && top != '{') || (c == ']' && top != '[') || (c == ')' && top != '(')) {
+                isCorrect = false;
+                break;
+            }
+            stack.pop();
+        }
+        else {
+            std::cout << "The bracket sequence contains invalid characters!" << std::endl;
+            return 0;
+        }
+    }
+
+    if (!stack.is_empty()) {
+        isCorrect = false;
+    }
+
+    if (isCorrect) {
+        std::cout << "The bracket sequence is correct!" << std::endl;
+    }
+    else {
+        std::cout << "The bracket sequence is not correct!" << std::endl;
+    }
+    
+    return 0;
+}
+#endif //STACK

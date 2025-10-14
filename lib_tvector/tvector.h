@@ -39,9 +39,10 @@ public:
     size_t size() const noexcept;
 
     inline bool is_empty() const noexcept;
+    inline bool is_full() const noexcept;
 
     inline T& front() noexcept;
-    inline T& back() noexcept; 
+    inline T& back() const noexcept;
 
     inline T* begin() noexcept; 
     inline T* end() noexcept; 
@@ -93,7 +94,7 @@ public:
     friend void hoara_sort<T>(TVector<T>&);
 
 private:
-    inline bool is_full() const noexcept;
+    
     void allocate_memory(size_t);
     void reallocate_memory(size_t);
     void reallocate_memory_for_delete();
@@ -205,7 +206,7 @@ inline T& TVector<T>::front() noexcept {
 }
 
 template<class T>
-inline T& TVector<T>::back() noexcept {
+inline T& TVector<T>::back() const noexcept {
     if (_size == 0) throw std::out_of_range("TVector::back: vector is empty");
     for (size_t i = _size + _deleted - 1; i >= 0; --i) {
         if (_states[i] == busy) return _data[i];
@@ -375,7 +376,6 @@ void TVector<T>::pop_back_elem() {
     for (size_t i = _size + _deleted - 1; i >= 0; --i) {
         if (_states[i] == busy) {
             _states[i] = empty;
-            _deleted++;
             _size--;
             break;
         }
@@ -768,7 +768,7 @@ int* find_elems(const TVector<T>& vec, const T& value, int& size) {
 }
 
 template<class T>
-inline bool TVector<T>::is_full() const noexcept { return _size >= _capacity; }
+inline bool TVector<T>::is_full() const noexcept { return _size == _capacity; }
 
 template<class T>
 void TVector<T>::allocate_memory(size_t new_capacity) {

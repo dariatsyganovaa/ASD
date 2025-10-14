@@ -13,6 +13,9 @@ int local_minimum_of_a_matrix(Matrix<int>& matrix) {
 	int random_rows = rand() % rows;
 	int random_cols = rand() % cols;
 
+	int dx[4] = { -1, 1, 0, 0 };
+	int dy[4] = { 0, 0, -1, 1 };
+
 	while (1) {
 		int rand_val = matrix[random_rows][random_cols];
 
@@ -20,9 +23,6 @@ int local_minimum_of_a_matrix(Matrix<int>& matrix) {
 		int best_row = random_rows;
 		int best_col = random_cols;
 		int best_val = rand_val;
-
-		int dx[4] = { -1, 1, 0, 0 };
-		int dy[4] = { 0, 0, -1, 1 };
 
 		for (int move = 0; move < 4; move++) {
 			int new_rows = random_rows + dx[move];

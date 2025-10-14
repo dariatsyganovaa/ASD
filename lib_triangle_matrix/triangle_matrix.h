@@ -24,8 +24,10 @@ public:
 	TriangleMatrix<T> operator+ (const TriangleMatrix<T>& other);
 	TriangleMatrix<T> operator- (const TriangleMatrix<T>& other);
 	TriangleMatrix<T> operator* (const TriangleMatrix<T>& matr);
+	MathVector<T> operator* (const MathVector<T>& vec) const;
 	TriangleMatrix<T> operator* (T val);
 
+	TriangleMatrix<T>& operator=(const MathVector<T>& other);
 	TriangleMatrix<T>& operator=(const TriangleMatrix<T>& other);
 	bool operator==(const TriangleMatrix<T>&) const;
 	bool operator!=(const TriangleMatrix<T>&) const;
@@ -122,6 +124,21 @@ TriangleMatrix<T> TriangleMatrix<T>::operator*(const TriangleMatrix<T>& other) {
 }
 
 template <typename T>
+MathVector <T> TriangleMatrix<T>::operator* (const MathVector<T>& vec) const {
+	if (_N == 0 || vec.size() == 0) {
+		throw std::invalid_argument("TriangleMatrix::operator*: empty vector or matrix!");
+	}
+	if (_N != vec.size()) {
+		throw std::invalid_argument("TriangleMatrix::operator*: incompatible sizes!");
+	}
+	MathVector <T> result(_N);
+	for (size_t i = 0; i < _N; i++) {
+		result[i] = (*this)[i] * vec;
+	}
+	return result;
+}
+
+template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 	TriangleMatrix<T> result(this->_N);
 	for (size_t i = 0; i < this->_N; i++) {
@@ -130,6 +147,16 @@ TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 		}
 	}
 	return result;
+}
+
+template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator= (const MathVector<T>& other) {
+	_N = other.size();
+	for (size_t i = 0; i < _N; i++) {
+		(*this)[i] = MathVector<T>(1);
+		(*this)[i][0] = other[i];
+	}
+	return *this;
 }
 
 template <typename T>
