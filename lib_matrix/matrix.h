@@ -66,12 +66,16 @@ Matrix <T>::Matrix(size_t N, size_t M) : MathVector <MathVector <T>>(N), _N(N), 
 template <typename T>
 Matrix <T>::Matrix(const MathVector <MathVector <T>>& vec) : MathVector <MathVector <T>>(vec), _N(vec.size()), _M(_N > 0 ? vec[0].size() : 0) {}
 
+
+
 template <typename T>
 Matrix <T>::Matrix(const Matrix& other) : MathVector <MathVector <T>>(other), _N(other._N), _M(other._M) {}
 
 template <typename T>
 Matrix<T> Matrix <T>::operator+ (const Matrix<T>& other) const {
-	return this->MathVector <MathVector <T>> :: operator+ (other);
+	Matrix<T> result(*this);
+	result += other;
+	return result;
 }
 
 template <typename T>
@@ -155,11 +159,7 @@ Matrix <T>& Matrix <T>::operator+= (const Matrix<T>& other) {
 	if (_N != other._N || _M != other._M) {
 		throw std::invalid_argument("Matrix::operator+=: matrix sizes must match!");
 	}
-	for (size_t i = 0; i < _N; i++) {
-		for (size_t j = 0; j < _M; j++) {
-			(*this)[i][j] += other[i][j];
-		}
-	}
+	this->MathVector<MathVector<T>>::operator+=(other);
 	return *this;
 }
 

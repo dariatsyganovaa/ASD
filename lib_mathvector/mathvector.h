@@ -59,19 +59,17 @@ size_t MathVector<T>::start_index() const noexcept { return _start_index; }
 
 template <typename T>
 MathVector <T> MathVector <T>::operator+ (const MathVector<T>& vec) const {
-	if (_size != vec._size) {
+	if (_size - _start_index != vec._size - vec._start_index) {
 		throw std::invalid_argument("MathVector::operator+: the sizes of the vectors must match!");
 	}
-	MathVector <T> result(_size);
-	for (size_t i = 0; i < _size; i++) {
-		result[i] = (*this)[i] + vec[i];
-	}
+	MathVector <T> result(*this);
+	result += vec;
 	return result;
 }
 
 template <typename T>
 MathVector <T> MathVector <T>::operator- (const MathVector<T>& vec) const {
-	if (_size != vec._size) {
+	if (_size - _start_index != vec._size - vec._start_index) {
 		throw std::invalid_argument("MathVector::operator-: the sizes of the vectors must match!");
 	}
 	MathVector <T> result(_size);
@@ -92,7 +90,7 @@ MathVector <T> MathVector <T>::operator* (T val) {
 
 template <typename T>
 T MathVector <T>::operator* (const MathVector<T>& vec) const {
-	if (_size != vec._size) {
+	if (_size - _start_index != vec._size - vec._start_index) {
 		throw std::invalid_argument("MathVector::operator*: the sizes of the vectors must match!");
 	}
 	T result = T();
@@ -105,7 +103,7 @@ T MathVector <T>::operator* (const MathVector<T>& vec) const {
 template <typename T>
 MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
 	if (this != &other) {
-		TVector<T>::operator=(other);
+		this->TVector<T>::operator=(other);
 		_start_index = other._start_index; 
 	}
 	return *this;
@@ -113,13 +111,9 @@ MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
 
 template <typename T>
 bool MathVector <T>::operator== (const MathVector& other) const {
-	if (_size != other._size) return false;
+	if (_size - _start_index != other._size - other._start_index) return false;
 
-	for (size_t i = 0; i < _size; i++) {
-		if ((*this)[i] != other[i]) return false;
-	}
-
-	return true;
+	return this->TVector<T>::operator==(other);
 }
 
 template <typename T>

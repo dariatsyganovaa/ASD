@@ -788,6 +788,15 @@ TEST(TestTVectorLib, comparison_operator) {
     EXPECT_FALSE(vec1 != vec2);
 }
 
+TEST(TestTVectorLib, not_comparison_operator) {
+    int arr1[16] = { 1, 2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    int arr2[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec1(arr1, 16);
+    TVector<int> vec2(arr2, 16);
+    //EXPECT_TRUE(vec1 == vec2);
+    EXPECT_FALSE(vec1 == vec2);
+}
+
 TEST(TestTVectorLib, comparison_operator_for_empty_vec) {
     TVector<int> vec1;
     TVector<int> vec2;

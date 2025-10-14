@@ -644,17 +644,21 @@ template<class T>
 bool TVector<T>::operator==(const TVector<T>& other) const {
     if (this == &other) return true;
     if (_size != other._size) return false;
+    size_t j = 0;
     for (size_t i = 0; i < _size + _deleted; i++) {
         if (_states[i] == busy) {
-            size_t j = 0;
-            bool found = false;
-            for (size_t k = 0; k < other._size + other._deleted; k++) {
-                if (other._states[k] == busy && _data[i] == other._data[k]) {
-                    found = true;
-                    break;
-                }
+            while (other._states[i + j] == deleted) {
+                j++;
             }
-            if (!found) return false;
+        }
+        else {
+            while (_states[i] == deleted) {
+                j--;
+                i++;
+            }
+        }
+        if (_data[i] != other._data[i + j]) {
+            return false;
         }
     }
     return true;
