@@ -125,15 +125,20 @@ TriangleMatrix<T> TriangleMatrix<T>::operator*(const TriangleMatrix<T>& other) {
 
 template <typename T>
 MathVector <T> TriangleMatrix<T>::operator* (const MathVector<T>& vec) const {
-	if (_N == 0 || vec.size() == 0) {
+	if (_N - _start_index == 0 || vec.size() == 0) {
 		throw std::invalid_argument("TriangleMatrix::operator*: empty vector or matrix!");
 	}
-	if (_N != vec.size()) {
+	if (_N - _start_index != vec.size()) {
 		throw std::invalid_argument("TriangleMatrix::operator*: incompatible sizes!");
 	}
-	MathVector <T> result(_N);
-	for (size_t i = 0; i < _N; i++) {
-		result[i] = (*this)[i] * vec;
+
+	MathVector<T> result(_N, _start_index);
+	for (size_t i = _start_index; i < _N; i++) {
+		T sum = T();
+		for (size_t j = i; j < _N; j++) {
+			sum += (*this)[i][j] * vec[j];
+		}
+		result[i] = sum;
 	}
 	return result;
 }
@@ -216,8 +221,8 @@ const MathVector<T>& TriangleMatrix<T>::operator [] (size_t index) const {
 template <class T>
 std::ostream& operator<< (std::ostream& out, const TriangleMatrix<T>& matr) {
 	out << " ---- UPPER TRIANGULAR MATRIX ---- " << std::endl;
-	for (size_t i = 0; i < matr.get_size(); ++i) {
-		for (size_t j = 0; j < matr.get_size(); ++j) {
+	for (size_t i = 0; i < matr.get_size(); i++) {
+		for (size_t j = 0; j < matr.get_size(); j++) {
 			if (j < i) {
 				out << "0 ";
 			}
@@ -239,13 +244,12 @@ std::istream& operator>> (std::istream& in, TriangleMatrix<T>& matr) {
 	matr = TriangleMatrix<T>(N);
 	for (size_t i = 0; i < N; i++) {
 		std::cout << "Row " << i + 1 << ": ";
-		MathVector<T> row(N - i, i);
-		row.input_math_vector();
 
 		for (size_t j = i; j < N; j++) {
-			matr[i][j] = row[j];
+			in >> matr[i][j];
 		}
 	}
 	return in;
 }
+
 #endif  // LIB_TRIANGLEMATRIX_TRIANGLEMATRIX_H_

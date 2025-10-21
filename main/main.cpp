@@ -22,10 +22,10 @@ void start_add_matrix(Matrix<int>& matrix_1) {
         break;
     }
     Matrix<int> matrix_2(N2, M2);
-    matrix_2.input_matrix(N2, M2);
+    std::cin >> matrix_2;
 
     matrix_1 += matrix_2;
-    matrix_1.print_matrix();
+    std::cout << matrix_1;
     system("pause");
 }
 
@@ -45,10 +45,10 @@ void start_sub_matrix(Matrix<int>& matrix_1) {
         break;
     }
     Matrix<int> matrix_2(N2, M2);
-    matrix_2.input_matrix(N2, M2);
+    std::cin >> matrix_2;
 
     matrix_1 = matrix_1 - matrix_2;
-    matrix_1.print_matrix();
+    std::cout << matrix_1;
     system("pause");
 }
 
@@ -67,10 +67,10 @@ void start_mult_matrix(Matrix<int>& matrix_1) {
         break;
     }
     Matrix<int> matrix_2(N2, M2);
-    matrix_2.input_matrix(N2, M2);
+    std::cin >> matrix_2;
 
     matrix_1 *= matrix_2;
-    matrix_1.print_matrix();
+    std::cout << matrix_1;
     system("pause");
 }
 
@@ -83,7 +83,7 @@ void start_matrix_scalar_mult(Matrix<int>& matrix_1) {
     std::cin >> scalar;
 
     matrix_1 *= scalar;
-    matrix_1.print_matrix();
+    std::cout << matrix_1;
     system("pause");
 }
 
@@ -103,10 +103,10 @@ void start_matrix_vec_mult(Matrix<int>& matrix_1) {
     }
     
     MathVector<int> vec(size);
-    vec.input_math_vector();
+    std::cin >> vec;
 
     matrix_1 = matrix_1 * vec;
-    matrix_1.print_matrix();
+    std::cout << matrix_1;
     system("pause");
 }
 
@@ -115,7 +115,7 @@ void start_trans_matrix(Matrix<int>& matrix_1) {
     std::cout << "==== MATRIX TRANSPOSITION ====" << std::endl;
 
     matrix_1 = matrix_1.trans();
-    matrix_1.print_matrix();
+    std::cout << matrix_1;
     system("pause");
 }
 
@@ -134,7 +134,7 @@ void start_comparison_of_matrices(Matrix<int>& matrix_1) {
         break;
     }
     Matrix<int> matrix_2(N2, M2);
-    matrix_2.input_matrix(N2, M2);
+    std::cin >> matrix_2;
 
     bool isComp = (matrix_1 == matrix_2);
     if (isComp == true) {
@@ -198,10 +198,12 @@ void start_tri_matrix_vec_mult(TriangleMatrix<int>& tri_matrix_1) {
     }
 
     MathVector<int> vec(size);
-    vec.input_math_vector();
+    std::cin >> vec;
 
-    tri_matrix_1 = tri_matrix_1 * vec;
-    tri_matrix_1.print_matrix();
+    vec = tri_matrix_1 * vec;
+
+    std::cout << "Vector elements: ";
+    std::cout << vec;
     system("pause");
 }
 
@@ -241,15 +243,14 @@ void MatrixOperations() {
     std::cout << "Enter the size of 1-st matrix separated by a space: ";
     std::cin >> N1 >> M1;
     Matrix <int> matrix_1(N1, M1);
-    matrix_1.input_matrix(N1, M1);
+    std::cin >> matrix_1;
     
     system("pause");
-
     while (1) {
         system("cls");
 
         std::cout << "==== MATRIX CALCULATOR ====" << std::endl;
-        matrix_1.print_matrix();
+        std::cout << matrix_1;
 
         std::cout << "Choose:\n1. Add \n2. Sub \n3. Mult \n4. Mult by a scalar \n5. Mult by a vector \n6. Transposition \n7. Comparison \n0. Back to main menu\nYour: ";
 

@@ -66,8 +66,6 @@ Matrix <T>::Matrix(size_t N, size_t M) : MathVector <MathVector <T>>(N), _N(N), 
 template <typename T>
 Matrix <T>::Matrix(const MathVector <MathVector <T>>& vec) : MathVector <MathVector <T>>(vec), _N(vec.size()), _M(_N > 0 ? vec[0].size() : 0) {}
 
-
-
 template <typename T>
 Matrix <T>::Matrix(const Matrix& other) : MathVector <MathVector <T>>(other), _N(other._N), _M(other._M) {}
 
@@ -80,7 +78,9 @@ Matrix<T> Matrix <T>::operator+ (const Matrix<T>& other) const {
 
 template <typename T>
 Matrix<T> Matrix <T>::operator- (const Matrix<T>& other) const {
-	return this->MathVector <MathVector <T>> :: operator- (other);
+	Matrix<T> result(*this);
+	result -= other;
+	return result;
 }
 
 template <typename T>
@@ -168,11 +168,7 @@ Matrix <T>& Matrix <T>::operator-= (const Matrix<T>& other) {
 	if (_N != other._N || _M != other._M) {
 		throw std::invalid_argument("Matrix::operator-=: matrix sizes must match!");
 	}
-	for (size_t i = 0; i < _N; i++) {
-		for (size_t j = 0; j < _M; j++) {
-			(*this)[i][j] -= other[i][j];
-		}
-	}
+	this->MathVector<MathVector<T>>::operator-=(other);
 	return *this;
 }
 
@@ -199,9 +195,7 @@ Matrix <T>& Matrix <T>::operator*= (const Matrix<T>& other) {
 template <typename T>
 Matrix <T>& Matrix <T>::operator*= (T val) {
 	for (size_t i = 0; i < _N; i++) {
-		for (size_t j = 0; j < _M; j++) {
-			(*this)[i][j] *= val;
-		}
+		(*this)[i] *= val;
 	}
 	return *this;
 }
@@ -227,42 +221,23 @@ Matrix<T> Matrix <T>::trans() const{
 	return matrix;
 }
 
-template<typename T>
-void Matrix<T>::input_matrix(size_t N, size_t M) {
-	this->resize(N, M);
-	for (size_t i = 0; i < N; i++) {
-		std::cout << "Row " << i + 1 << ": ";
-		MathVector<T> row(M);
-		row.input_math_vector();
-
-		for (size_t j = 0; j < M; j++) {
-			this->_data[i][j] = row[j]; 
-		}
-	}
-}
-
-template<typename T>
-void Matrix<T>::print_matrix() const {
-	std::cout << " ---- YOUR MATRIX ---- " << std::endl;
-	for (size_t i = 0; i < _N; ++i) {
-		for (size_t j = 0; j < _M; ++j) {
-			std::cout << _data[i][j] << " "; 
-		}
-		std::cout << std::endl;
-	}
-}
 
 template <class T>
 std::ostream& operator<< (std::ostream& out, const Matrix<T>& matr) {
-	std::cout << "operator<<" << std::endl;
+	out << " ---- YOUR MATRIX ---- " << std::endl;
+	for (size_t i = 0; i < matr.get_rows(); i++) {
+		out << matr[i];
+	}
 	return out;
 }
 
 template <class T>
 std::istream& operator>> (std::istream& in, Matrix<T>& matr){
-	std::cout << "operator>>" << std::endl;
+	for (size_t i = 0; i < matr.get_rows(); i++) {
+		std::cout << "Row " << i + 1 << ": ";
+		in >> matr[i];
+	}
 	return in;
 }
-
 
 #endif  // LIB_MATRIX_MATRIX_H_
