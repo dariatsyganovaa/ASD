@@ -48,3 +48,62 @@ int local_minimum_of_a_matrix(Matrix<int>& matrix) {
 		random_cols = best_col;
 	}
 }
+
+bool check_breckets(std::string str) {
+	Stack<char> stack(str.length());
+	for (size_t i = 0; i < str.length(); i++) {
+		char c = str[i];
+		if (c == '{' || c == '[' || c == '(') {
+			stack.push(c);
+		}
+		else if (c == '}' || c == ']' || c == ')') {
+			if (stack.is_empty()) {
+				return false;
+			}
+			char top = stack.top();
+			if ((c == ')' && top != '(') || (c == '}' && top != '{') || (c == ']' && top != '[')) {
+				return false;
+			}
+			stack.pop();
+		}
+	}
+	if (!stack.is_empty()) {
+		return false;
+	}
+	return true;
+}
+
+void read_expression(std::string expression) {
+	Stack<char> stack(expression.length());
+	for (size_t i = 0; i < expression.length(); i++) {
+		char c = expression[i];
+
+		if (c == '{' || c == '[' || c == '(') {
+			stack.push(c);
+		}
+		else if (c == '}' || c == ']' || c == ')') {
+			if (stack.is_empty()) {
+				throw std::invalid_argument("Missing opened brecket!");
+			}
+			char top = stack.top();
+			if ((c == ')' && top != '(') || (c == '}' && top != '{') || (c == ']' && top != '[')) {
+				throw std::invalid_argument("Missing closed brecket!");
+			}
+			stack.pop();
+		}
+
+		if (c == 'x' || c == 'y') {
+			stack.push(c);
+		}
+		if (!stack.is_empty()) {
+			char top = stack.top();
+			if ((top == 'x' || top == 'y') && (i + 1 < expression.length())) {
+				char next_c = expression[i + 1];
+				if (next_c != '+' && next_c != '-' && next_c != '*') {
+					throw std::invalid_argument("Missing operation!");
+				}
+				
+			}
+		}
+	}
+}

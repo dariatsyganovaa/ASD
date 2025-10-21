@@ -44,3 +44,39 @@ TEST(TestAlgorithmsLib, find_local_minimum_of_a_matrix_2) {
     int val = local_minimum_of_a_matrix(matr1);
     EXPECT_TRUE(val == 6 || val == 1);
 }
+
+TEST(TestAlgorithmsLib, try_check_breckets_1) {
+    std::string str = "()()";
+
+    EXPECT_TRUE(check_breckets(str));
+}
+
+TEST(TestAlgorithmsLib, try_check_breckets_2) {
+    std::string str = "[(()())({})]";
+
+    EXPECT_TRUE(check_breckets(str));
+}
+
+TEST(TestAlgorithmsLib, try_check_breckets_3) {
+    std::string str = "(()()";
+
+    EXPECT_FALSE(check_breckets(str));
+}
+
+TEST(TestAlgorithmsLib, try_check_breckets_4) {
+    std::string str = "())(())";
+
+    EXPECT_FALSE(check_breckets(str));
+}
+
+TEST(TestAlgorithmsLib, try_check_breckets_5) {
+    std::string str = "((()()(()))";
+
+    EXPECT_FALSE(check_breckets(str));
+}
+
+TEST(TestAlgorithmsLib, try_read_expression_1) {
+    std::string str = "x*y";
+
+    EXPECT_NO_THROW(read_expression(str));
+}
