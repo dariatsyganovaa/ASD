@@ -55,12 +55,6 @@ List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {
 
 	Node<T>* cur_other = other._head;
 
-	_head = new Node<T>(cur_other->data);
-	_tail = _head;
-	_size = 1;
-
-	cur_other = cur_other->next;
-
 	while (cur_other != nullptr) {
 		push_back(cur_other->data);
 		cur_other = cur_other->next;
@@ -106,6 +100,7 @@ void List<T>::push_front(const T& value) noexcept {
 	if (is_empty()) {
 		_head = node;
 		_tail = node;
+		_size++;
 		return;
 	}
 	node->next = _head;
@@ -119,6 +114,7 @@ void List<T>::push_back(const T& value) noexcept {
 	if (is_empty()) {
 		_head = node;
 		_tail = node;
+		_size++;
 		return;
 	}
 	_tail->next = node;
