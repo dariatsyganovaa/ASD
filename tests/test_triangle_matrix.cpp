@@ -341,23 +341,6 @@ TEST(TestTriangleMatrixLib, operator_assignment) {
     }
 }
 
-TEST(TestTriangleMatrixLib, vector_to_matrix_assignment_operator) {
-    Matrix<int> matr1(2, 1);
-    matr1[0][0] = 1;
-    matr1[1][0] = 3;
-
-    int arr1[2] = { 1, 2 };
-    MathVector<int> vec1(arr1, 2);
-
-    matr1 = vec1;
-
-    EXPECT_EQ(matr1.get_rows(), 2);
-    EXPECT_EQ(matr1.get_cols(), 1);
-
-    EXPECT_EQ(matr1[0][0], 1);
-    EXPECT_EQ(matr1[1][0], 2);
-}
-
 TEST(TestTriangleMatrixLib, operator_assignment_with_empty_matrix) {
     Matrix<int> matr1;
     Matrix<int> matr2(2, 2);

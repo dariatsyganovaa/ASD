@@ -28,11 +28,10 @@ public:
 
 	Matrix<T> operator+ (const Matrix<T>& other) const;
 	Matrix<T> operator- (const Matrix<T>& other) const;
-	Matrix<T> operator* (Matrix<T> matr);
+	Matrix<T> operator* (const Matrix<T>& other) const;
 	Matrix<T> operator* (T val);
 	MathVector<T> operator* (const MathVector<T>& vec) const;
 
-	Matrix<T>& operator=(const MathVector<T>& other);
 	Matrix<T>& operator=(const Matrix<T>& other);
 	bool operator==(const Matrix<T>&) const;
 	bool operator!=(const Matrix<T>&) const;
@@ -46,8 +45,6 @@ public:
 	const MathVector<T>& operator [] (size_t index) const;
 
 	Matrix<T> trans() const;
-	void input_matrix(size_t, size_t);
-	void print_matrix() const;
 
 	friend std::ostream& operator<< <T>(std::ostream& out, const Matrix<T>& matr);
 	friend std::istream& operator>> <T>(std::istream& in, Matrix<T>& matr);
@@ -77,6 +74,15 @@ Matrix<T> Matrix <T>::operator+ (const Matrix<T>& other) const {
 }
 
 template <typename T>
+Matrix <T>& Matrix <T>::operator+= (const Matrix<T>& other) {
+	if (_N != other._N || _M != other._M) {
+		throw std::invalid_argument("Matrix::operator+=: matrix sizes must match!");
+	}
+	this->MathVector<MathVector<T>>::operator+=(other);
+	return *this;
+}
+
+template <typename T>
 Matrix<T> Matrix <T>::operator- (const Matrix<T>& other) const {
 	Matrix<T> result(*this);
 	result -= other;
@@ -84,12 +90,27 @@ Matrix<T> Matrix <T>::operator- (const Matrix<T>& other) const {
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator* (T val){
-	Matrix<T> result(_N, _M);
-	for (size_t i = 0; i < _N; i++) {
-		result[i] = (*this)[i] * val;
+Matrix <T>& Matrix <T>::operator-= (const Matrix<T>& other) {
+	if (_N != other._N || _M != other._M) {
+		throw std::invalid_argument("Matrix::operator-=: matrix sizes must match!");
 	}
+	this->MathVector<MathVector<T>>::operator-=(other);
+	return *this;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator* (T val){
+	Matrix<T> result(*this);
+	result *= val;
 	return result;
+}
+
+template <typename T>
+Matrix <T>& Matrix <T>::operator*= (T val) {
+	for (size_t i = 0; i < _N; i++) {
+		(*this)[i] *= val;
+	}
+	return *this;
 }
 
 template <typename T>
@@ -108,68 +129,10 @@ MathVector <T> Matrix<T>::operator* (const MathVector<T>& vec) const {
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator* (Matrix<T> matr) {
-	if (_N == 0 || _M == 0 || matr._N == 0 || matr._M == 0) {
-		throw std::invalid_argument("Matrix::operator*: can't mult empty matrices!");
-	}
-	if (_M != matr._N) {
-		throw std::invalid_argument("Matrix::operator*: incompatible matrix sizes!");
-	}
-	Matrix<T> result(_N, matr._M);
-	Matrix<T> matr_t = matr.trans();
-
-	for (size_t i = 0; i < _N; i++) {
-		for (size_t j = 0; j < matr._M; j++) {
-			result[i][j] = (*this)[i] * matr_t[j];
-		}
-	}
+Matrix<T> Matrix<T>::operator* (const Matrix<T>& other) const {
+	Matrix<T> result(*this);
+	result *= other;
 	return result;
-}
-
-template <typename T>
-Matrix <T>& Matrix <T>::operator= (const Matrix<T>& other) {
-	this->MathVector <MathVector <T>> :: operator= (other);
-	this->_N = other._N;
-	this->_M = other._M;
-	return *this;
-}
-
-template <typename T>
-Matrix <T>& Matrix <T>::operator= (const MathVector<T>& other) {  
-	*this = Matrix<T>(_N, 1);
-	for (size_t i = 0; i < _N; i++) {
-		(*this)[i] = MathVector<T>(1);
-		(*this)[i][0] = other[i];
-	}
-	return *this;
-}
-
-template <typename T>
-bool Matrix <T>::operator== (const Matrix<T>& other) const {
-	return MathVector <MathVector <T>> :: operator== (other);
-}
-
-template <typename T>
-bool Matrix <T>::operator!= (const Matrix<T>& other) const {
-	return MathVector <MathVector <T>> :: operator!= (other);
-}
-
-template <typename T>
-Matrix <T>& Matrix <T>::operator+= (const Matrix<T>& other) {
-	if (_N != other._N || _M != other._M) {
-		throw std::invalid_argument("Matrix::operator+=: matrix sizes must match!");
-	}
-	this->MathVector<MathVector<T>>::operator+=(other);
-	return *this;
-}
-
-template <typename T>
-Matrix <T>& Matrix <T>::operator-= (const Matrix<T>& other) {
-	if (_N != other._N || _M != other._M) {
-		throw std::invalid_argument("Matrix::operator-=: matrix sizes must match!");
-	}
-	this->MathVector<MathVector<T>>::operator-=(other);
-	return *this;
 }
 
 template <typename T>
@@ -193,11 +156,21 @@ Matrix <T>& Matrix <T>::operator*= (const Matrix<T>& other) {
 }
 
 template <typename T>
-Matrix <T>& Matrix <T>::operator*= (T val) {
-	for (size_t i = 0; i < _N; i++) {
-		(*this)[i] *= val;
-	}
+Matrix <T>& Matrix <T>::operator= (const Matrix<T>& other) {
+	this->MathVector <MathVector <T>> :: operator= (other);
+	this->_N = other._N;
+	this->_M = other._M;
 	return *this;
+}
+
+template <typename T>
+bool Matrix <T>::operator== (const Matrix<T>& other) const {
+	return MathVector <MathVector <T>> :: operator== (other);
+}
+
+template <typename T>
+bool Matrix <T>::operator!= (const Matrix<T>& other) const {
+	return MathVector <MathVector <T>> :: operator!= (other);
 }
 
 template <typename T>
@@ -220,7 +193,6 @@ Matrix<T> Matrix <T>::trans() const{
 	}
 	return matrix;
 }
-
 
 template <class T>
 std::ostream& operator<< (std::ostream& out, const Matrix<T>& matr) {

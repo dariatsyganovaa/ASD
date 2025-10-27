@@ -72,6 +72,17 @@ MathVector <T> MathVector <T>::operator+ (const MathVector<T>& vec) const {
 }
 
 template <typename T>
+MathVector <T>& MathVector <T>::operator+= (const MathVector& other) {
+	if (_size - _start_index != other._size - other._start_index) {
+		throw std::invalid_argument("MathVector::operator+=: the sizes of the vectors must match!");
+	}
+	for (size_t i = 0; i < _size; i++) {
+		(*this)[i] += other[i];
+	}
+	return *this;
+}
+
+template <typename T>
 MathVector <T> MathVector <T>::operator- (const MathVector<T>& vec) const {
 	if (_size - _start_index != vec._size - vec._start_index) {
 		throw std::invalid_argument("MathVector::operator-: the sizes of the vectors must match!");
@@ -82,12 +93,29 @@ MathVector <T> MathVector <T>::operator- (const MathVector<T>& vec) const {
 }
 
 template <typename T>
-MathVector <T> MathVector <T>::operator* (T val) {
-	MathVector <T> result(_size);
-	for (size_t i = 0; i < _size; i++) {
-		result[i] = (*this)[i] * val;
+MathVector <T>& MathVector <T>::operator-= (const MathVector& other) {
+	if (_size - _start_index != other._size - other._start_index) {
+		throw std::invalid_argument("MathVector::operator-=: the sizes of the vectors must match!");
 	}
+	for (size_t i = 0; i < _size; i++) {
+		(*this)[i] -= other[i];
+	}
+	return *this;
+}
+
+template <typename T>
+MathVector <T> MathVector <T>::operator* (T val) {
+	MathVector <T> result(*this);
+	result *= val;
 	return result;
+}
+
+template <typename T>
+MathVector <T>& MathVector <T>::operator*= (T val) {
+	for (size_t i = 0; i < _size; i++) {
+		(*this)[i] *= val;
+	}
+	return *this;
 }
 
 template <typename T>
@@ -103,49 +131,6 @@ T MathVector <T>::operator* (const MathVector<T>& vec) const {
 }
 
 template <typename T>
-MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
-	if (this != &other) {
-		this->TVector<T>::operator=(other);
-		_start_index = other._start_index; 
-	}
-	return *this;
-}
-
-template <typename T>
-bool MathVector <T>::operator== (const MathVector& other) const {
-	if (_size - _start_index != other._size - other._start_index) return false;
-
-	return this->TVector<T>::operator==(other);
-}
-
-template <typename T>
-bool MathVector <T>::operator!= (const MathVector& other) const {
-	return !(*this == other);
-}
-
-template <typename T>
-MathVector <T>& MathVector <T>::operator+= (const MathVector& other) {
-	if (_size - _start_index != other._size - other._start_index) {
-		throw std::invalid_argument("MathVector::operator+=: the sizes of the vectors must match!");
-	}
-	for (size_t i = 0; i < _size; i++) {
-		(*this)[i] += other[i];
-	}
-	return *this;
-}
-
-template <typename T>
-MathVector <T>& MathVector <T>::operator-= (const MathVector& other) {
-	if (_size - _start_index != other._size - other._start_index) {
-		throw std::invalid_argument("MathVector::operator-=: the sizes of the vectors must match!");
-	}
-	for (size_t i = 0; i < _size; i++) {
-		(*this)[i] -= other[i];
-	}
-	return *this;
-}
-
-template <typename T>
 MathVector <T>& MathVector <T>::operator*= (const MathVector& other) {
 	if (_size - _start_index != other._size - other._start_index) {
 		throw std::invalid_argument("MathVector::operator*=: the sizes of the vectors must match!");
@@ -157,11 +142,23 @@ MathVector <T>& MathVector <T>::operator*= (const MathVector& other) {
 }
 
 template <typename T>
-MathVector <T>& MathVector <T>::operator*= (T val) {
-	for (size_t i = 0; i < _size; i++) {
-		_data[i] *= val;
+MathVector <T>& MathVector <T>::operator= (const MathVector& other) {
+	if (this != &other) {
+		this->TVector<T>::operator=(other);
+		_start_index = other._start_index; 
 	}
 	return *this;
+}
+
+template <typename T>
+bool MathVector <T>::operator== (const MathVector& other) const {
+	if (_size - _start_index != other._size - other._start_index) return false;
+	return this->TVector<T>::operator==(other);
+}
+
+template <typename T>
+bool MathVector <T>::operator!= (const MathVector& other) const {
+	return !(*this == other);
 }
 
 template<typename T>
@@ -193,7 +190,7 @@ std::ostream& operator<<(std::ostream& out, const MathVector<T>& vec){
 
 template <class T>
 std::istream& operator>>(std::istream& in, MathVector<T>& vec){
-	std::cout << ("Enter the elements of the vector: ") << std::endl;
+	std::cout << ("Enter the elements of the vector: ");
 	for (size_t i = 0; i < vec.size(); i++) {
 		in >> vec[i];
 	}

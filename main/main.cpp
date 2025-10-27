@@ -105,8 +105,9 @@ void start_matrix_vec_mult(Matrix<int>& matrix_1) {
     MathVector<int> vec(size);
     std::cin >> vec;
 
-    matrix_1 = matrix_1 * vec;
-    std::cout << matrix_1;
+    std::cout << "Vector elements: ";
+    vec = matrix_1 * vec;
+    std::cout << vec;
     system("pause");
 }
 
@@ -307,7 +308,6 @@ void TriangleMatrixOperations() {
     }
 
     system("pause");
-
     while (1) {
         system("cls");
         std::cout << "==== TRIANGULAR MATRIX CALCULATOR ====" << std::endl;
@@ -348,7 +348,6 @@ void TriangleMatrixOperations() {
             std::cout << "Wrong input!\n";
             system("pause");
             break;
-
         }
     }
 }
@@ -381,56 +380,3 @@ int main() {
 }
 
 #endif  // MATRIX
-
-//#define STACK
-#ifdef STACK
-
-#include "../lib_stack/stack.h"
-#include <string>
-
-int main() {
-    std::string str;
-    std::cout << "Enter the bracket sequence: ";
-    std::cin >> str;
-    
-    Stack<char> stack(str.length());
-    bool isCorrect = true;
-
-    for (size_t i = 0; i < str.length(); i++) {
-        char c = str[i];
-
-        if (c == '{' || c == '[' || c == '(') {
-            stack.push(c);
-        }
-        else if (c == '}' || c == ']' || c == ')') {
-            if (stack.is_empty()) {
-                isCorrect = false;
-                break;
-            }
-            char top = stack.top();
-            if ((c == '}' && top != '{') || (c == ']' && top != '[') || (c == ')' && top != '(')) {
-                isCorrect = false;
-                break;
-            }
-            stack.pop();
-        }
-        else {
-            std::cout << "The bracket sequence contains invalid characters!" << std::endl;
-            return 0;
-        }
-    }
-
-    if (!stack.is_empty()) {
-        isCorrect = false;
-    }
-
-    if (isCorrect) {
-        std::cout << "The bracket sequence is correct!" << std::endl;
-    }
-    else {
-        std::cout << "The bracket sequence is not correct!" << std::endl;
-    }
-    
-    return 0;
-}
-#endif //STACK
