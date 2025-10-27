@@ -1,7 +1,7 @@
 #ifndef LIB_QUEUE_QUEUE_H_
 #define LIB_QUEUE_QUEUE_H_
 
-#pragma once÷¸
+#pragma once
 #include "..\lib_queue\queue.h"
 
 template <typename T> class Queue;
