@@ -76,7 +76,9 @@ TEST(TestAlgorithmsLib, try_check_breckets_5) {
 }
 
 TEST(TestAlgorithmsLib, try_read_expression_1) {
-    std::string str = "x*y";
-
-    EXPECT_NO_THROW(read_expression(str));
+    EXPECT_NO_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^2))"));
+    EXPECT_ANY_THROW(read_expression("3 * (15 + (x y) * (2x - 7*y^2))"));
+    EXPECT_ANY_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^))"));
+    EXPECT_ANY_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^2)"));
+    EXPECT_ANY_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^2)))"));
 }

@@ -71,11 +71,10 @@ TriangleMatrix <T>::TriangleMatrix(const Matrix<T>& matr) : Matrix<T>(matr.get_r
 template <typename T>
 TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix<T>& other) : Matrix<T>(other) {}
 
-
 template <class T>
 TriangleMatrix<T> TriangleMatrix<T>::operator+(const TriangleMatrix<T>& other) {
 	if (this->_N != other._N) {
-		throw std::invalid_argument("TriangleMatrix sizes must match for addition");
+		throw std::invalid_argument("TriangleMatrix::operator+: sizes must match for addition!");
 	}
 
 	TriangleMatrix<T> result(this->_N);
@@ -88,10 +87,16 @@ TriangleMatrix<T> TriangleMatrix<T>::operator+(const TriangleMatrix<T>& other) {
 	return result;
 }
 
+template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) {
+	*this = *this + other;
+	return *this;
+}
+
 template <class T>
 TriangleMatrix<T> TriangleMatrix<T>::operator-(const TriangleMatrix<T>& other) {
 	if (this->_N != other._N) {
-		throw std::invalid_argument("TriangleMatrix sizes must match for subtraction");
+		throw std::invalid_argument("TriangleMatrix::operator-: sizes must match for subtraction!");
 	}
 
 	TriangleMatrix<T> result(this->_N);
@@ -104,9 +109,19 @@ TriangleMatrix<T> TriangleMatrix<T>::operator-(const TriangleMatrix<T>& other) {
 }
 
 template <typename T>
+TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) {
+	*this = *this - other;
+	return *this;
+}
+
+template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator*(const TriangleMatrix<T>& other) {
+	if (this->_N == 0 || other._N == 0) {
+		throw std::invalid_argument("TriangleMatrix::operator*: can't mult empty matrices!");
+	}
+
 	if (this->_N != other._N) {
-		throw std::invalid_argument("TriangleMatrix sizes must match");
+		throw std::invalid_argument("TriangleMatrix::operator*: sizes must match!");
 	}
 
 	TriangleMatrix<T> result(this->_N);
@@ -178,18 +193,6 @@ bool TriangleMatrix <T>::operator== (const TriangleMatrix& other) const {
 template <typename T>
 bool TriangleMatrix <T>::operator!= (const TriangleMatrix& other) const {
 	return !(*this == other);
-}
-
-template <typename T>
-TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) {
-	*this = *this + other;
-	return *this;
-}
-
-template <typename T>
-TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) {
-	*this = *this - other;
-	return *this;
 }
 
 template <typename T>

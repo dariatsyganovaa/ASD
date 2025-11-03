@@ -20,13 +20,57 @@ Node<T>::Node(const T& value) : data(value), next(nullptr) {}
 template<class T>
 class List {
 	Node<T>* _head, * _tail;
-	size_t _size; // храним размер для О(1) доступа к нему
+	size_t _size; 
 
 public:
 	List();
+	List(size_t);
 	List(const List<T>&);
 	~List();
 
+	class Iterator {
+		Node<T>* _cur;
+	public:
+		Iterator() : _cur(nullptr) {}
+		Iterator(Node<T>* node) : _cur(node) {}
+
+		Iterator& operator=(const Node<T>& other) {
+			_cur = other._cur;
+			return *this;
+		}
+
+		Iterator& operator++() { //++it
+			_cur = _cur->next;
+			return *this;
+		}
+
+		Iterator operator++(int) {//it++
+			Iterator temp = *this;
+			++(*this);
+			return temp;
+		}
+
+		bool operator== (const Iterator& other) {
+			return _cur == other._cur;
+		}
+
+		bool operator!= (const Iterator& other) {
+			return !(*this == other);
+		}
+
+		T& operator*() const {
+			return _cur->data;
+		}
+	};
+
+	Iterator begin() {
+		return Iterator(_head);
+	}
+
+	Iterator end() {
+		return Iterator(nullptr);
+	}
+	
 	Node<T>* head() const;
 	Node<T>* tail() const;
 	size_t size() const;
@@ -44,8 +88,12 @@ public:
 	void erase(Node<T>* node);
 };
 
+
 template <class T>
 List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {}
+
+template <class T>
+List<T>::List(size_t size) : _head(nullptr), _tail(nullptr), _size(size) {}
 
 template <class T>
 List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {

@@ -164,3 +164,44 @@ TEST(TestListLib, deep_copy_constructor) {
 
     ASSERT_NE(list.head(), listCopy.head());
 }
+
+TEST(TestListLib, read_iterator) {
+    List<int> list;
+    
+    for (int i = 0; i < 10; i++)
+        list.push_back(i * 3 + 1);
+
+    int i = 0;
+    List<int>::Iterator it;
+
+    for (it = list.begin(); it != list.end(); it++){
+        //std::cout << *it << " ";
+        EXPECT_EQ(*it, i * 3 + 1);
+        *it = i++;
+    }
+}
+
+TEST(TestListLib, write_iterator) {
+    List<int> list;
+    
+    for (int i = 0; i < 3; i++)
+        list.push_back(i * 3 + 1);
+
+    List<int>::Iterator it;
+
+    for (it = list.begin(); it != list.end(); it++) {
+        *it = 111;
+        EXPECT_EQ(*it, 111);
+    }
+}
+
+TEST(TestListLib, iterator_in_empty_list) {
+    List<int> list;
+    List<int>::Iterator it;
+
+    for (it = list.begin(); it != list.end(); it++) {
+        EXPECT_NO_THROW(*it);
+    }
+
+    EXPECT_TRUE(list.begin() == list.end());
+}

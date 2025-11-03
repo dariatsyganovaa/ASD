@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <random>
+#include <cctype>
 #include "../lib_algorithms/algorithms.h"
 
 int local_minimum_of_a_matrix(Matrix<int>& matrix) {
@@ -75,11 +76,21 @@ bool check_breckets(std::string str) {
 
 void read_expression(std::string expression) {
 	Stack<char> stack(expression.length());
+	bool expect_operand = true; // если true, то ожидаем число, переменная, унарный -, открывающая скобка 
+	// если false, то +, -, *, ^, закрывающая скобка
+
 	for (size_t i = 0; i < expression.length(); i++) {
 		char c = expression[i];
 
+		if (isspace(c)) {
+			continue;
+		}
 		if (c == '{' || c == '[' || c == '(') {
+			if (!expect_operand) {
+				throw std::invalid_argument("Missing operator before brecket!");
+			}
 			stack.push(c);
+			expect_operand = true;
 		}
 		else if (c == '}' || c == ']' || c == ')') {
 			if (stack.is_empty()) {
@@ -90,20 +101,48 @@ void read_expression(std::string expression) {
 				throw std::invalid_argument("Missing closed brecket!");
 			}
 			stack.pop();
+			expect_operand = false;
 		}
-
-		if (c == 'x' || c == 'y') {
-			stack.push(c);
-		}
-		if (!stack.is_empty()) {
-			char top = stack.top();
-			if ((top == 'x' || top == 'y') && (i + 1 < expression.length())) {
-				char next_c = expression[i + 1];
-				if (next_c != '+' && next_c != '-' && next_c != '*') {
-					throw std::invalid_argument("Missing operation!");
-				}
-				
+		else if (c == 'x' || c == 'y') {
+			if (!expect_operand) {
+				throw std::invalid_argument("Missing operator before variable!");
 			}
+			expect_operand = false;
 		}
+		else if (isdigit(c)) {
+			if (!expect_operand) {
+				throw std::invalid_argument("Missing operator before number!");
+			}
+
+			while (i < expression.length() && isdigit(expression[i])) {
+				i++;
+			}
+			i--;
+			expect_operand = false;
+		}
+		else if (c == '+' || c == '-' || c == '*' || c == '^') {
+			if ((expect_operand) && (c == '*' || c == '^')) {
+				throw std::invalid_argument("Invalid unary operator!");
+			}
+			if (c == '^') {
+				size_t j = i + 1;
+				while (j < expression.length() && isspace(expression[j])) {
+					j++;
+				}
+				if (j >= expression.length() || !isdigit(expression[j])) {
+					throw std::invalid_argument("Missing second operand in operation ^ !");
+				}
+			}
+			expect_operand = true;
+		}
+		else {
+			throw std::invalid_argument("Invalid character: '" + std::string(1, c) + "'");
+		}
+	}
+	if (expect_operand) {
+		throw std::invalid_argument("Expression ends with operator!");
+	}
+	if (!stack.is_empty()) {
+		throw std::invalid_argument("Unclosed brecket!");
 	}
 }
