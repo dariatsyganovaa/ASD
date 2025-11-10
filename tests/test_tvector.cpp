@@ -83,29 +83,6 @@ TEST(TestTVectorLib, back_elem) {
     EXPECT_EQ(expected_res, actual_res);
 }
 
-TEST(TestTVectorLib, begin_vector_with_size) { 
-    int arr[14] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, 14);
-    EXPECT_EQ(&vec[0], vec.begin());
-}
-
-TEST(TestTVectorLib, begin_empty_vector) {
-    TVector<int> empty_vec;
-    EXPECT_EQ(empty_vec.end(), empty_vec.begin());
-}
-
-TEST(TestTVectorLib, end_vector_with_size) {
-    const int size = 14;
-    int arr[size] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-    TVector<int> vec(arr, size);
-    EXPECT_EQ(&vec[size - 1] + 1, vec.end());
-}
-
-TEST(TestTVectorLib, end_empty_vector) {
-    TVector<int> empty_vec;
-    EXPECT_EQ(empty_vec.end(), empty_vec.begin()); 
-}
-
 TEST(TestTVectorLib, push_front_elem) { 
     const int size = 6;
     int arr[size];
@@ -1151,4 +1128,40 @@ TEST(TestTVectorLib, push_back_after_erase_elems) {
     for (int i = 0; i < 13; i++) {
         EXPECT_EQ(vec1[i], vec2[i]);
     }
+}
+
+TEST(TestTVectorLib, read_iterator) {
+    TVector<int> vec;
+
+    for (int i = 0; i < 10; i++)
+        vec.push_back_elem(i * 3 + 1);
+
+    int i = 0;
+    for (auto it = vec.begin(); it != vec.end(); it++) {
+        //std::cout << *it << " ";
+        EXPECT_EQ(*it, i * 3 + 1);
+        *it = i++;
+    }
+}
+
+TEST(TestTVectorLib, write_iterator) {
+    TVector<int> vec;
+
+    for (int i = 0; i < 3; i++)
+        vec.push_back_elem(i * 3 + 1);
+
+    for (auto it = vec.begin(); it != vec.end(); it++) {
+        *it = 111;
+        EXPECT_EQ(*it, 111);
+    }
+}
+
+TEST(TestTVectorLib, iterator_in_empty_vec) {
+    TVector<int> vec;
+
+    for (auto it = vec.begin(); it != vec.end(); it++) {
+        EXPECT_NO_THROW(*it);
+    }
+
+    //EXPECT_TRUE(vec.begin() == vec.end());
 }

@@ -1,27 +1,27 @@
-#ifndef LIB_LIST_LIST_H_
-#define LIB_LIST_LIST_H_
+#ifndef LIB_LINKED_LIST_LINKED_LIST_H_
+#define LIB_LINKED_LIST_LINKED_LIST_H_
 
 #pragma once
-#include "..\lib_list\list.h"
+#include "..\lib_linked_list\linked_list.h"
 #include <stdexcept>
 
 template <class T>
 struct Node {
 	T data;
 	Node<T>* next;
+	Node<T>* prev;
 
-	Node(const T& value) : data(value), next(nullptr) {}
+	Node(T value, Node<T>* prev_ = nullptr, Node<T>* next_ = nullptr) : data(value), prev(prev_), next(next_){}
 };
 
 template<class T>
-class List {
-	Node<T>* _head, * _tail;
-	size_t _size; 
-
+class LinkedList {
+	Node<T>* _head, *_tail;
+	size_t _size;
 public:
-	List();
-	List(const List<T>&);
-	~List();
+	LinkedList();
+	LinkedList(const LinkedList<T>&);
+	~LinkedList();
 
 	class Iterator {
 		Node<T>* _cur;
@@ -45,6 +45,17 @@ public:
 			return temp;
 		}
 
+		Iterator& operator--() { //--it
+			_cur = _cur->prev;
+			return *this;
+		}
+
+		Iterator operator--(int) {//it--
+			Iterator temp = *this;
+			--(*this);
+			return temp;
+		}
+
 		bool operator== (const Iterator& other) {
 			return _cur == other._cur;
 		}
@@ -58,14 +69,14 @@ public:
 		}
 	};
 
-	Iterator begin() {
+	Iterator begin() const {
 		return Iterator(_head);
 	}
 
-	Iterator end() {
+	Iterator end() const {
 		return Iterator(nullptr);
 	}
-	
+
 	Node<T>* head() const;
 	Node<T>* tail() const;
 	size_t size() const;
@@ -81,28 +92,25 @@ public:
 	void pop_front();
 	void erase(size_t pos);
 	void erase(Node<T>* node);
-};
-
-
-template <class T>
-List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {}
+}; 
 
 template <class T>
-List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {
+LinkedList<T>::LinkedList() : _head(nullptr), _tail(nullptr), _size(0) {}
+
+template <class T>
+LinkedList<T>::LinkedList(const LinkedList<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {
 	if (other.is_empty()) {
 		return;
 	}
 
-	Node<T>* cur_other = other._head;
-
-	while (cur_other != nullptr) {
-		push_back(cur_other->data);
-		cur_other = cur_other->next;
+	LinkedList<int>::Iterator it;
+	for (it = other.begin(); it != other.end(); it++) {
+		push_back(*it);
 	}
 }
 
 template <class T>
-List<T>::~List() {
+LinkedList<T>::~LinkedList() {
 	Node<T>* cur = _head;
 	Node<T>* next_node = nullptr;
 	while (cur != nullptr) {
@@ -115,55 +123,55 @@ List<T>::~List() {
 }
 
 template <class T>
-Node<T>* List<T>::head() const {
+Node<T>* LinkedList<T>::head() const {
 	return _head;
 }
 
 template <class T>
-Node<T>* List<T>::tail() const {
+Node<T>* LinkedList<T>::tail() const {
 	return _tail;
 }
 
 template <class T>
-size_t List<T>::size() const {
+size_t LinkedList<T>::size() const {
 	return _size;
 }
 
 template <class T>
-bool List<T>::is_empty() const {
+bool LinkedList<T>::is_empty() const {
 	return _size == 0;
 }
 
 template <class T>
-void List<T>::push_front(const T& value) noexcept {
+void LinkedList<T>::push_front(const T& value) noexcept {
 	Node<T>* node = new Node<T>(value);
 	if (is_empty()) {
-		_head = node;
-		_tail = node;
-		_size++;
-		return;
+		_head = _tail = node;
 	}
-	node->next = _head;
-	_head = node;
+	else {
+		node->next = _head;
+		_head->prev = node;
+		_head = node;
+	}
 	_size++;
 }
 
 template <class T>
-void List<T>::push_back(const T& value) noexcept {
+void LinkedList<T>::push_back(const T& value) noexcept {
 	Node<T>* node = new Node<T>(value);
 	if (is_empty()) {
-		_head = node;
-		_tail = node;
-		_size++;
-		return;
+		_head = _tail = node;
 	}
-	_tail->next = node;
-	_tail = node;
+	else {
+		_tail->next = node;
+		node->prev = _tail;
+		_tail = node;
+	}	
 	_size++;
 }
 
 template <class T>
-void List<T>::insert(Node<T>* node, const T& value) { 
+void LinkedList<T>::insert(Node<T>* node, const T& value) {
 	if (node == nullptr) {
 		throw std::invalid_argument("Node can't be nullptr!");
 	}
@@ -171,11 +179,13 @@ void List<T>::insert(Node<T>* node, const T& value) {
 		throw std::invalid_argument("List is empty!");
 	}
 
-	Node<T>* new_node = new Node<T>(value);
+	Node<T>* new_node = new Node<T>(value, node, node->next);
 
-	new_node->next = node->next; 
-	node->next = new_node; 
-
+	node->next = new_node;
+	if (new_node->next != nullptr) {
+		new_node->next->prev = new_node;
+	}
+	
 	if (node == _tail) {
 		_tail = new_node;
 	}
@@ -183,7 +193,7 @@ void List<T>::insert(Node<T>* node, const T& value) {
 }
 
 template <class T>
-void List<T>::insert(size_t pos, const T& value) {
+void LinkedList<T>::insert(size_t pos, const T& value) {
 	if (pos > _size + 1 || pos < 1) {
 		throw std::out_of_range("Position is out of bounds!");
 	}
@@ -203,14 +213,11 @@ void List<T>::insert(size_t pos, const T& value) {
 		cur = cur->next;
 	}
 
-	Node<T>* new_node = new Node<T>(value);
-	new_node->next = cur->next;
-	cur->next = new_node;
-	_size++;
+	insert(cur, value);
 }
 
 template <class T>
-void List<T>::pop_back() {
+void LinkedList<T>::pop_front() {
 	if (is_empty()) {
 		throw std::out_of_range("Can't pop from an empty list!");
 	}
@@ -224,40 +231,41 @@ void List<T>::pop_back() {
 	}
 
 	Node<T>* cur = _head;
-	while (cur->next != _tail) {
-		cur = cur->next;
-	}
-
-	Node<T>* old_tail = _tail;
-
-	_tail = cur;
-	_tail->next = nullptr;
-
-	delete old_tail;
+	_head = _head->next;
+	_head->prev = nullptr;
+	delete cur;
+	
 	_size--;
 }
 
 template <class T>
-void List<T>::pop_front() {
+void LinkedList<T>::pop_back() {
 	if (is_empty()) {
 		throw std::out_of_range("Can't pop from an empty list!");
 	}
 
-	Node<T>* cur = _head;
-	_head = _head->next;
+	if (_head == _tail) {
+		delete _head;
+		_head = nullptr;
+		_tail = nullptr;
+		_size = 0;
+		return;
+	}
+
+	Node<T>* cur = _tail;
+	_tail = _tail->prev;
+	_tail->next = nullptr;
 	delete cur;
 
-	if (_head == nullptr) {
-		_tail = nullptr;
-	}
 	_size--;
 }
 
 template <class T>
-void List<T>::erase(Node<T>* node) {
+void LinkedList<T>::erase(Node<T>* node) {
 	if (node == nullptr) {
 		throw std::invalid_argument("Node can't be nullptr!");
 	}
+
 	if (is_empty()) {
 		throw std::invalid_argument("List is empty!");
 	}
@@ -267,28 +275,20 @@ void List<T>::erase(Node<T>* node) {
 		return;
 	}
 
-	Node<T>* cur = _head;
-
-	while (cur != nullptr && cur->next != node) {
-		cur = cur->next;
+	if (node == _tail) {
+		pop_back();
+		return;
 	}
 
-	if (cur == nullptr) {
-		throw std::invalid_argument("Node not found in list!");
-	}
-
-	cur->next = node->next;
-
-	if (node == tail) {
-		_tail = cur;
-	}
+	node->prev->next = node->next;
+	node->next->prev = node->prev;
 
 	delete node;
 	_size--;
 }
 
 template <class T>
-void List<T>::erase(size_t pos) {
+void LinkedList<T>::erase(size_t pos) {
 	if (is_empty()) {
 		throw std::out_of_range("List is empty!");
 	}
@@ -307,19 +307,12 @@ void List<T>::erase(size_t pos) {
 	}
 
 	Node<T>* cur = _head;
-	for (size_t i = 1; i < pos - 1; i++) {
+	for (size_t i = 1; i < pos; i++) {
 		cur = cur->next;
 	}
 
-	Node<T>* to_delete = cur->next;
-	cur->next = to_delete->next;
-
-	if (to_delete == _tail) {
-		_tail = cur;
-	}
-
-	delete to_delete;
-	_size--;
+	erase(cur);
 }
 
-#endif //LIB_LIST_LIST_H_
+
+#endif //LIB_LINKED_LIST_LINKED_LIST_H_

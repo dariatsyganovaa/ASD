@@ -35,6 +35,65 @@ public:
     TVector(const TVector<T>&);
     ~TVector();
 
+    class Iterator {
+        T* _data;
+        State* _states;
+        size_t _capacity;
+        size_t _cur_index;
+    public:
+        Iterator(T* data, State* states, size_t capacity, size_t cur_index)
+            : _data(data), _states(states), _capacity(capacity), _cur_index(cur_index) 
+        {
+            while (_cur_index < _capacity && _states[_cur_index] != busy) {
+                _cur_index++;
+            }
+        }
+
+        Iterator& operator=(const Iterator& other) {
+            if (this != &other) {
+                _data = other._data;
+                _states = other._states;
+                _capacity = other._capacity;
+                _cur_index = other._cur_index;
+            }
+            return *this;
+        }
+
+        Iterator& operator++() { //++it
+            _cur_index++;
+            while (_cur_index < _capacity && _states[_cur_index] != busy){
+                _cur_index++;
+            } 
+            return *this;
+        }
+
+        Iterator operator++(int) {//it++
+            Iterator temp = *this;
+            ++(*this);
+            return temp;
+        }
+
+        bool operator== (const Iterator& other) {
+            return _cur_index == other._cur_index;
+        }
+
+        bool operator!= (const Iterator& other) {
+            return !(*this == other);
+        }
+
+        T& operator*() const {
+            return _data[_cur_index];
+        }
+    };
+
+    Iterator begin() {
+        return Iterator(_data, _states, _capacity, 0);
+    }
+
+    Iterator end() {
+        return Iterator(_data, _states, _capacity, _capacity);
+    }
+
     size_t capacity() const noexcept;
     size_t size() const noexcept;
 
@@ -43,9 +102,6 @@ public:
 
     inline T& front() noexcept;
     inline T& back() const noexcept;
-
-    inline T* begin() noexcept; 
-    inline T* end() noexcept; 
 
     inline const T* data() const noexcept;
     inline const State* states() const noexcept;
@@ -94,7 +150,6 @@ public:
     friend void hoara_sort<T>(TVector<T>&);
 
 private:
-    
     void allocate_memory(size_t);
     void reallocate_memory(size_t);
     void reallocate_memory_for_delete();
@@ -212,16 +267,6 @@ inline T& TVector<T>::back() const noexcept {
         if (_states[i] == busy) return _data[i];
     }
     throw std::logic_error("TVector::back: no valid element found");
-}
-
-template<class T>
-inline T* TVector<T>::begin() noexcept {
-    return _data;
-}
-
-template<class T>
-inline T* TVector<T>::end() noexcept {
-    return _data + _size;
 }
 
 template<class T>
