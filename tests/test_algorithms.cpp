@@ -82,3 +82,28 @@ TEST(TestAlgorithmsLib, try_read_expression_1) {
     EXPECT_ANY_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^2)"));
     EXPECT_ANY_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^2)))"));
 }
+
+TEST(TestAlgorithmsLib, try_is_looped) {
+    List<int> list;
+
+    for (int i = 0; i < 10; i++)
+        list.push_back(i * 3 + 1);
+
+    Node<int>* cur = list.tail();
+    cur->next = list.head()->next;
+    //std::cout << cur->data << std::endl;
+    /*for (auto it = list.begin(); it != list.end(); it++) {
+        std::cout << *it << " ";
+    }*/
+    EXPECT_TRUE(is_looped(&list));
+    cur->next = nullptr;
+}
+
+TEST(TestAlgorithmsLib, try_is_looped_1) {
+    List<int> list;
+
+    for (int i = 0; i < 10; i++)
+        list.push_back(i * 3 + 1);
+
+    EXPECT_FALSE(is_looped(&list));
+}

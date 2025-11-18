@@ -146,3 +146,17 @@ void read_expression(std::string expression) {
 		throw std::invalid_argument("Unclosed brecket!");
 	}
 }
+
+//template <class T>
+//bool is_looped(List<T> list) {
+//	auto it1 = list.begin();
+//	auto it2 = list.begin();
+//	while (it1 != list.end() || it2 != list.end()) {
+//		it1++;
+//		it2 = it2 + 2;
+//		if (it1 == it2) {
+//			return true;
+//		}
+//	}
+//	return false;
+//}

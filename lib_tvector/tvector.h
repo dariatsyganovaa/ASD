@@ -36,34 +36,18 @@ public:
     ~TVector();
 
     class Iterator {
-        T* _data;
-        State* _states;
-        size_t _capacity;
-        size_t _cur_index;
+        T* _ptr;
     public:
-        Iterator(T* data, State* states, size_t capacity, size_t cur_index)
-            : _data(data), _states(states), _capacity(capacity), _cur_index(cur_index) 
-        {
-            while (_cur_index < _capacity && _states[_cur_index] != busy) {
-                _cur_index++;
-            }
-        }
+        Iterator() : _ptr(nullptr) {}
+        Iterator(T* ptr) : _ptr(ptr) {}
 
         Iterator& operator=(const Iterator& other) {
-            if (this != &other) {
-                _data = other._data;
-                _states = other._states;
-                _capacity = other._capacity;
-                _cur_index = other._cur_index;
-            }
+            _ptr = other._ptr;
             return *this;
         }
 
         Iterator& operator++() { //++it
-            _cur_index++;
-            while (_cur_index < _capacity && _states[_cur_index] != busy){
-                _cur_index++;
-            } 
+            ++_ptr;
             return *this;
         }
 
@@ -74,7 +58,7 @@ public:
         }
 
         bool operator== (const Iterator& other) {
-            return _cur_index == other._cur_index;
+            return _ptr == other._ptr;
         }
 
         bool operator!= (const Iterator& other) {
@@ -82,16 +66,16 @@ public:
         }
 
         T& operator*() const {
-            return _data[_cur_index];
+            return *_ptr;
         }
     };
 
     Iterator begin() {
-        return Iterator(_data, _states, _capacity, 0);
+        return Iterator(_data);
     }
 
     Iterator end() {
-        return Iterator(_data, _states, _capacity, _capacity);
+        return Iterator(_data + _size);
     }
 
     size_t capacity() const noexcept;
