@@ -2,7 +2,7 @@
 #include <iomanip>
 
 #define MATRIX
-#ifdef MATRIX
+#ifndef MATRIX
 
 #include "../lib_triangle_matrix/triangle_matrix.h"
 
@@ -380,3 +380,68 @@ int main() {
 }
 
 #endif  // MATRIX
+
+#define LEXEM
+#ifdef LEXEM
+
+void create_expression() {
+
+}
+
+void delete_expression() {
+
+}
+
+void set_variables() {
+
+}
+
+void calculate_value_expression() {
+
+}
+
+int main() {
+    while (1) {
+        system("cls");
+
+        std::cout << "+----------------------------------------------------------------+" << std::endl;
+        std::cout << "| ID   | EXPRESSION                    | VARIABLES VALUES        |" << std::endl;
+        std::cout << "+----------------------------------------------------------------+" << std::endl;
+
+        int id = 1;
+        std::string expression;
+        int x = 1;
+        int y = 1;
+
+        std::cout << "| " << id << expression << " | " << "x = " << x << " y = " << y << " | " << std::endl;
+
+        std::cout << "MENU:\n1. Create a new expression \n2. Delete expression \n3. Set variables \n4. Calculate the value of an expression \n0. Exit \nYour choice: ";
+
+        int choose;
+        std::cin >> choose;
+
+        if (choose == 0) break;
+
+        switch (choose) {
+        case 1:
+            create_expression();
+            break;
+        case 2:
+            delete_expression();
+            break;
+        case 3:
+            set_variables();
+            break;
+        case 4:
+            calculate_value_expression();
+            break;
+        default:
+            std::cout << "Wrong input!\n";
+            break;
+        }
+    }
+    return 0;
+}
+
+
+#endif  // LEXEM

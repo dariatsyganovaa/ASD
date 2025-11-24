@@ -147,16 +147,34 @@ void read_expression(std::string expression) {
 	}
 }
 
-//template <class T>
-//bool is_looped(List<T> list) {
-//	auto it1 = list.begin();
-//	auto it2 = list.begin();
-//	while (it1 != list.end() || it2 != list.end()) {
-//		it1++;
-//		it2 = it2 + 2;
-//		if (it1 == it2) {
-//			return true;
-//		}
-//	}
-//	return false;
-//}
+int count_of_islands(Matrix<int>& islands) {
+	int rows = islands.size();
+	int cols = islands[0].size();
+	DSU dsu(rows * cols);
+
+	int total_land = 0;
+
+	int dx[2] = { 1, 0 };
+	int dy[2] = { 0, 1 };
+
+	for (size_t i = 0; i < islands.get_rows(); i++) {
+		for (size_t j = 0; j < islands.get_cols(); j++) {
+			if (islands[i][j] == 1) {
+				total_land++;
+				int cur_index = i * cols + j;
+
+				for (int move = 0; move < 2; move++) {
+					int new_rows = i + dx[move];
+					int new_cols = j + dy[move];
+
+					if (new_rows >= 0 && new_rows < rows && new_cols >= 0 && new_cols < cols && islands[new_rows][new_cols] == 1) {
+						int neighbor_index = new_rows * cols + new_cols;
+						dsu.union_dsu(cur_index, neighbor_index);
+						total_land--;
+					}
+				}
+			}
+		}
+	}
+	return total_land;
+}

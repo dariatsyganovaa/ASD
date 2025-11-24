@@ -20,6 +20,7 @@ class List {
 
 public:
 	List();
+	List(size_t size);
 	List(const List<T>&);
 	~List();
 
@@ -86,6 +87,9 @@ public:
 
 template <class T>
 List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {}
+
+template <class T>
+List<T>::List(size_t size) : _head(nullptr), _tail(nullptr), _size(size) {}
 
 template <class T>
 List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {
