@@ -15,6 +15,8 @@ include(cmake/function.cmake)         # подхватываем функции,
 
 add_subdirectory(lib_algorithms)
 add_subdirectory(lib_tvector)
+add_subdirectory(lib_mathvector)
+add_subdirectory(lib_matrix)
 add_subdirectory(lib_stack)
 add_subdirectory(lib_queue)
 add_subdirectory(lib_list)

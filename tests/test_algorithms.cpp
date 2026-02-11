@@ -113,3 +113,42 @@ TEST(TestAlgorithmsLib, find_loop_returns_null_if_no_cycle) {
     Node<int>* result = find_loop(&list);
     EXPECT_EQ(result, nullptr);
 }
+
+TEST(TestAlgorithmsLib, counting_of_islands_complex) {
+    Matrix<int> matr1(4, 4);
+
+    for (size_t i = 0; i < 4; i++)
+        for (size_t j = 0; j < 4; j++) matr1[i][j] = 0;
+
+    matr1[0][1] = 1;
+
+    matr1[2][0] = 1;
+    matr1[3][0] = 1;
+    matr1[2][2] = 1; matr1[2][3] = 1;
+    matr1[3][2] = 1;
+
+    int val = count_of_islands(matr1);
+    EXPECT_EQ(val, 3);
+}
+
+TEST(TestAlgorithmsLib, counting_of_islands_full_square) {
+    Matrix<int> matr(2, 2);
+
+    matr[0][0] = 1; matr[0][1] = 1;
+    matr[1][0] = 1; matr[1][1] = 1;
+
+    int val = count_of_islands(matr);
+
+    EXPECT_EQ(val, 1);
+}
+
+TEST(TestAlgorithmsLib, counting_of_islands) {
+    Matrix<int> matr(2, 2);
+
+    matr[0][0] = 1; matr[0][1] = 0;
+    matr[1][0] = 0; matr[1][1] = 0;
+
+    int val = count_of_islands(matr);
+
+    EXPECT_EQ(val, 1);
+}

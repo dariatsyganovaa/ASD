@@ -94,3 +94,40 @@ void read_expression(std::string expression) {
 		throw std::invalid_argument("Unclosed brecket!");
 	}
 }
+
+int count_of_islands(Matrix<int>& islands) {
+	if (islands.size() == 0) return 0;
+
+	int rows = islands.size();
+	int cols = islands[0].size();
+	DSU dsu(rows * cols);
+
+	int total_land = 0;
+
+	int dx[2] = { 1, 0 };
+	int dy[2] = { 0, 1 };
+
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
+			if (islands[i][j] == 1) {
+				total_land++; 
+				int cur_index = i * cols + j;
+
+				for (int move = 0; move < 2; move++) {
+					int new_row = i + dx[move];
+					int new_col = j + dy[move];
+
+					if (new_row < rows && new_col < cols && islands[new_row][new_col] == 1) {
+						int neighbor_index = new_row * cols + new_col;
+
+						if (dsu.find(cur_index) != dsu.find(neighbor_index)) {
+							dsu.union_dsu(cur_index, neighbor_index);
+							total_land--;
+						}
+					}
+				}
+			}
+		}
+	}
+	return total_land;
+}
