@@ -83,38 +83,116 @@ TEST(TestAlgorithmsLib, try_read_expression_1) {
     EXPECT_ANY_THROW(read_expression("3 * (15 + (x + y) * (2*x - 7*y^2)))"));
 }
 
-//TEST(TestAlgorithmsLib, try_is_looped) {
-//    List<int> list;
-//
-//    for (int i = 0; i < 10; i++)
-//        list.push_back(i * 3 + 1);
-//
-//    Node<int>* cur = list.tail();
-//    cur->next = list.head()->next;
-//    //std::cout << cur->data << std::endl;
-//    /*for (auto it = list.begin(); it != list.end(); it++) {
-//        std::cout << *it << " ";
-//    }*/
-//    EXPECT_TRUE(is_looped(&list));
-//    cur->next = nullptr;
-//}
-
-TEST(TestAlgorithmsLib, try_is_looped_1) {
+TEST(TestAlgorithmsLib, rabbit_turtle_has_cycle) {
     List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.push_back(4);
+    list.push_back(5);
 
-    for (int i = 0; i < 10; i++)
-        list.push_back(i * 3 + 1);
+    Node<int>* head = list.head();
+    Node<int>* tail = head;
+    while (tail->next != nullptr) {
+        tail = tail->next;
+    }
 
-    EXPECT_EQ(is_looped_rabbit_turtle(&list), false);
+    Node<int>* cycle = head->next->next;
+    tail->next = cycle;
+
+    EXPECT_TRUE(is_looped_rabbit_turtle(&list));
+
+    tail->next = nullptr;
+}
+
+TEST(TestAlgorithmsLib, reversal_check_has_cycle) {
+    List<int> list;
+    list.push_back(10);
+    list.push_back(20);
+    list.push_back(30);
+
+    Node<int>* head = list.head();
+    Node<int>* tail = head;
+    while (tail->next != nullptr) {
+        tail = tail->next;
+    }
+
+    tail->next = head;
+
+    EXPECT_TRUE(is_looped(&list));
+
+    tail->next = nullptr;
+}
+
+TEST(TestAlgorithmsLib, find_loop_detects_entry_point) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.push_back(4);
+    list.push_back(5);
+
+    Node<int>* head = list.head();
+    Node<int>* tail = head;
+    while (tail->next != nullptr) {
+        tail = tail->next;
+    }
+    Node<int>* expected_entry = head->next->next;
+
+    tail->next = expected_entry;
+
+    Node<int>* result = find_loop(&list);
+    EXPECT_EQ(result, expected_entry);
+    EXPECT_EQ(result->data, 3);
+
+    tail->next = nullptr;
+}
+
+TEST(TestAlgorithmsLib, find_loop_returns_null_if_no_cycle) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    Node<int>* result = find_loop(&list);
+    EXPECT_EQ(result, nullptr);
+}
+
+TEST(TestAlgorithmsLib, counting_of_islands_complex) {
+    Matrix<int> matr1(4, 4);
+
+    for (size_t i = 0; i < 4; i++)
+        for (size_t j = 0; j < 4; j++) matr1[i][j] = 0;
+
+    matr1[0][1] = 1;
+
+    matr1[2][0] = 1;
+    matr1[3][0] = 1;
+    matr1[2][2] = 1; matr1[2][3] = 1;
+    matr1[3][2] = 1;
+
+    int val = count_of_islands(matr1);
+    EXPECT_EQ(val, 3);
+}
+
+TEST(TestAlgorithmsLib, counting_of_islands_full_square) {
+    Matrix<int> matr(2, 2);
+
+    matr[0][0] = 1; matr[0][1] = 1;
+    matr[1][0] = 1; matr[1][1] = 1;
+
+    int val = count_of_islands(matr);
+
+    EXPECT_EQ(val, 1);
 }
 
 TEST(TestAlgorithmsLib, counting_of_islands) {
-    Matrix<int> matr1(4, 4);
-    matr1[0][0] = 0; matr1[0][1] = 1; matr1[0][2] = 0; matr1[0][3] = 0;
-    matr1[1][0] = 0; matr1[1][1] = 0; matr1[1][2] = 0; matr1[1][3] = 0;
-    matr1[2][0] = 1; matr1[2][1] = 0; matr1[2][2] = 1; matr1[2][3] = 1;
-    matr1[3][0] = 1; matr1[3][1] = 0; matr1[3][2] = 1; matr1[3][3] = 0;
+    Matrix<int> matr(2, 2);
 
-    int val = count_of_islands(matr1);
-    EXPECT_TRUE(val == 3);
+    matr[0][0] = 1; matr[0][1] = 0;
+    matr[1][0] = 0; matr[1][1] = 0;
+
+    int val = count_of_islands(matr);
+
+    EXPECT_EQ(val, 1);
 }

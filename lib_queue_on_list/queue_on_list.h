@@ -9,6 +9,8 @@ template <typename T> class QueueOnList;
 template<class T>
 class QueueOnList {
 	List<T> _data;
+	size_t _cur_size = 0;
+	size_t _max_size = -1;
 public:
 	QueueOnList() = default;
 	QueueOnList(size_t size);
@@ -18,11 +20,12 @@ public:
 	T head() const;
 	T tail() const;
 	inline bool is_empty() const noexcept;
+	inline bool is_full() const noexcept;
 	void clear() noexcept;
 };
 
 template<class T>
-QueueOnList<T>::QueueOnList(size_t size) : _data(size) {}
+QueueOnList<T>::QueueOnList(size_t size) : _max_size(size) {}
 
 template<class T>
 QueueOnList<T>::QueueOnList(const QueueOnList<T>& other) : _data(other._data) {}

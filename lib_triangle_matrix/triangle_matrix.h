@@ -27,7 +27,6 @@ public:
 	MathVector<T> operator* (const MathVector<T>& vec) const;
 	TriangleMatrix<T> operator* (T val);
 
-	TriangleMatrix<T>& operator=(const MathVector<T>& other);
 	TriangleMatrix<T>& operator=(const TriangleMatrix<T>& other);
 	bool operator==(const TriangleMatrix<T>&) const;
 	bool operator!=(const TriangleMatrix<T>&) const;
@@ -51,7 +50,7 @@ TriangleMatrix <T>::TriangleMatrix() : Matrix<T>(){}
 template <typename T>
 TriangleMatrix <T>::TriangleMatrix(size_t N) : Matrix<T>(N, N){
 	for (size_t i = 0; i < N; i++) {
-		(*this)[i] = MathVector<T>(N - i, i); //i - доп. поле индекса
+		_data[i] = MathVector<T>(N - i, i); 
 	}
 }
 
@@ -73,49 +72,39 @@ TriangleMatrix <T>::TriangleMatrix(const TriangleMatrix<T>& other) : Matrix<T>(o
 
 template <class T>
 TriangleMatrix<T> TriangleMatrix<T>::operator+(const TriangleMatrix<T>& other) {
-	if (this->_N != other._N) {
-		throw std::invalid_argument("TriangleMatrix::operator+: sizes must match for addition!");
-	}
-
-	TriangleMatrix<T> result(this->_N);
-
-	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = i; j < this->_N; j++) {
-			result[i][j] = (*this)[i][j] + other[i][j];
-		}
-	}
+	TriangleMatrix<T> result(*this);
+	result += other;
 	return result;
 }
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator+= (const TriangleMatrix& other) {
-	*this = *this + other;
+	this->Matrix<T>::operator+=(other);
 	return *this;
 }
 
 template <class T>
 TriangleMatrix<T> TriangleMatrix<T>::operator-(const TriangleMatrix<T>& other) {
-	if (this->_N != other._N) {
-		throw std::invalid_argument("TriangleMatrix::operator-: sizes must match for subtraction!");
-	}
-
-	TriangleMatrix<T> result(this->_N);
-	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = i; j < this->_N; j++) {
-			result[i][j] = (*this)[i][j] - other[i][j];
-		}
-	}
+	TriangleMatrix<T> result(*this);
+	result -= other;
 	return result;
 }
 
 template <typename T>
 TriangleMatrix <T>& TriangleMatrix <T>::operator-= (const TriangleMatrix& other) {
-	*this = *this - other;
+	this->Matrix<T>::operator-=(other);
 	return *this;
 }
 
 template <typename T>
 TriangleMatrix<T> TriangleMatrix<T>::operator*(const TriangleMatrix<T>& other) {
+	TriangleMatrix<T> result(*this);
+	result *= other;
+	return result;
+}
+
+template <typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator*= (const TriangleMatrix<T>& other) {
 	if (this->_N == 0 || other._N == 0) {
 		throw std::invalid_argument("TriangleMatrix::operator*: can't mult empty matrices!");
 	}
@@ -127,15 +116,16 @@ TriangleMatrix<T> TriangleMatrix<T>::operator*(const TriangleMatrix<T>& other) {
 	TriangleMatrix<T> result(this->_N);
 
 	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = i; j < this->_N; j++) { 
+		for (size_t j = i; j < this->_N; j++) {
 			T sum = T();
-			for (size_t k = i; k <= j; k++) {    
-				sum += (*this)[i][k] * other[k][j];
+			for (size_t k = i; k <= j; k++) {
+				sum += _data[i][k] * other._data[k][j];
 			}
 			result[i][j] = sum;
 		}
 	}
-	return result;
+	*this = result;
+	return *this;
 }
 
 template <typename T>
@@ -151,7 +141,7 @@ MathVector <T> TriangleMatrix<T>::operator* (const MathVector<T>& vec) const {
 	for (size_t i = _start_index; i < _N; i++) {
 		T sum = T();
 		for (size_t j = i; j < _N; j++) {
-			sum += (*this)[i][j] * vec[j];
+			sum += _data[i][j] * vec[j];
 		}
 		result[i] = sum;
 	}
@@ -170,11 +160,11 @@ TriangleMatrix<T> TriangleMatrix<T>::operator* (T val) {
 }
 
 template <typename T>
-TriangleMatrix <T>& TriangleMatrix <T>::operator= (const MathVector<T>& other) {
-	_N = other.size();
-	for (size_t i = 0; i < _N; i++) {
-		(*this)[i] = MathVector<T>(1);
-		(*this)[i][0] = other[i];
+TriangleMatrix <T>& TriangleMatrix <T>::operator*= (T val) {
+	for (size_t i = 0; i < this->_N; i++) {
+		for (size_t j = i; j < this->_N; j++) {
+			_data[i][j] *= val;
+		}
 	}
 	return *this;
 }
@@ -193,22 +183,6 @@ bool TriangleMatrix <T>::operator== (const TriangleMatrix& other) const {
 template <typename T>
 bool TriangleMatrix <T>::operator!= (const TriangleMatrix& other) const {
 	return !(*this == other);
-}
-
-template <typename T>
-TriangleMatrix<T>& TriangleMatrix<T>::operator*= (const TriangleMatrix<T>& other) {
-	*this = *this * other;
-	return *this;
-}
-
-template <typename T>
-TriangleMatrix <T>& TriangleMatrix <T>::operator*= (T val) {
-	for (size_t i = 0; i < this->_N; i++) {
-		for (size_t j = i; j < this->_N; j++) {
-			(*this)[i][j] *= val;
-		}
-	}
-	return *this;
 }
 
 template <typename T>

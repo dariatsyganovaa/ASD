@@ -17,7 +17,7 @@ struct Node {
 template<class T>
 class LinkedList {
 	Node<T>* _head, *_tail;
-	size_t _size;
+	size_t _count;
 public:
 	LinkedList();
 	LinkedList(const LinkedList<T>&);
@@ -77,9 +77,17 @@ public:
 		return Iterator(nullptr);
 	}
 
+	Iterator rbegin() const {
+		return Iterator(_tail);
+	}
+
+	Iterator rend() const {
+		return Iterator(nullptr);
+	}
+
 	Node<T>* head() const;
 	Node<T>* tail() const;
-	size_t size() const;
+	size_t count() const;
 
 	bool is_empty() const;
 
@@ -95,10 +103,10 @@ public:
 }; 
 
 template <class T>
-LinkedList<T>::LinkedList() : _head(nullptr), _tail(nullptr), _size(0) {}
+LinkedList<T>::LinkedList() : _head(nullptr), _tail(nullptr), _count(0) {}
 
 template <class T>
-LinkedList<T>::LinkedList(const LinkedList<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {
+LinkedList<T>::LinkedList(const LinkedList<T>& other) : _head(nullptr), _tail(nullptr), _count(0) {
 	if (other.is_empty()) {
 		return;
 	}
@@ -119,7 +127,7 @@ LinkedList<T>::~LinkedList() {
 		cur = next_node;
 	}
 	_head = _tail = nullptr;
-	_size = 0;
+	_count = 0;
 }
 
 template <class T>
@@ -133,13 +141,13 @@ Node<T>* LinkedList<T>::tail() const {
 }
 
 template <class T>
-size_t LinkedList<T>::size() const {
-	return _size;
+size_t LinkedList<T>::count() const {
+	return _count;
 }
 
 template <class T>
 bool LinkedList<T>::is_empty() const {
-	return _size == 0;
+	return _count == 0;
 }
 
 template <class T>
@@ -153,7 +161,7 @@ void LinkedList<T>::push_front(const T& value) noexcept {
 		_head->prev = node;
 		_head = node;
 	}
-	_size++;
+	_count++;
 }
 
 template <class T>
@@ -167,7 +175,7 @@ void LinkedList<T>::push_back(const T& value) noexcept {
 		node->prev = _tail;
 		_tail = node;
 	}	
-	_size++;
+	_count++;
 }
 
 template <class T>
@@ -189,27 +197,27 @@ void LinkedList<T>::insert(Node<T>* node, const T& value) {
 	if (node == _tail) {
 		_tail = new_node;
 	}
-	_size++;
+	_count++;
 }
 
 template <class T>
 void LinkedList<T>::insert(size_t pos, const T& value) {
-	if (pos > _size + 1 || pos < 1) {
+	if (pos > _count || pos < 0) {
 		throw std::out_of_range("Position is out of bounds!");
 	}
 
-	if (pos == 1) {
+	if (pos == 0) {
 		push_front(value);
 		return;
 	}
 
-	if (pos == _size + 1) {
+	if (pos == _count) {
 		push_back(value);
 		return;
 	}
 
 	Node<T>* cur = _head;
-	for (size_t i = 1; i < pos - 1; i++) {
+	for (size_t i = 0; i < pos - 1; i++) {
 		cur = cur->next;
 	}
 
@@ -226,7 +234,7 @@ void LinkedList<T>::pop_front() {
 		delete _head;
 		_head = nullptr;
 		_tail = nullptr;
-		_size = 0;
+		_count = 0;
 		return;
 	}
 
@@ -235,7 +243,7 @@ void LinkedList<T>::pop_front() {
 	_head->prev = nullptr;
 	delete cur;
 	
-	_size--;
+	_count--;
 }
 
 template <class T>
@@ -248,7 +256,7 @@ void LinkedList<T>::pop_back() {
 		delete _head;
 		_head = nullptr;
 		_tail = nullptr;
-		_size = 0;
+		_count = 0;
 		return;
 	}
 
@@ -257,7 +265,7 @@ void LinkedList<T>::pop_back() {
 	_tail->next = nullptr;
 	delete cur;
 
-	_size--;
+	_count--;
 }
 
 template <class T>
@@ -284,7 +292,7 @@ void LinkedList<T>::erase(Node<T>* node) {
 	node->next->prev = node->prev;
 
 	delete node;
-	_size--;
+	_count--;
 }
 
 template <class T>
@@ -292,27 +300,26 @@ void LinkedList<T>::erase(size_t pos) {
 	if (is_empty()) {
 		throw std::out_of_range("List is empty!");
 	}
-	if (pos > _size || pos < 1) {
+	if (pos >= _count || pos < 0) {
 		throw std::out_of_range("Position is out of bounds!");
 	}
 
-	if (pos == 1) {
+	if (pos == 0) {
 		pop_front();
 		return;
 	}
 
-	if (pos == _size) {
+	if (pos == _count - 1) {
 		pop_back();
 		return;
 	}
 
 	Node<T>* cur = _head;
-	for (size_t i = 1; i < pos; i++) {
+	for (size_t i = 0; i < pos; i++) {
 		cur = cur->next;
 	}
 
 	erase(cur);
 }
-
 
 #endif //LIB_LINKED_LIST_LINKED_LIST_H_

@@ -55,7 +55,7 @@ void DSU::union_dsu(int x, int y) {
 	}
 }
 
-int DSU::find(int x) {
+int DSU::find(int x) { // O(n)
 	if (x >= _size || x < 0) {
 		throw std::out_of_range("Uncorrect value!");
 	}

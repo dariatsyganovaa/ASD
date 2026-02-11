@@ -89,13 +89,6 @@ TEST(TestTriangleMatrixLib, operator_plus) {
     }
 }
 
-TEST(TestTriangleMatrixLib, try_operator_plus_with_different_size) {
-    TriangleMatrix<int> matr1(2);
-    TriangleMatrix<int> matr2(3);
-
-    EXPECT_THROW(matr1 + matr2, std::invalid_argument);
-}
-
 TEST(TestTriangleMatrixLib, operator_minus) {
     TriangleMatrix<int> matr1(2);
     TriangleMatrix<int> matr2(2);
@@ -117,11 +110,20 @@ TEST(TestTriangleMatrixLib, operator_minus) {
     }
 }
 
-TEST(TestTriangleMatrixLib, try_operator_minus_with_different_size) {
+TEST(TestTriangleMatrixLib, try_operator_plus_minus_mult_with_different_size) {
     TriangleMatrix<int> matr1(2);
     TriangleMatrix<int> matr2(3);
 
+    EXPECT_THROW(matr1 + matr2, std::invalid_argument);
     EXPECT_THROW(matr1 - matr2, std::invalid_argument);
+    EXPECT_THROW(matr1 * matr2, std::invalid_argument);
+}
+
+TEST(TestTriangleMatrixLib, try_mult_of_empty_matrices) {
+    TriangleMatrix<int> matr1(0);
+    TriangleMatrix<int> matr2(0);
+
+    EXPECT_THROW(matr1 * matr2, std::invalid_argument);
 }
 
 TEST(TestTriangleMatrixLib, operator_mult_with_value) {
@@ -182,6 +184,24 @@ TEST(TestTriangleMatrixLib, operator_mult_with_vector) {
     }
 }
 
+TEST(TestTriangleMatrixLib, operator_mult_with_empty_vector) {
+    TriangleMatrix<int> matr(3);
+
+    matr[0][0] = 1; matr[0][1] = 1; matr[0][2] = 1;
+    matr[1][1] = 1; matr[1][2] = 1;
+    matr[2][2] = 1;
+
+    int arr1[3] = { 0, 0, 0 };
+    MathVector<int> vec(arr1, 3);
+
+    MathVector<int> actual_res = matr * vec;
+    MathVector<int> expected_res(arr1, 3);
+
+    for (size_t i = 0; i < expected_res.size(); i++) {
+        EXPECT_EQ(expected_res[i], actual_res[i]);
+    }
+}
+
 TEST(TestTriangleMatrixLib, try_mult_of_empty_vec_by_tri_matrix) {
     MathVector<int> vec1(0);
 
@@ -239,33 +259,17 @@ TEST(TestTriangleMatrixLib, matrix_mult) {
     }
 }
 
-TEST(TestTriangleMatrixLib, try_mult_of_empty_matrices) {
-    TriangleMatrix<int> matr1(0);
-    TriangleMatrix<int> matr2(0);
-
-    EXPECT_THROW(matr1 * matr2, std::invalid_argument);
-}
-
-TEST(TestTriangleMatrixLib, try_operator_mult_with_different_size) {
-    Matrix<int> matr1(2, 3);
-    Matrix<int> matr2(1, 4);
-
-    EXPECT_THROW(matr1 * matr2, std::invalid_argument);
-}
-
 TEST(TestTriangleMatrixLib, operator_assignment) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(2, 2);
+    TriangleMatrix<int> matr1(3);
+    TriangleMatrix<int> matr2(3);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
+    matr1[0][0] = 1; matr1[0][1] = 1; matr1[0][2] = 1;
+    matr1[1][1] = 1; matr1[1][2] = 1;
+    matr1[2][2] = 1;
 
-    matr2[0][0] = 4;
-    matr2[0][1] = 3;
-    matr2[1][0] = 2;
-    matr2[1][1] = 1;
+    matr2[0][0] = 1; matr2[0][1] = 2; matr2[0][2] = 3;
+    matr2[1][1] = 2; matr2[1][2] = 3;
+    matr2[2][2] = 3;
 
     matr1 = matr2;
 
@@ -273,19 +277,17 @@ TEST(TestTriangleMatrixLib, operator_assignment) {
     EXPECT_EQ(matr1.get_cols(), matr2.get_cols());
 
     for (size_t i = 0; i < matr1.get_rows(); i++) {
-        for (size_t j = 0; j < matr1.get_cols(); j++) {
+        for (size_t j = i; j < matr1.get_cols(); j++) {
             EXPECT_EQ(matr1[i][j], matr2[i][j]);
         }
     }
 }
 
 TEST(TestTriangleMatrixLib, operator_assignment_with_empty_matrix) {
-    Matrix<int> matr1;
-    Matrix<int> matr2(2, 2);
+    TriangleMatrix<int> matr1;
+    TriangleMatrix<int> matr2(2);
 
-    matr2[0][0] = 4;
-    matr2[0][1] = 3;
-    matr2[1][0] = 2;
+    matr2[0][0] = 3; matr2[0][1] = 2;
     matr2[1][1] = 1;
 
     matr1 = matr2;
@@ -294,23 +296,22 @@ TEST(TestTriangleMatrixLib, operator_assignment_with_empty_matrix) {
     EXPECT_EQ(matr1.get_cols(), matr2.get_cols());
 
     for (size_t i = 0; i < matr1.get_rows(); i++) {
-        for (size_t j = 0; j < matr1.get_cols(); j++) {
+        for (size_t j = i; j < matr1.get_cols(); j++) {
             EXPECT_EQ(matr1[i][j], matr2[i][j]);
         }
     }
 }
 
 TEST(TestTriangleMatrixLib, try_operator_assignment_with_different_size) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(1, 2);
+    TriangleMatrix<int> matr1(3);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
+    matr1[0][0] = 1; matr1[0][1] = 1; matr1[0][2] = 1;
+    matr1[1][1] = 1; matr1[1][2] = 1;
+    matr1[2][2] = 1;
 
-    matr2[0][0] = 4;
-    matr2[0][1] = 3;
+    matr2[0][0] = 1; matr2[0][1] = 2; 
+    matr2[1][1] = 2; 
 
     matr1 = matr2;
 
@@ -318,329 +319,215 @@ TEST(TestTriangleMatrixLib, try_operator_assignment_with_different_size) {
     EXPECT_EQ(matr1.get_cols(), matr2.get_cols());
 
     for (size_t i = 0; i < matr1.get_rows(); i++) {
-        for (size_t j = 0; j < matr1.get_cols(); j++) {
+        for (size_t j = i; j < matr1.get_cols(); j++) {
             EXPECT_EQ(matr1[i][j], matr2[i][j]);
         }
     }
 }
 
-TEST(TestTriangleMatrixLib, operator_comparison) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(2, 2);
+TEST(TestTriangleMatrixLib, operator_comparison) { 
+    TriangleMatrix<int> matr1(2);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 1;
-    matr1[1][0] = 1;
+    matr1[0][0] = 1; matr1[0][1] = 1;
     matr1[1][1] = 1;
 
-    matr2[0][0] = 1;
-    matr2[0][1] = 1;
-    matr2[1][0] = 1;
+    matr2[0][0] = 1; matr2[0][1] = 1;
     matr2[1][1] = 1;
 
     EXPECT_TRUE(matr1 == matr2);
+    EXPECT_FALSE(matr1 != matr2);
 }
 
 TEST(TestTriangleMatrixLib, operator_comparison_not_equal) {
-    Matrix<int> matr1(2, 3);
-    Matrix<int> matr2(1, 2);
+    TriangleMatrix<int> matr1(3);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 5;
-    matr1[0][2] = -4;
-    matr1[1][0] = 1;
-    matr1[1][1] = 2;
-    matr1[1][2] = 3;
+    matr1[0][0] = 1; matr1[0][1] = 1; matr1[0][2] = 1;
+    matr1[1][1] = 1; matr1[1][2] = 1;
+    matr1[2][2] = 1;
 
-    matr2[0][0] = 1;
-    matr2[0][1] = 7;
+    matr1[0][0] = 1; matr1[0][1] = 1;
+    matr1[1][1] = 1; 
 
     EXPECT_TRUE(matr1 != matr2);
+    EXPECT_FALSE(matr1 == matr2);
 }
 
 TEST(TestTriangleMatrixLib, operator_comparison_not_equal_with_negative_values) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(2, 2);
+    TriangleMatrix<int> matr1(2);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 1;
-    matr1[1][0] = 1;
+    matr1[0][0] = 1; matr1[0][1] = 1;
     matr1[1][1] = 1;
 
-    matr2[0][0] = -1;
-    matr2[0][1] = -1;
-    matr2[1][0] = -1;
+    matr2[0][0] = -1; matr2[0][1] = -1;
     matr2[1][1] = -1;
 
     EXPECT_TRUE(matr1 != matr2);
 }
 
 TEST(TestTriangleMatrixLib, addition_assignment_operator) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(2, 2);
+    TriangleMatrix<int> matr1(2);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 1;
-    matr1[1][0] = 1;
+    matr1[0][0] = 1; matr1[0][1] = 1;
     matr1[1][1] = 1;
 
-    matr2[0][0] = 1;
-    matr2[0][1] = 1;
-    matr2[1][0] = 1;
+    matr2[0][0] = 1; matr2[0][1] = 1;
     matr2[1][1] = 1;
 
-    Matrix<int> result(2, 2);
+    TriangleMatrix<int> result(2);
 
-    result[0][0] = 2;
-    result[0][1] = 2;
-    result[1][0] = 2;
+    result[0][0] = 2; result[0][1] = 2;
     result[1][1] = 2;
 
     matr1 += matr2;
 
     for (size_t i = 0; i < matr2.get_rows(); i++) {
-        for (size_t j = 0; j < matr2.get_cols(); j++) {
+        for (size_t j = i; j < matr2.get_cols(); j++) {
             EXPECT_EQ(matr1[i][j], result[i][j]);
         }
     }
 }
 
-TEST(TestTriangleMatrixLib, try_addition_assignment_operator_with_different_size) {
-    Matrix<int> matr1(1, 2);
-    Matrix<int> matr2(2, 2);
+TEST(TestTriangleMatrixLib, try_add_sub_mult_assignment_operator_with_different_size) {
+    TriangleMatrix<int> matr1(3);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 4;
-    matr1[0][1] = 3;
+    matr1[0][0] = 1; matr1[0][1] = 1; matr1[0][2] = 1;
+    matr1[1][1] = 1; matr1[1][2] = 1;
+    matr1[2][2] = 1;
 
-    matr2[0][0] = 1;
-    matr2[0][1] = 2;
-    matr2[1][0] = 3;
-    matr2[1][1] = 4;
+    matr2[0][0] = 1; matr2[0][1] = 2;
+    matr2[1][1] = 2;
 
     EXPECT_THROW(matr1 += matr2, std::invalid_argument);
+    EXPECT_THROW(matr1 -= matr2, std::invalid_argument);
+    EXPECT_THROW(matr1 *= matr2, std::invalid_argument);
 }
 
-TEST(TestTriangleMatrixLib, try_addition_assignment_operator_with_empty_matrix) {
-    Matrix<int> matr1(0, 0);
-    Matrix<int> matr2(2, 2);
+TEST(TestTriangleMatrixLib, try_add_sub_mult_assignment_operator_with_empty_matrix) {
+    TriangleMatrix<int> matr1;
+    TriangleMatrix<int> matr2(2);
 
     EXPECT_THROW(matr1 += matr2, std::invalid_argument);
+    EXPECT_THROW(matr1 -= matr2, std::invalid_argument);
+    EXPECT_THROW(matr1 *= matr2, std::invalid_argument);
 }
 
 TEST(TestTriangleMatrixLib, subtraction_assignment_operator) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(2, 2);
+    TriangleMatrix<int> matr1(2);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 1;
-    matr1[1][0] = 1;
+    matr1[0][0] = 1; matr1[0][1] = 1;
     matr1[1][1] = 1;
 
-    matr2[0][0] = 1;
-    matr2[0][1] = 1;
-    matr2[1][0] = 1;
+    matr2[0][0] = 1; matr2[0][1] = 1;
     matr2[1][1] = 1;
 
-    Matrix<int> result(2, 2);
+    TriangleMatrix<int> result(2);
 
-    result[0][0] = 0;
-    result[0][1] = 0;
-    result[1][0] = 0;
+    result[0][0] = 0; result[0][1] = 0;
     result[1][1] = 0;
 
     matr1 -= matr2;
 
     for (size_t i = 0; i < matr2.get_rows(); i++) {
-        for (size_t j = 0; j < matr2.get_cols(); j++) {
+        for (size_t j = i; j < matr2.get_cols(); j++) {
             EXPECT_EQ(matr1[i][j], result[i][j]);
         }
     }
 }
 
-TEST(TestTriangleMatrixLib, try_subtraction_assignment_operator_with_different_size) {
-    Matrix<int> matr1(1, 2);
-    Matrix<int> matr2(2, 2);
-
-    matr1[0][0] = 4;
-    matr1[0][1] = 3;
-
-    matr2[0][0] = 1;
-    matr2[0][1] = 2;
-    matr2[1][0] = 3;
-    matr2[1][1] = 4;
-
-    EXPECT_THROW(matr1 -= matr2, std::invalid_argument);
-}
-
-TEST(TestTriangleMatrixLib, subtraction_assignment_operator_with_empty_matrix) {
-    Matrix<int> matr1(2, 3);
-    Matrix<int> matr2(0, 0);
-
-    EXPECT_THROW(matr1 -= matr2, std::invalid_argument);
-}
-
 TEST(TestTriangleMatrixLib, multiplication_assignment_operator_with_matrices) {
-    Matrix<int> matr1(2, 2);
-    Matrix<int> matr2(2, 2);
+    TriangleMatrix<int> matr1(2);
+    TriangleMatrix<int> matr2(2);
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
+    matr1[0][0] = 1; matr1[0][1] = 2;
+    matr1[1][1] = 3;
 
-    matr2[0][0] = 4;
-    matr2[0][1] = 3;
-    matr2[1][0] = 2;
+    matr2[0][0] = 3; matr2[0][1] = 2;
     matr2[1][1] = 1;
 
     matr1 *= matr2;
-    Matrix<int> expected_res(2, 2);
+    TriangleMatrix<int> expected_res(2);
 
-    expected_res[0][0] = 8;
-    expected_res[0][1] = 5;
-    expected_res[1][0] = 20;
-    expected_res[1][1] = 13;
+    expected_res[0][0] = 3; expected_res[0][1] = 4;
+    expected_res[1][1] = 3;
 
     EXPECT_EQ(matr1.get_rows(), expected_res.get_rows());
     EXPECT_EQ(matr1.get_cols(), expected_res.get_cols());
 
     for (size_t i = 0; i < expected_res.get_rows(); i++) {
-        for (size_t j = 0; j < expected_res.get_cols(); j++) {
+        for (size_t j = i; j < expected_res.get_cols(); j++) {
             EXPECT_EQ(expected_res[i][j], matr1[i][j]);
         }
     }
 }
 
-TEST(TestTriangleMatrixLib, try_mult_assignment_operator_with_different_size) {
-    Matrix<int> matr1(3, 2);
-    Matrix<int> matr2(6, 1);
-
-    EXPECT_THROW(matr1 *= matr2, std::invalid_argument);
-}
-
-TEST(TestTriangleMatrixLib, multiplication_assignment_operator_with_empty_matrix) {
-    Matrix<int> matr1(2, 3);
-    Matrix<int> matr2(0, 0);
-
-    EXPECT_THROW(matr1 *= matr2, std::invalid_argument);
-}
-
 TEST(TestTriangleMatrixLib, multiplication_assignment_operator_with_value) {
-    Matrix<int> matr1(2, 2);
+    TriangleMatrix<int> matr1(2);
     int val = 5;
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
+    matr1[0][0] = 1; matr1[0][1] = 2;
+    matr1[1][1] = 3;
 
     matr1 *= val;
-    Matrix<int> expected_res(2, 2);
+    TriangleMatrix<int> expected_res(2);
 
-    expected_res[0][0] = 5;
-    expected_res[0][1] = 10;
-    expected_res[1][0] = 15;
-    expected_res[1][1] = 20;
+    expected_res[0][0] = 5; expected_res[0][1] = 10;
+    expected_res[1][1] = 15;
 
     for (size_t i = 0; i < expected_res.get_rows(); i++) {
-        for (size_t j = 0; j < expected_res.get_cols(); j++) {
+        for (size_t j = i; j < expected_res.get_cols(); j++) {
             EXPECT_EQ(expected_res[i][j], matr1[i][j]);
         }
     }
 }
 
 TEST(TestTriangleMatrixLib, mult_by_value_assignment_operator_with_zero) {
-    Matrix<int> matr1(2, 2);
+    TriangleMatrix<int> matr1(2);
     int val = 5;
 
     matr1 *= val;
 
     for (size_t i = 0; i < matr1.get_rows(); i++) {
-        for (size_t j = 0; j < matr1.get_cols(); j++) {
+        for (size_t j = i; j < matr1.get_cols(); j++) {
             EXPECT_EQ(matr1[i][j], 0);
         }
     }
 }
 
 TEST(TestTriangleMatrixLib, multiplication_assignment_operator_with_negative_value) {
-    Matrix<int> matr1(2, 2);
+    TriangleMatrix<int> matr1(2);
     int val = -5;
 
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
+    matr1[0][0] = 1; matr1[0][1] = 2;
+    matr1[1][1] = 3;
 
     matr1 *= val;
     Matrix<int> expected_res(2, 2);
 
-    expected_res[0][0] = -5;
-    expected_res[0][1] = -10;
-    expected_res[1][0] = -15;
-    expected_res[1][1] = -20;
+    expected_res[0][0] = -5; expected_res[0][1] = -10;
+    expected_res[1][1] = -15;
 
     for (size_t i = 0; i < expected_res.get_rows(); i++) {
-        for (size_t j = 0; j < expected_res.get_cols(); j++) {
+        for (size_t j = i; j < expected_res.get_cols(); j++) {
             EXPECT_EQ(expected_res[i][j], matr1[i][j]);
         }
     }
 }
 
-TEST(TestTriangleMatrixLib, access_operator) {
-    Matrix<int> matr1(2, 2);
-
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
-
-    EXPECT_EQ(matr1[0][0], 1);
-    EXPECT_EQ(matr1[0][1], 2);
-    EXPECT_EQ(matr1[1][0], 3);
-    EXPECT_EQ(matr1[1][1], 4);
-}
-
-TEST(TestTriangleMatrixLib, matrix_mult_vector_as_matrix_multiplication) {
-    Matrix<int> matr1(2, 2);
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
-
-    Matrix<int> matr2(2, 1);
-    matr2[0][0] = 5;
-    matr2[1][0] = 6;
-
-    Matrix<int> result = matr1 * matr2;
-
-    EXPECT_EQ(result.get_rows(), 2);
-    EXPECT_EQ(result.get_cols(), 1);
-
-    EXPECT_EQ(result[0][0], 17);
-    EXPECT_EQ(result[1][0], 39);
-
-    MathVector<int> result_vector(result.get_rows());
-    for (size_t i = 0; i < result.get_rows(); i++) {
-        result_vector[i] = result[i][0];
-    }
-
-    EXPECT_EQ(result_vector.size(), 2);
-    EXPECT_EQ(result_vector[0], 17);
-    EXPECT_EQ(result_vector[1], 39);
-}
-
 TEST(TestTriangleMatrixLib, simple_mixed_assignment_addition) {
-    Matrix<int> matr1(2, 2);
-    matr1[0][0] = 1;
-    matr1[0][1] = 2;
-    matr1[1][0] = 3;
-    matr1[1][1] = 4;
+    TriangleMatrix<int> matr1(2);
+    matr1[0][0] = 1; matr1[0][1] = 2;
+    matr1[1][1] = 3;
 
-    Matrix<int> matr2(matr1);
+    TriangleMatrix<int> matr2(matr1);
     matr2 += matr1;
 
     EXPECT_EQ(matr2[0][0], 2);
     EXPECT_EQ(matr2[0][1], 4);
-    EXPECT_EQ(matr2[1][0], 6);
-    EXPECT_EQ(matr2[1][1], 8);
+    EXPECT_EQ(matr2[1][1], 6);
 }

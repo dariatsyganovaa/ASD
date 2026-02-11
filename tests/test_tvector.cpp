@@ -1160,8 +1160,6 @@ TEST(TestTVectorLib, iterator_in_empty_vec) {
     TVector<int> vec;
 
     for (auto it = vec.begin(); it != vec.end(); it++) {
-        EXPECT_NO_THROW(*it);
+        ADD_FAILURE();
     }
-
-    //EXPECT_TRUE(vec.begin() == vec.end());
 }

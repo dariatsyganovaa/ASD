@@ -9,6 +9,8 @@ template <typename T> class StackOnList;
 template<class T>
 class StackOnList {
 	List<T> _data;
+	size_t _cur_size = 0;
+	size_t _max_size = -1;
 public:
 	StackOnList() = default;
 	StackOnList(size_t size);
@@ -17,18 +19,23 @@ public:
 	void pop();
 	T top() const;
 	inline bool is_empty() const noexcept;
+	inline bool is_full() const noexcept;
 	void clear() noexcept;
 };
 
 template<class T>
-StackOnList<T>::StackOnList(size_t size) : _data(size) {}
+StackOnList<T>::StackOnList(size_t size) : _max_size(size) {}
 
 template<class T>
 StackOnList<T>::StackOnList(const StackOnList<T>& other) : _data(other._data) {}
 
 template<class T>
 void StackOnList<T>::push(T val) {
-	_data.push_back(val);
+	if (is_full()) {
+		throw std::out_of_range("Can't push in full stack!");
+	}
+	_data.push_front(val);
+	_cur_size++;
 }
 
 template<class T>
@@ -36,7 +43,8 @@ void StackOnList<T>::pop() {
 	if (is_empty()) {
 		throw std::out_of_range("Can't pop from empty stack!");
 	}
-	_data.pop_back();
+	_data.pop_front();
+	_cur_size--;
 }
 
 template<class T>
@@ -44,7 +52,7 @@ T StackOnList<T>::top() const {
 	if (is_empty()) {
 		throw std::out_of_range("Can't get top from empty stack!");
 	}
-	return _data.tail()->data;
+	return _data.head()->data;
 }
 
 template<class T>
@@ -53,10 +61,16 @@ inline bool StackOnList<T>::is_empty() const noexcept {
 }
 
 template<class T>
+inline bool StackOnList<T>::is_full() const noexcept {
+	return _max_size == _cur_size;
+}
+
+template<class T>
 void StackOnList<T>::clear() noexcept {
 	while (!_data.is_empty()) {
-		_data.pop_back();
+		_data.pop_front();
 	}
+	_cur_size = 0;
 }
 
 #endif //LIB_STACK_ON_LIST_STACK_ON_LIST_H_

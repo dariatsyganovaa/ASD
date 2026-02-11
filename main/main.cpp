@@ -150,12 +150,18 @@ void start_comparison_of_matrices(Matrix<int>& matrix_1) {
 void start_add_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX ADDITION ====" << std::endl;
-
+    
     TriangleMatrix<int> tri_matrix_2;
     std::cin >> tri_matrix_2;
 
-    tri_matrix_1 += tri_matrix_2;
-    std::cout << tri_matrix_1;
+    try {
+        tri_matrix_1 += tri_matrix_2;
+        std::cout << tri_matrix_1;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+    
     system("pause");
 }
 
@@ -166,8 +172,14 @@ void start_sub_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     TriangleMatrix<int> tri_matrix_2;
     std::cin >> tri_matrix_2;
 
-    tri_matrix_1 -= tri_matrix_2;
-    std::cout << tri_matrix_1;
+    try {
+        tri_matrix_1 -= tri_matrix_2;
+        std::cout << tri_matrix_1;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+
     system("pause");
 }
 
@@ -178,8 +190,14 @@ void start_mult_tri_matrix(TriangleMatrix<int>& tri_matrix_1) {
     TriangleMatrix<int> tri_matrix_2;
     std::cin >> tri_matrix_2;
 
-    tri_matrix_1 *= tri_matrix_2;
-    std::cout << tri_matrix_1;
+    try {
+        tri_matrix_1 *= tri_matrix_2;
+        std::cout << tri_matrix_1;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+
     system("pause");
 }
 
@@ -187,24 +205,23 @@ void start_tri_matrix_vec_mult(TriangleMatrix<int>& tri_matrix_1) {
     system("cls");
     std::cout << "==== TRIANGULAR MATRIX MULTIPLICATION BY A VECTOR ====" << std::endl;
 
-    int size;
-    while (1) {
-        std::cout << "Enter a vector size: ";
-        std::cin >> size;
-        if (tri_matrix_1.get_size() != size) {
-            std::cout << "Error! The number of columns of the matrix must be equal to the size of the vector!" << std::endl;
-            continue;
-        }
-        break;
-    }
-
+    int size; 
+    std::cout << "Enter a vector size: ";
+    std::cin >> size;
+       
     MathVector<int> vec(size);
     std::cin >> vec;
 
-    vec = tri_matrix_1 * vec;
+    try {
+        vec = tri_matrix_1 * vec;
 
-    std::cout << "Vector elements: ";
-    std::cout << vec;
+        std::cout << "Vector elements: ";
+        std::cout << vec;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+
     system("pause");
 }
 
@@ -216,8 +233,14 @@ void start_tri_matrix_scalar_mult(TriangleMatrix<int>& tri_matrix_1) {
     std::cout << "Enter a scalar: ";
     std::cin >> scalar;
 
-    tri_matrix_1 *= scalar;
-    std::cout << tri_matrix_1;
+    try {
+        tri_matrix_1 *= scalar;
+        std::cout << tri_matrix_1;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+
     system("pause");
 }
 
@@ -382,66 +405,163 @@ int main() {
 #endif  // MATRIX
 
 #define LEXEM
-#ifdef LEXEM
+#ifndef LEXEM
 
-void create_expression() {
+#include "../lib_tvector/tvector.h"
+#include "../lib_expression/expression.h"
+#include "../lib_parser/parser.h"
 
+TVector<Expression*> expressions;
+
+void print_separator() {
+    std::cout << "+------+------------------------------------------+--------------------------------+" << std::endl;
 }
 
-void delete_expression() {
-
+void print_header() {
+    print_separator();
+    std::cout << "| " << std::setw(4) << std::left << "ID"
+        << " | " << std::setw(40) << "EXPRESSION"
+        << " | " << std::setw(30) << "VARIABLES VALUES" << " |" << std::endl;
+    print_separator();
 }
 
-void set_variables() {
+void create_new_expression() {
+    std::string input;
+    std::cout << "Input expression: ";
+    std::cin.ignore(); // Очистка буфера перед getline
+    std::getline(std::cin, input);
 
+    if (input.empty()) return;
+
+    try {
+        // Пытаемся создать выражение (внутри вызовется Parser::parse)
+        Expression* new_expr = new Expression(input);
+        expressions.push_back_elem(new_expr);
+        std::cout << "Expression added successfully.\n";
+    }
+    catch (const ParserException& e) {
+        // Форматированный вывод ошибки по ТЗ
+        std::cout << "Input expression: " << input << std::endl;
+        std::cout << "                  "; // Отступ для Input expression: 
+        for (int i = 0; i < e.get_pos(); ++i) std::cout << " ";
+        std::cout << "^" << std::endl;
+        std::cout << "Error in function 'Parser::parse()' at " << e.get_pos() << " symbol: " << e.what() << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Critical error: " << e.what() << std::endl;
+    }
+    system("pause");
 }
 
-void calculate_value_expression() {
+void delete_expression_ui() {
+    int id;
+    std::cout << "Enter ID to delete: ";
+    std::cin >> id;
 
+    if (id >= 1 && id <= (int)expressions.size()) {
+        // Удаляем объект из памяти
+        delete expressions[id - 1];
+        // Удаляем указатель из вектора (сдвиг элементов)
+        expressions.erase_elem(id - 1);
+        std::cout << "Deleted.\n";
+    }
+    else {
+        std::cout << "Expression with ID " << id << " not found.\n";
+    }
+    system("pause");
+}
+
+void set_variables_ui() {
+    int id;
+    std::cout << "Enter ID to set variables: ";
+    std::cin >> id;
+
+    if (id >= 1 && id <= (int)expressions.size()) {
+        expressions[id - 1]->set_variables();
+    }
+    else {
+        std::cout << "Expression with ID " << id << " not found.\n";
+        system("pause");
+    }
+}
+
+void calculate_expression_ui() {
+    int id;
+    std::cout << "Enter ID to calculate: ";
+    std::cin >> id;
+
+    if (id >= 1 && id <= (int)expressions.size()) {
+        double res = expressions[id - 1]->calculate();
+        std::cout << "Result: " << res << std::endl;
+    }
+    else {
+        std::cout << "Expression with ID " << id << " not found.\n";
+    }
+    system("pause");
 }
 
 int main() {
-    while (1) {
-        system("cls");
+    while (true) {
+        system("cls"); // Очистка экрана (Windows)
 
-        std::cout << "+----------------------------------------------------------------+" << std::endl;
-        std::cout << "| ID   | EXPRESSION                    | VARIABLES VALUES        |" << std::endl;
-        std::cout << "+----------------------------------------------------------------+" << std::endl;
+        print_header();
 
-        int id = 1;
-        std::string expression;
-        int x = 1;
-        int y = 1;
+        // Вывод таблицы
+        if (expressions.size() == 0) {
+            std::cout << "| " << std::setw(78) << std::left << "List is empty" << " |" << std::endl;
+        }
+        else {
+            for (size_t i = 0; i < expressions.size(); ++i) {
+                // Обрезаем строку, если она слишком длинная для таблицы
+                std::string expr_str = expressions[i]->get_expression_str();
+                if (expr_str.length() > 40) expr_str = expr_str.substr(0, 37) + "...";
 
-        std::cout << "| " << id << expression << " | " << "x = " << x << " y = " << y << " | " << std::endl;
+                std::string var_str = expressions[i]->get_variables_str();
+                if (var_str.length() > 30) var_str = var_str.substr(0, 27) + "...";
 
-        std::cout << "MENU:\n1. Create a new expression \n2. Delete expression \n3. Set variables \n4. Calculate the value of an expression \n0. Exit \nYour choice: ";
+                std::cout << "| " << std::setw(4) << std::left << (i + 1)
+                    << " | " << std::setw(40) << expr_str
+                    << " | " << std::setw(30) << var_str << " |" << std::endl;
+            }
+        }
+        print_separator();
 
-        int choose;
-        std::cin >> choose;
+        std::cout << "\nMENU:\n"
+            << "1. Create a new expression\n"
+            << "2. Delete expression\n"
+            << "3. Set variables\n"
+            << "4. Calculate the value of an expression\n"
+            << "0. Exit\n"
+            << "Your choice: ";
 
-        if (choose == 0) break;
+        int choice;
+        // Проверка на корректный ввод числа
+        if (!(std::cin >> choice)) {
+            std::cin.clear();
+            std::cin.ignore(10000, '\n');
+            continue;
+        }
 
-        switch (choose) {
-        case 1:
-            create_expression();
-            break;
-        case 2:
-            delete_expression();
-            break;
-        case 3:
-            set_variables();
-            break;
-        case 4:
-            calculate_value_expression();
-            break;
+        if (choice == 0) break;
+
+        switch (choice) {
+        case 1: create_new_expression(); break;
+        case 2: delete_expression_ui(); break;
+        case 3: set_variables_ui(); break;
+        case 4: calculate_expression_ui(); break;
         default:
             std::cout << "Wrong input!\n";
+            system("pause");
             break;
         }
     }
+
+    // Очистка памяти перед выходом
+    for (size_t i = 0; i < expressions.size(); ++i) {
+        delete expressions[i];
+    }
+
     return 0;
 }
-
-
 #endif  // LEXEM
+

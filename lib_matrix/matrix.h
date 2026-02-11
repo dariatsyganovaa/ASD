@@ -108,7 +108,7 @@ Matrix<T> Matrix<T>::operator* (T val){
 template <typename T>
 Matrix <T>& Matrix <T>::operator*= (T val) {
 	for (size_t i = 0; i < _N; i++) {
-		(*this)[i] *= val;
+		_data[i] *= val;
 	}
 	return *this;
 }
@@ -123,7 +123,7 @@ MathVector <T> Matrix<T>::operator* (const MathVector<T>& vec) const {
 	}
 	MathVector <T> result(_N);
 	for (size_t i = 0; i < _N; i++) {
-		result[i] = (*this)[i] * vec;
+		result[i] = _data[i] * vec;
 	}
 	return result;
 }
@@ -148,7 +148,7 @@ Matrix <T>& Matrix <T>::operator*= (const Matrix<T>& other) {
 
 	for (size_t i = 0; i < _N; i++) {
 		for (size_t j = 0; j < other._M; j++) {
-			result[i][j] = (*this)[i] * matr_t[j];
+			result[i][j] = _data[i] * matr_t[j];
 		}
 	}
 	*this = result;
@@ -188,7 +188,7 @@ Matrix<T> Matrix <T>::trans() const{
 	Matrix <T> matrix(_M, _N);
 	for (size_t i = 0; i < _M; i++) {
 		for (size_t j = 0; j < _N; j++) {
-			matrix[i][j] = (*this)[j][i];
+			matrix[i][j] = _data[j][i];
 		}
 	}
 	return matrix;

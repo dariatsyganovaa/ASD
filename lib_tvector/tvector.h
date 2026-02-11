@@ -36,7 +36,7 @@ public:
     ~TVector();
 
     class Iterator {
-        T* _ptr;
+        T* _ptr; // адрес текущего элемента в массиве
     public:
         Iterator() : _ptr(nullptr) {}
         Iterator(T* ptr) : _ptr(ptr) {}
@@ -121,6 +121,7 @@ public:
     bool operator==(const TVector<T>&) const;
     bool operator!=(const TVector<T>&) const;
     T& operator[](size_t);
+    const T& operator[](size_t) const;
 
     void print_elems();
     void print_states();
@@ -255,7 +256,9 @@ inline T& TVector<T>::back() const noexcept {
 
 template<class T>
 inline bool TVector<T>::is_empty() const noexcept {
-    return _size == 0;
+    if (_size == 0) return true;
+    if (_size == _deleted) return true;
+    else return false;
 }
 
 template<class T>
@@ -700,6 +703,23 @@ bool TVector<T>::operator!=(const TVector<T>& other) const {
 
 template<class T>
 T& TVector<T>::operator[](size_t pos) {
+    if (pos >= _size) {
+        throw std::out_of_range("TVector::operator[]: index out of range");
+    }
+    size_t j = 0;
+    for (size_t i = 0; i < _size + _deleted; i++) {
+        if (_states[i] == busy) {
+            if (j == pos) {
+                return _data[i];
+            }
+            j++;
+        }
+    }
+    throw std::logic_error("TVector::operator[]: element not found");
+}
+
+template<class T>
+const T& TVector<T>::operator[](size_t pos) const {
     if (pos >= _size) {
         throw std::out_of_range("TVector::operator[]: index out of range");
     }

@@ -82,10 +82,22 @@ void read_expression(std::string expression) {
 	for (size_t i = 0; i < expression.length(); i++) {
 		char c = expression[i];
 
-		if (isspace(c)) {
-			continue;
+		if (isspace(c)) continue;
+
+		if (isdigit(c) || c == 'x' || c == 'y') {
+			if (!expect_operand) {
+				throw std::invalid_argument("Missing operator before number!");
+			}
+
+			if (isdigit(c)) {
+				while (i + 1 < expression.length() && isdigit(expression[i + 1])) {
+					i++;
+				}
+			}
+			
+			expect_operand = false;
 		}
-		if (c == '{' || c == '[' || c == '(') {
+		else if (c == '{' || c == '[' || c == '(') {
 			if (!expect_operand) {
 				throw std::invalid_argument("Missing operator before brecket!");
 			}
@@ -93,6 +105,9 @@ void read_expression(std::string expression) {
 			expect_operand = true;
 		}
 		else if (c == '}' || c == ']' || c == ')') {
+			if (expect_operand) {
+				throw std::invalid_argument("Missing operand!");
+			}
 			if (stack.is_empty()) {
 				throw std::invalid_argument("Missing opened brecket!");
 			}
@@ -103,40 +118,20 @@ void read_expression(std::string expression) {
 			stack.pop();
 			expect_operand = false;
 		}
-		else if (c == 'x' || c == 'y') {
-			if (!expect_operand) {
-				throw std::invalid_argument("Missing operator before variable!");
-			}
-			expect_operand = false;
-		}
-		else if (isdigit(c)) {
-			if (!expect_operand) {
-				throw std::invalid_argument("Missing operator before number!");
-			}
-
-			while (i < expression.length() && isdigit(expression[i])) {
-				i++;
-			}
-			i--;
-			expect_operand = false;
-		}
 		else if (c == '+' || c == '-' || c == '*' || c == '^') {
-			if ((expect_operand) && (c == '*' || c == '^')) {
-				throw std::invalid_argument("Invalid unary operator!");
-			}
-			if (c == '^') {
-				size_t j = i + 1;
-				while (j < expression.length() && isspace(expression[j])) {
-					j++;
+			if (expect_operand) {
+				if (c == '-') {
 				}
-				if (j >= expression.length() || !isdigit(expression[j])) {
-					throw std::invalid_argument("Missing second operand in operation ^ !");
+				else {
+					throw std::invalid_argument("Invalid use of binary operator!");
 				}
 			}
-			expect_operand = true;
+			else {
+				expect_operand = true;
+			}
 		}
 		else {
-			throw std::invalid_argument("Invalid character: '" + std::string(1, c) + "'");
+			throw std::invalid_argument("Invalid character detected!");
 		}
 	}
 	if (expect_operand) {
@@ -148,6 +143,8 @@ void read_expression(std::string expression) {
 }
 
 int count_of_islands(Matrix<int>& islands) {
+	if (islands.size() == 0) return 0;
+
 	int rows = islands.size();
 	int cols = islands[0].size();
 	DSU dsu(rows * cols);
@@ -157,20 +154,23 @@ int count_of_islands(Matrix<int>& islands) {
 	int dx[2] = { 1, 0 };
 	int dy[2] = { 0, 1 };
 
-	for (size_t i = 0; i < islands.get_rows(); i++) {
-		for (size_t j = 0; j < islands.get_cols(); j++) {
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
 			if (islands[i][j] == 1) {
-				total_land++;
+				total_land++; 
 				int cur_index = i * cols + j;
 
 				for (int move = 0; move < 2; move++) {
-					int new_rows = i + dx[move];
-					int new_cols = j + dy[move];
+					int new_row = i + dx[move];
+					int new_col = j + dy[move];
 
-					if (new_rows >= 0 && new_rows < rows && new_cols >= 0 && new_cols < cols && islands[new_rows][new_cols] == 1) {
-						int neighbor_index = new_rows * cols + new_cols;
-						dsu.union_dsu(cur_index, neighbor_index);
-						total_land--;
+					if (new_row < rows && new_col < cols && islands[new_row][new_col] == 1) {
+						int neighbor_index = new_row * cols + new_col;
+
+						if (dsu.find(cur_index) != dsu.find(neighbor_index)) {
+							dsu.union_dsu(cur_index, neighbor_index);
+							total_land--;
+						}
 					}
 				}
 			}

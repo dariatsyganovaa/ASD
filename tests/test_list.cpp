@@ -15,7 +15,7 @@ TEST(TestListLib, copy_constructor) {
 
     List<int> list2(list1);
 
-    EXPECT_TRUE(list1.size() == list2.size());
+    EXPECT_TRUE(list1.count() == list2.count());
 
     int i = 1;
     List<int>::Iterator it;
@@ -46,7 +46,7 @@ TEST(TestListLib, push_front_elem) {
     list.push_front(10);
 
     ASSERT_FALSE(list.is_empty());
-    EXPECT_EQ(list.size(), 1);
+    EXPECT_EQ(list.count(), 1);
     EXPECT_NE(list.head(), nullptr);
     EXPECT_EQ(list.head(), list.tail());
     EXPECT_EQ(list.head()->data, 10);
@@ -58,7 +58,7 @@ TEST(TestListLib, push_back_elem) {
     list.push_back(20);
 
     ASSERT_FALSE(list.is_empty());
-    EXPECT_EQ(list.size(), 1);
+    EXPECT_EQ(list.count(), 1);
     EXPECT_NE(list.head(), nullptr);
     EXPECT_EQ(list.head(), list.tail());
     EXPECT_EQ(list.head()->data, 20);
@@ -70,7 +70,7 @@ TEST(TestListLib, push_front_multiple_elems) {
     list.push_front(2);
     list.push_front(1);
 
-    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list.count(), 3);
 
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.head()->next->data, 2);
@@ -79,13 +79,35 @@ TEST(TestListLib, push_front_multiple_elems) {
     EXPECT_EQ(list.tail()->next, nullptr);
 }
 
+TEST(TestListLib, push_pop_front_combination) {
+    List<int> list;
+    list.push_front(3);
+    list.push_front(2);
+    list.push_front(1);
+
+    list.pop_front();
+
+    list.push_front(4);
+
+    EXPECT_EQ(list.count(), 3);
+
+    EXPECT_EQ(list.head()->data, 4);
+    EXPECT_EQ(list.head()->next->data, 2);
+    EXPECT_EQ(list.head()->next->next->data, 3);
+    EXPECT_EQ(list.head()->next->next, list.tail());
+    EXPECT_EQ(list.tail()->next, nullptr);
+}
+
+
 TEST(TestListLib, insert_at_begin) {
     List<int> list;
     list.push_back(20);
     list.push_back(30);
-    list.insert(1, 10);
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 0;
+    list.insert(pos, 10);
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 10);
     EXPECT_EQ(list.head()->next->data, 20);
     EXPECT_EQ(list.tail()->data, 30);
@@ -95,9 +117,11 @@ TEST(TestListLib, insert_at_middle) {
     List<int> list;
     list.push_back(10);
     list.push_back(30);
-    list.insert(2, 20); 
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 1;
+    list.insert(pos, 20); 
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 10);
     EXPECT_EQ(list.head()->next->data, 20);
     EXPECT_EQ(list.tail()->data, 30);
@@ -107,9 +131,11 @@ TEST(TestListLib, insert_at_end) {
     List<int> list;
     list.push_back(10);
     list.push_back(20);
-    list.insert(3, 30);
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 2;
+    list.insert(pos,30);
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.tail()->data, 30);
     EXPECT_EQ(list.head()->next->next, list.tail());
 }
@@ -126,7 +152,7 @@ TEST(TestListLib, pop_front_single_elem) {
     list.push_front(10);
     list.pop_front();
     ASSERT_TRUE(list.is_empty());
-    EXPECT_EQ(list.size(), 0);
+    EXPECT_EQ(list.count(), 0);
     EXPECT_EQ(list.head(), nullptr);
     EXPECT_EQ(list.tail(), nullptr);
 }
@@ -138,7 +164,7 @@ TEST(TestListLib, pop_back_multiple_elems) {
     list.push_back(3); 
     list.pop_back();
 
-    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.tail()->data, 2); 
     EXPECT_EQ(list.tail()->next, nullptr);
@@ -149,9 +175,11 @@ TEST(TestListLib, erase_from_begin) {
     list.push_back(1);
     list.push_back(2);
     list.push_back(3);
-    list.erase(1);
 
-    EXPECT_EQ(list.size(), 2);
+    size_t pos = 0;
+    list.erase(pos);
+
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 2);
     EXPECT_EQ(list.head()->next->data, 3);
     EXPECT_EQ(list.tail()->data, 3);
@@ -163,9 +191,11 @@ TEST(TestListLib, erase_from_middle) {
     list.push_back(2);
     list.push_back(3);
     list.push_back(4);
-    list.erase(2); 
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 1;
+    list.erase(pos);
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.head()->next->data, 3); 
     EXPECT_EQ(list.tail()->data, 4);
@@ -176,9 +206,11 @@ TEST(TestListLib, erase_from_end) {
     list.push_back(1);
     list.push_back(2);
     list.push_back(3); 
-    list.erase(3); 
+    
+    size_t pos = 2;
+    list.erase(pos);
 
-    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.tail()->data, 2);
     EXPECT_EQ(list.tail()->next, nullptr);
@@ -232,8 +264,6 @@ TEST(TestListLib, iterator_in_empty_list) {
     List<int>::Iterator it;
 
     for (it = list.begin(); it != list.end(); it++) {
-        EXPECT_NO_THROW(*it);
+        ADD_FAILURE();
     }
-
-    EXPECT_TRUE(list.begin() == list.end());
 }

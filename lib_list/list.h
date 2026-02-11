@@ -1,7 +1,6 @@
 #ifndef LIB_LIST_LIST_H_
 #define LIB_LIST_LIST_H_
 
-#pragma once
 #include "..\lib_list\list.h"
 #include <stdexcept>
 
@@ -16,11 +15,10 @@ struct Node {
 template<class T>
 class List {
 	Node<T>* _head, * _tail;
-	size_t _size; 
+	size_t _count; 
 
 public:
 	List();
-	List(size_t size);
 	List(const List<T>&);
 	~List();
 
@@ -69,7 +67,7 @@ public:
 	
 	Node<T>* head() const;
 	Node<T>* tail() const;
-	size_t size() const;
+	size_t count() const;
 
 	bool is_empty() const;
 
@@ -86,13 +84,10 @@ public:
 
 
 template <class T>
-List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {}
+List<T>::List() : _head(nullptr), _tail(nullptr), _count(0) {}
 
 template <class T>
-List<T>::List(size_t size) : _head(nullptr), _tail(nullptr), _size(size) {}
-
-template <class T>
-List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _size(0) {
+List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _count(0) {
 	if (other.is_empty()) {
 		return;
 	}
@@ -115,7 +110,7 @@ List<T>::~List() {
 		cur = next_node;
 	}
 	_head = _tail = nullptr;
-	_size = 0;
+	_count = 0;
 }
 
 template <class T>
@@ -129,13 +124,13 @@ Node<T>* List<T>::tail() const {
 }
 
 template <class T>
-size_t List<T>::size() const {
-	return _size;
+size_t List<T>::count() const {
+	return _count;
 }
 
 template <class T>
 bool List<T>::is_empty() const {
-	return _size == 0;
+	return _count == 0;
 }
 
 template <class T>
@@ -144,12 +139,12 @@ void List<T>::push_front(const T& value) noexcept {
 	if (is_empty()) {
 		_head = node;
 		_tail = node;
-		_size++;
+		_count++;
 		return;
 	}
 	node->next = _head;
 	_head = node;
-	_size++;
+	_count++;
 }
 
 template <class T>
@@ -158,12 +153,12 @@ void List<T>::push_back(const T& value) noexcept {
 	if (is_empty()) {
 		_head = node;
 		_tail = node;
-		_size++;
+		_count++;
 		return;
 	}
 	_tail->next = node;
 	_tail = node;
-	_size++;
+	_count++;
 }
 
 template <class T>
@@ -183,34 +178,34 @@ void List<T>::insert(Node<T>* node, const T& value) {
 	if (node == _tail) {
 		_tail = new_node;
 	}
-	_size++;
+	_count++;
 }
 
 template <class T>
 void List<T>::insert(size_t pos, const T& value) {
-	if (pos > _size + 1 || pos < 1) {
+	if (pos > _count || pos < 0) {
 		throw std::out_of_range("Position is out of bounds!");
 	}
 
-	if (pos == 1) {
+	if (pos == 0) {
 		push_front(value);
 		return;
 	}
 
-	if (pos == _size + 1) {
+	if (pos == _count) {
 		push_back(value);
 		return;
 	}
 
 	Node<T>* cur = _head;
-	for (size_t i = 1; i < pos - 1; i++) {
+	for (size_t i = 0; i < pos - 1; i++) {
 		cur = cur->next;
 	}
 
 	Node<T>* new_node = new Node<T>(value);
 	new_node->next = cur->next;
 	cur->next = new_node;
-	_size++;
+	_count++;
 }
 
 template <class T>
@@ -223,7 +218,7 @@ void List<T>::pop_back() {
 		delete _head;
 		_head = nullptr;
 		_tail = nullptr;
-		_size = 0;
+		_count = 0;
 		return;
 	}
 
@@ -238,7 +233,7 @@ void List<T>::pop_back() {
 	_tail->next = nullptr;
 
 	delete old_tail;
-	_size--;
+	_count--;
 }
 
 template <class T>
@@ -254,7 +249,7 @@ void List<T>::pop_front() {
 	if (_head == nullptr) {
 		_tail = nullptr;
 	}
-	_size--;
+	_count--;
 }
 
 template <class T>
@@ -288,7 +283,7 @@ void List<T>::erase(Node<T>* node) {
 	}
 
 	delete node;
-	_size--;
+	_count--;
 }
 
 template <class T>
@@ -296,22 +291,22 @@ void List<T>::erase(size_t pos) {
 	if (is_empty()) {
 		throw std::out_of_range("List is empty!");
 	}
-	if (pos > _size || pos < 1) {
+	if (pos >= _count || pos < 0) {
 		throw std::out_of_range("Position is out of bounds!");
 	}
 
-	if (pos == 1) {
+	if (pos == 0) {
 		pop_front();
 		return;
 	}
 
-	if (pos == _size) {
+	if (pos == _count - 1) {
 		pop_back();
 		return;
 	}
 
 	Node<T>* cur = _head;
-	for (size_t i = 1; i < pos - 1; i++) {
+	for (size_t i = 0; i < pos - 1; i++) {
 		cur = cur->next;
 	}
 
@@ -323,7 +318,7 @@ void List<T>::erase(size_t pos) {
 	}
 
 	delete to_delete;
-	_size--;
+	_count--;
 }
 
 #endif //LIB_LIST_LIST_H_

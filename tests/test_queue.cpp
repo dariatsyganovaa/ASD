@@ -54,14 +54,6 @@ TEST(TestQueueLib, pop_elem) {
     EXPECT_FALSE(queue.is_full());
 }
 
-TEST(TestQueueLib, try_pop_elem_from_an_empty_queue) {
-    Queue<int> queue(3);
-
-    ASSERT_ANY_THROW(queue.pop());
-    EXPECT_FALSE(queue.is_full());
-    EXPECT_TRUE(queue.is_empty());
-}
-
 TEST(TestQueueLib, tail_elem) {
     Queue<int> queue(6);
     queue.push(1); queue.push(2); queue.push(3);
@@ -91,19 +83,13 @@ TEST(TestQueueLib, head_elem) {
     EXPECT_EQ(queue.head(), 3);
 }
 
-TEST(TestQueueLib, try_head_elem_from_an_empty_queue) {
+TEST(TestQueueLib, try_actions_from_an_empty_queue) {
     Queue<int> queue(3);
 
+    ASSERT_ANY_THROW(queue.pop());
     ASSERT_ANY_THROW(queue.head());
     EXPECT_FALSE(queue.is_full());
     EXPECT_TRUE(queue.is_empty());
-}
-
-TEST(TestQueueLib, the_queue_is_empty) {
-    Queue<int> queue(15);
-
-    EXPECT_TRUE(queue.is_empty());
-    EXPECT_FALSE(queue.is_full());
 }
 
 TEST(TestQueueLib, the_queue_is_not_empty) {

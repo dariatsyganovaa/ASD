@@ -15,7 +15,7 @@ TEST(TestLinkedListLib, copy_constructor) {
 
     LinkedList<int> list2(list1);
 
-    EXPECT_TRUE(list1.size() == list2.size());
+    EXPECT_TRUE(list1.count() == list2.count());
 
     int i = 1;
     LinkedList<int>::Iterator it;
@@ -42,7 +42,7 @@ TEST(TestLinkedListLib, push_front_elem) {
     list.push_front(10);
 
     EXPECT_FALSE(list.is_empty());
-    EXPECT_EQ(list.size(), 1);
+    EXPECT_EQ(list.count(), 1);
     EXPECT_NE(list.head(), nullptr);
 
     EXPECT_EQ(list.head()->next, nullptr);
@@ -58,7 +58,7 @@ TEST(TestLinkedListLib, push_back_elem) {
     list.push_back(20);
 
     EXPECT_FALSE(list.is_empty());
-    EXPECT_EQ(list.size(), 1);
+    EXPECT_EQ(list.count(), 1);
     EXPECT_NE(list.head(), nullptr);
 
     EXPECT_EQ(list.head()->next, nullptr);
@@ -74,7 +74,7 @@ TEST(TestLinkedListLib, push_front_multiple_elems) {
     list.push_front(2);
     list.push_front(1);
 
-    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list.count(), 3);
 
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.head()->next->data, 2);
@@ -102,7 +102,7 @@ TEST(TestLinkedListLib, insert_at_middle_with_node) {
         i++;
     }
 
-    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(node->next->data, 2);
     EXPECT_EQ(node->prev, nullptr);
@@ -113,9 +113,11 @@ TEST(TestLinkedListLib, insert_at_begin_with_pos) {
     LinkedList<int> list;
     list.push_back(20);
     list.push_back(30);
-    list.insert(1, 10);
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 0;
+    list.insert(pos, 10); 
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 10);
     EXPECT_EQ(list.head()->next->data, 20);
     EXPECT_EQ(list.tail()->data, 30);
@@ -126,9 +128,11 @@ TEST(TestLinkedListLib, insert_at_middle_with_pos) {
     LinkedList<int> list;
     list.push_back(10);
     list.push_back(30);
-    list.insert(2, 20);
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 1;
+    list.insert(pos, 20);
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 10);
     EXPECT_EQ(list.head()->next->data, 20);
     EXPECT_EQ(list.tail()->data, 30);
@@ -139,9 +143,11 @@ TEST(TestLinkedListLib, insert_at_end_with_pos) {
     LinkedList<int> list;
     list.push_back(10);
     list.push_back(20);
-    list.insert(3, 30);
 
-    EXPECT_EQ(list.size(), 3);
+    size_t pos = 2;
+    list.insert(pos, 30);
+
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.tail()->data, 30);
     EXPECT_EQ(list.head()->next->next, list.tail());
 }
@@ -167,7 +173,7 @@ TEST(TestLinkedListLib, pop_front_elem) {
     list.pop_front();
 
     EXPECT_TRUE(list.is_empty());
-    EXPECT_EQ(list.size(), 0);
+    EXPECT_EQ(list.count(), 0);
     EXPECT_EQ(list.head(), nullptr);
     EXPECT_EQ(list.head(), list.tail());
 }
@@ -180,7 +186,7 @@ TEST(TestLinkedListLib, pop_back_elem) {
     list.pop_back();
 
     EXPECT_FALSE(list.is_empty());
-    EXPECT_EQ(list.size(), 1);
+    EXPECT_EQ(list.count(), 1);
     EXPECT_NE(list.tail(), nullptr);
 
     EXPECT_EQ(list.head()->next, nullptr);
@@ -198,7 +204,7 @@ TEST(TestLinkedListLib, pop_back_multiple_elems) {
     list.push_back(4);
     list.pop_back();
 
-    EXPECT_EQ(list.size(), 3);
+    EXPECT_EQ(list.count(), 3);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.tail()->prev->data, 2);
     EXPECT_EQ(list.tail()->data, 3);
@@ -215,7 +221,7 @@ TEST(TestLinkedListLib, erase_from_middle_with_node) {
     Node<int>* node = list.head()->next;
     list.erase(node);
 
-    EXPECT_EQ(list.size(), 2);
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.head()->next->data, 3);
     EXPECT_EQ(list.tail()->prev, list.head());
@@ -227,9 +233,11 @@ TEST(TestLinkedListLib, erase_from_begin_with_pos) {
     list.push_back(1);
     list.push_back(2);
     list.push_back(3);
-    list.erase(1);
 
-    EXPECT_EQ(list.size(), 2);
+    size_t pos = 0;
+    list.erase(pos);
+
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 2);
     EXPECT_EQ(list.head()->next->data, 3);
     EXPECT_EQ(list.tail()->prev, list.head());
@@ -241,9 +249,11 @@ TEST(TestLinkedListLib, erase_from_middle_with_pos) {
     list.push_back(1);
     list.push_back(2);
     list.push_back(3);
-    list.erase(2);
 
-    EXPECT_EQ(list.size(), 2);
+    size_t pos = 1;
+    list.erase(pos);
+
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.head()->next->data, 3);
     EXPECT_EQ(list.tail()->prev, list.head());
@@ -255,9 +265,11 @@ TEST(TestLinkedListLib, erase_from_end_with_pos) {
     list.push_back(1);
     list.push_back(2);
     list.push_back(3);
-    list.erase(3);
 
-    EXPECT_EQ(list.size(), 2);
+    size_t pos = 2;
+    list.erase(pos);
+
+    EXPECT_EQ(list.count(), 2);
     EXPECT_EQ(list.head()->data, 1);
     EXPECT_EQ(list.tail()->data, 2);
     EXPECT_EQ(list.tail()->prev, list.head());
@@ -311,8 +323,21 @@ TEST(TestLinkedListLib, iterator_in_empty_list) {
     LinkedList<int>::Iterator it;
 
     for (it = list.begin(); it != list.end(); it++) {
-        EXPECT_NO_THROW(*it);
+        ADD_FAILURE();
     }
+}
 
-    EXPECT_TRUE(list.begin() == list.end());
+TEST(TestLinkedListLib, back_iterator_list) {
+    LinkedList<int> list;
+
+    for (int i = 0; i < 10; i++)
+        list.push_back(i * 3 + 1);
+
+    LinkedList<int>::Iterator it;
+
+    int i = 9;
+    for (it = list.rbegin(); it != list.rend(); it--) {
+        EXPECT_EQ(*it, i * 3 + 1);
+        i--;
+    }
 }

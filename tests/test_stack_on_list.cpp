@@ -91,3 +91,14 @@ TEST(TestStackOnListLib, clear_the_stack) {
     EXPECT_TRUE(stack.is_empty());
     ASSERT_NO_THROW(stack.push(1));
 }
+
+TEST(TestStackOnListLib, try_push_elem_onto_an_overflowing_stack) {
+    StackOnList<int> stack(15);
+    stack.push(1); stack.push(2); stack.push(3);
+    stack.push(4); stack.push(5); stack.push(6);
+    stack.push(7); stack.push(8); stack.push(9);
+    stack.push(10); stack.push(11); stack.push(12);
+    stack.push(13); stack.push(14); stack.push(15);
+
+    ASSERT_ANY_THROW(stack.push(16));
+}

@@ -100,3 +100,17 @@ TEST(TestDSULib, find_rec) {
     EXPECT_EQ(root, 0);
     EXPECT_EQ(dsu.parent()[3], 0);
 }
+
+TEST(TestDSULib, union_rank) {
+    DSU dsu(4);
+
+    dsu.union_dsu(0, 1);
+    dsu.union_dsu(2, 3);
+    dsu.union_dsu(0, 2);
+
+    EXPECT_EQ(0, dsu.find(0));
+    EXPECT_EQ(0, dsu.find(1));
+    EXPECT_EQ(0, dsu.find(2));
+    EXPECT_EQ(2, dsu.parent()[3]);
+    EXPECT_EQ(2, dsu.rank()[0]);
+}
