@@ -1,6 +1,9 @@
 #ifndef LIB_LEXEM_LEXEM_H_
 #define LIB_LEXEM_LEXEM_H_
 
+#include <string>
+#include <stdexcept>
+
 enum TypeLexem { Constant, Variable, OpenBracket, ClosedBracket, Function, Operator, UnOperator, OpenedAbs, ClosedAbs };
 
 struct Lexem {

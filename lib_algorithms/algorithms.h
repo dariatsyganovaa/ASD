@@ -3,18 +3,13 @@
 
 #include <iostream>
 #include <cstddef>
-#include "../lib_matrix/matrix.h"
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
 #include "../lib_dsu/dsu.h"
 
-int local_minimum_of_a_matrix(Matrix<int>& matrix);
-
 bool check_breckets(std::string str);
 
 void read_expression(std::string expression);
-
-int count_of_islands(Matrix<int>& islands);
 
 template <class T>
 bool is_looped_rabbit_turtle(List<T>* list) {

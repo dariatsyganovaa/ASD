@@ -3,53 +3,6 @@
 #include <cctype>
 #include "../lib_algorithms/algorithms.h"
 
-int local_minimum_of_a_matrix(Matrix<int>& matrix) {
-	int rows = matrix.get_rows();
-	int cols = matrix.get_cols();
-
-	if (rows != cols) {
-		throw std::invalid_argument("The matrix must be square!");
-	}
-
-	int random_rows = rand() % rows;
-	int random_cols = rand() % cols;
-
-	int dx[4] = { -1, 1, 0, 0 };
-	int dy[4] = { 0, 0, -1, 1 };
-
-	while (1) {
-		int rand_val = matrix[random_rows][random_cols];
-
-		bool found_better = false;
-		int best_row = random_rows;
-		int best_col = random_cols;
-		int best_val = rand_val;
-
-		for (int move = 0; move < 4; move++) {
-			int new_rows = random_rows + dx[move];
-			int new_cols = random_cols + dy[move];
-
-			if (new_rows >= 0 && new_rows < rows && new_cols >= 0 && new_cols < cols) {
-				int neighbor_val = matrix[new_rows][new_cols];
-
-				if (neighbor_val < rand_val) {
-					best_val = neighbor_val;
-					best_row = new_rows;
-					best_col = new_cols;
-					found_better = true;
-					break;
-				}
-			}
-		}
-		if (!found_better) {
-			return rand_val;
-		}
-		
-		random_rows = best_row;
-		random_cols = best_col;
-	}
-}
-
 bool check_breckets(std::string str) {
 	Stack<char> stack(str.length());
 	for (size_t i = 0; i < str.length(); i++) {
@@ -140,41 +93,4 @@ void read_expression(std::string expression) {
 	if (!stack.is_empty()) {
 		throw std::invalid_argument("Unclosed brecket!");
 	}
-}
-
-int count_of_islands(Matrix<int>& islands) {
-	if (islands.size() == 0) return 0;
-
-	int rows = islands.size();
-	int cols = islands[0].size();
-	DSU dsu(rows * cols);
-
-	int total_land = 0;
-
-	int dx[2] = { 1, 0 };
-	int dy[2] = { 0, 1 };
-
-	for (size_t i = 0; i < rows; i++) {
-		for (size_t j = 0; j < cols; j++) {
-			if (islands[i][j] == 1) {
-				total_land++; 
-				int cur_index = i * cols + j;
-
-				for (int move = 0; move < 2; move++) {
-					int new_row = i + dx[move];
-					int new_col = j + dy[move];
-
-					if (new_row < rows && new_col < cols && islands[new_row][new_col] == 1) {
-						int neighbor_index = new_row * cols + new_col;
-
-						if (dsu.find(cur_index) != dsu.find(neighbor_index)) {
-							dsu.union_dsu(cur_index, neighbor_index);
-							total_land--;
-						}
-					}
-				}
-			}
-		}
-	}
-	return total_land;
 }
