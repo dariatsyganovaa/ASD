@@ -11,16 +11,13 @@ class Polynom {
 public:
     Polynom() = default;
     Polynom(const TVector<Monom>& m) : monoms(m) {
-        // В реальной жизни тут должна быть нормализация (сложение подобных)
     }
 
-    // Метод добавления монома (упрощенный)
     void addMonom(double c, int d) {
-        if (std::abs(c) < 1e-10) return; // Нулевые коэффициенты не храним
+        if (std::abs(c) < 1e-10) return;
         monoms.push_back_elem(Monom(c, d));
     }
 
-    // Оператор сравнения для gtest (важно!)
     bool operator==(const Polynom& other) const {
         if (monoms.size() != other.monoms.size()) return false;
         for (size_t i = 0; i < monoms.size(); ++i) {
@@ -29,7 +26,6 @@ public:
         return true;
     }
 
-    // Оператор вывода для работы оператора << таблицы
     friend std::ostream& operator<<(std::ostream& out, const Polynom& p) {
         if (p.monoms.is_empty()) {
             out << "0";
