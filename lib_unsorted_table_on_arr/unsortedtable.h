@@ -31,7 +31,7 @@ bool UnsortedTableM<TKey, TValue>::is_empty() const noexcept { return _rows.is_e
 
 template <class TKey, class TValue>
 void UnsortedTableM<TKey, TValue>::insert(const TKey& key, const TValue& value) {
-	for (size_t i = 0; i < _rows.size(); ++i) {
+	for (size_t i = 0; i < _rows.size(); i++) {
 		if (_rows[i].first == key) {
 			throw std::logic_error("UnsortedTableM::insert: the keys must be unique! ");
 		}
