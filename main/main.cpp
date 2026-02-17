@@ -5,6 +5,7 @@
 #include <iomanip>
 
 int main() {
+
 }
 
 #endif  // EASY_EXAMPLE

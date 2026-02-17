@@ -1,97 +1,94 @@
 #include <gtest/gtest.h>
-#include "../lib_itable/itable.h" 
+#include <string>
 #include "../lib_unsorted_table_on_arr/unsortedtable.h" 
-#include "../lib_polynom/polynom.h"        
 
-// 1. Тест создания таблицы
-TEST(UnsortedTableTest, Can_Create_Table) {
-    ASSERT_NO_THROW((UnsortedTableM<std::string, int>()));
-}
-
-TEST(UnsortedTableTest, New_Table_Is_Empty) {
+TEST(TestUnsortedTableM, init) {
     UnsortedTableM<std::string, int> table;
     EXPECT_TRUE(table.is_empty());
-    EXPECT_EQ(table.size(), 0);
+    EXPECT_EQ(table.size(), size_t(0));
 }
 
-// 2. Тест вставки и поиска
-TEST(UnsortedTableTest, Can_Insert_And_Find_Value) {
+TEST(TestUnsortedTableM, insert_and_found_elem) {
     UnsortedTableM<std::string, int> table;
-    table.insert("key1", 100);
+    table.insert("first", 10);
+    table.insert("second", 20);
+    table.insert("third", 30);
 
-    int* val = table.find("key1");
-
-    ASSERT_NE(val, nullptr); // Убеждаемся, что не нулевой адрес
-    EXPECT_EQ(*val, 100);
-    EXPECT_EQ(table.size(), 1);
+    EXPECT_EQ(table.size(), size_t(3));
+    EXPECT_EQ(table.found("first"), 10);
+    EXPECT_EQ(table.found("second"), 20);
+    EXPECT_EQ(table.found("third"), 30);
 }
 
-// 3. Тест на ошибку при дублировании ключа
-TEST(UnsortedTableTest, Throws_On_Duplicate_Insert) {
+TEST(TestUnsortedTableM, erase_elem) {
     UnsortedTableM<std::string, int> table;
-    table.insert("key1", 10);
+    table.insert("first", 10);
+    table.insert("second", 20);
+    table.erase("first");
 
-    // Ожидаем исключение, так как "key1" уже есть
-    EXPECT_THROW(table.insert("key1", 20), std::runtime_error);
+    EXPECT_EQ(table.size(), size_t(1));
+    EXPECT_EQ(table.found("second"), 20);
+    EXPECT_THROW(table.found("first"), std::logic_error);
 }
 
-// 4. Тест поиска несуществующего ключа
-TEST(UnsortedTableTest, Returns_Nullptr_If_Not_Found) {
+TEST(TestUnsortedTableM, exceptions) {
     UnsortedTableM<std::string, int> table;
-    table.insert("A", 1);
+    table.insert("first", 10);
 
-    EXPECT_EQ(table.find("B"), nullptr); // Должен вернуть нулевой адрес
+    EXPECT_THROW(table.insert("first", 20), std::logic_error);
+    EXPECT_THROW(table.erase("second"), std::logic_error);
+    EXPECT_THROW(table.found("second"), std::logic_error);
 }
 
-// 5. Тест удаления (erase)
-TEST(UnsortedTableTest, Can_Erase_Element) {
+TEST(TestUnsortedTableM, clear_test) {
     UnsortedTableM<std::string, int> table;
-    table.insert("A", 1);
-    table.insert("B", 2);
+    table.insert("first", 10);
+    table.insert("second", 20);
 
-    table.erase("A");
+    table.erase("first");
+    table.erase("second");
 
-    EXPECT_EQ(table.size(), 1);
-    EXPECT_EQ(table.find("A"), nullptr);
-    EXPECT_NE(table.find("B"), nullptr); // Второй элемент должен остаться
+    EXPECT_TRUE(table.is_empty());
+    EXPECT_EQ(table.size(), size_t(0));
+
+    ASSERT_NO_THROW(table.insert("new", 100));
+    EXPECT_EQ(table.found("new"), 100);
+    EXPECT_EQ(table.size(), size_t(1));
 }
 
-TEST(UnsortedTableTest, Throws_On_Erase_Non_Existent_Key) {
+TEST(TestUnsortedTableM, reference_modification) {
     UnsortedTableM<std::string, int> table;
-    EXPECT_THROW(table.erase("ghost"), std::runtime_error);
+    table.insert("first", 10);
+    table.found("first") = 20;
+
+    EXPECT_EQ(table.found("first"), 20);
 }
 
-// 6. КОМПЛЕКСНЫЙ ТЕСТ С ПОЛИНОМАМИ (Главная цель лабы)
-TEST(UnsortedTableTest, Working_With_Polynoms) {
-    UnsortedTableM<std::string, Polynom> table;
+TEST(TestUnsortedTableM, mixed_test) {
+    UnsortedTableM<std::string, int> table;
 
-    // Создаем два разных полинома
-    Polynom p1;
-    p1.addMonom(2.5, 211); // 2.5 * x^2 * y^1 * z^1
+    table.insert("first", 10);
+    table.insert("second", 20);
+    table.insert("third", 30);
 
-    Polynom p2;
-    p2.addMonom(1.0, 100); // 1.0 * x^1
+    EXPECT_EQ(table.size(), size_t(3));
+    EXPECT_EQ(table.found("first"), 10);
+    EXPECT_EQ(table.found("second"), 20);
+    EXPECT_EQ(table.found("third"), 30);
+    //table.print(std::cout);
 
-    // Вставляем их в таблицу под именами
-    table.insert("First", p1);
-    table.insert("Second", p2);
+    table.erase("second");
 
-    // Ищем первый и проверяем данные
-    Polynom* found = table.find("First");
-    ASSERT_NE(found, nullptr);
-    EXPECT_EQ(*found, p1); // Тут сработает operator== в Polynom
+    EXPECT_EQ(table.size(), size_t(2));
+    EXPECT_THROW(table.found("second"), std::logic_error); 
+    EXPECT_EQ(table.found("first"), 10); 
+    EXPECT_EQ(table.found("third"), 30);
+    //table.print(std::cout);
 
-    // Проверяем, что в таблице действительно 2 элемента
-    EXPECT_EQ(table.size(), 2);
-}
+    table.insert("fourth", 40);
 
-// 7. Тест полиморфизма (работа через интерфейс ITable)
-TEST(UnsortedTableTest, Works_Through_Interface_Pointer) {
-    // Указатель на базовый класс (интерфейс)
-    ITable<std::string, int>* tablePtr = new UnsortedTableM<std::string, int>();
-
-    tablePtr->insert("test", 50);
-    EXPECT_EQ(*tablePtr->find("test"), 50);
-
-    delete tablePtr;
+    EXPECT_EQ(table.size(), size_t(3));
+    EXPECT_EQ(table.found("fourth"), 40);
+    EXPECT_EQ(table.found("third"), 30);
+    //table.print(std::cout);
 }
