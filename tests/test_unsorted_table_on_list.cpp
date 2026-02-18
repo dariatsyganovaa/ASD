@@ -8,6 +8,16 @@ TEST(TestUnsortedTableOnList, init) {
     EXPECT_EQ(table.size(), size_t(0));
 }
 
+TEST(TestUnsortedTableOnList, insert_into_empty) {
+    UnsortedTableOnList<std::string, int> table;
+    EXPECT_TRUE(table.is_empty());
+
+    table.insert("first", 10);
+
+    EXPECT_FALSE(table.is_empty());
+    EXPECT_EQ(table.size(), size_t(1));
+}
+
 TEST(TestUnsortedTableOnList, insert_and_found_elem) {
     UnsortedTableOnList<std::string, int> table;
     table.insert("first", 10);
@@ -20,6 +30,16 @@ TEST(TestUnsortedTableOnList, insert_and_found_elem) {
     EXPECT_EQ(table.found("third"), 30);
 }
 
+TEST(TestUnsortedTableOnList, try_insert_duplicate) {
+    UnsortedTableOnList<std::string, int> table;
+    table.insert("first", 10);
+
+    ASSERT_THROW(table.insert("first", 20), std::logic_error);
+
+    EXPECT_EQ(table.size(), size_t(1));
+    EXPECT_FALSE(table.is_empty());
+}
+
 TEST(TestUnsortedTableOnList, erase_elem) {
     UnsortedTableOnList<std::string, int> table;
     table.insert("first", 10);
@@ -29,6 +49,15 @@ TEST(TestUnsortedTableOnList, erase_elem) {
     EXPECT_EQ(table.size(), size_t(1));
     EXPECT_EQ(table.found("second"), 20);
     EXPECT_THROW(table.found("first"), std::logic_error);
+}
+
+TEST(TestUnsortedTableOnList, erase_last_elem) {
+    UnsortedTableOnList<std::string, int> table;
+    table.insert("first", 10);
+    table.erase("first");
+
+    EXPECT_EQ(table.size(), size_t(0));
+    EXPECT_TRUE(table.is_empty());
 }
 
 TEST(TestUnsortedTableOnList, exceptions) {
@@ -75,7 +104,7 @@ TEST(TestUnsortedTableOnList, mixed_test) {
     EXPECT_EQ(table.found("first"), 10);
     EXPECT_EQ(table.found("second"), 20);
     EXPECT_EQ(table.found("third"), 30);
-    //table.print(std::cout);
+    //std::cout << table;
 
     table.erase("second");
 
@@ -83,12 +112,12 @@ TEST(TestUnsortedTableOnList, mixed_test) {
     EXPECT_THROW(table.found("second"), std::logic_error); 
     EXPECT_EQ(table.found("first"), 10); 
     EXPECT_EQ(table.found("third"), 30);
-    //table.print(std::cout);
+    //std::cout << table;
 
     table.insert("fourth", 40);
 
     EXPECT_EQ(table.size(), size_t(3));
     EXPECT_EQ(table.found("fourth"), 40);
     EXPECT_EQ(table.found("third"), 30);
-    //table.print(std::cout);
+    //std::cout << table;
 }

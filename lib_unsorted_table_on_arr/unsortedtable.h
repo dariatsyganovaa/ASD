@@ -41,17 +41,6 @@ void UnsortedTableM<TKey, TValue>::insert(const TKey& key, const TValue& value) 
 
 template <class TKey, class TValue>
 void UnsortedTableM<TKey, TValue>::erase(const TKey& key) { 
-	/*int index = -1;
-	for (size_t i = 0; i < _rows.size(); i++) {
-		if (_rows[i].first == key) {
-			index = i;
-			break;
-		}
-	}
-	if (index == -1) {
-		throw std::logic_error("UnsortedTableM::erase: the key not found! ");
-	}
-	_rows.erase_elem(index);*/
 	for (size_t i = 0; i < _rows.size(); i++) {
 		if (_rows[i].first == key) {
 			_rows.erase_elem(i);
