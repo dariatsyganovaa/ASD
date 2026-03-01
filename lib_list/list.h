@@ -89,6 +89,8 @@ public:
 	void pop_front();
 	void erase(size_t pos);
 	void erase(Node<T>* node);
+
+	T& operator[](size_t pos);
 };
 
 
@@ -328,6 +330,29 @@ void List<T>::erase(size_t pos) {
 
 	delete to_delete;
 	_count--;
+}
+
+template <class T>
+T& List<T>::operator[](size_t pos) {
+	if (pos > _count || pos < 0) {
+		throw std::out_of_range("Position is out of bounds!");
+	}
+
+	if (pos == 0) {
+		push_front(value);
+		return;
+	}
+
+	if (pos == _count) {
+		push_back(value);
+		return;
+	}
+
+	Node<T>* cur = _head;
+	for (size_t i = 0; i < pos - 1; i++) {
+		cur = cur->next;
+	}
+	return cur[pos];
 }
 
 #endif //LIB_LIST_LIST_H_

@@ -23,12 +23,16 @@ TEST(TestSortedTableM, insert_and_found_elem) {
     table.insert("b", 1);
     table.insert("a", 3);
     table.insert("d", 2);
-    std::cout << table;
+
+    std::string expect_keys[] = {"a", "b", "d"};
+    int expect_values[] = {3, 1, 2};
+
+    for (int i = 0; i < table.size(); i++) {
+        EXPECT_EQ(table.get_key(i), expect_keys[i]);
+        EXPECT_EQ(table[i], expect_values[i]);
+    }
 
     EXPECT_EQ(table.size(), size_t(3));
-    EXPECT_EQ(table.found("b"), 1);
-    EXPECT_EQ(table.found("d"), 2);
-    EXPECT_EQ(table.found("a"), 3);
 }
 
 TEST(TestSortedTableM, try_insert_duplicate) {
@@ -45,11 +49,18 @@ TEST(TestSortedTableM, erase_elem) {
     SortedTableM<std::string, int> table;
     table.insert("first", 10);
     table.insert("second", 20);
+    table.insert("zero", 0);
     table.erase("first");
 
-    std::cout << table;
-    EXPECT_EQ(table.size(), size_t(1));
-    EXPECT_EQ(table.found("second"), 20);
+    std::string expect_keys[] = { "second", "zero" };
+    int expect_values[] = { 20, 0 };
+
+    for (int i = 0; i < table.size(); i++) {
+        EXPECT_EQ(table.get_key(i), expect_keys[i]);
+        EXPECT_EQ(table[i], expect_values[i]);
+    }
+
+    EXPECT_EQ(table.size(), size_t(2));
     EXPECT_THROW(table.found("first"), std::logic_error);
 }
 
@@ -102,24 +113,38 @@ TEST(TestSortedTableM, mixed_test) {
     table.insert("ab", 20);
     table.insert("abcd", 30);
 
+    std::string expect_keys1[] = { "ab", "abc", "abcd" };
+    int expect_values1[] = { 20, 10, 30 };
+
+    for (int i = 0; i < table.size(); i++) {
+        EXPECT_EQ(table.get_key(i), expect_keys1[i]);
+        EXPECT_EQ(table[i], expect_values1[i]);
+    }
+
     EXPECT_EQ(table.size(), size_t(3));
-    EXPECT_EQ(table.found("abc"), 10);
-    EXPECT_EQ(table.found("ab"), 20);
-    EXPECT_EQ(table.found("abcd"), 30);
-    std::cout << table;
 
     table.erase("ab");
 
+    std::string expect_keys2[] = { "abc", "abcd" };
+    int expect_values2[] = { 10, 30 };
+
+    for (int i = 0; i < table.size(); i++) {
+        EXPECT_EQ(table.get_key(i), expect_keys2[i]);
+        EXPECT_EQ(table[i], expect_values2[i]);
+    }
+
     EXPECT_EQ(table.size(), size_t(2));
     EXPECT_THROW(table.found("ab"), std::logic_error);
-    EXPECT_EQ(table.found("abc"), 10);
-    EXPECT_EQ(table.found("abcd"), 30);
-    std::cout << table;
 
     table.insert("a", 40);
 
+    std::string expect_keys3[] = { "a", "abc", "abcd" };
+    int expect_values3[] = { 40, 10, 30 };
+
+    for (int i = 0; i < table.size(); i++) {
+        EXPECT_EQ(table.get_key(i), expect_keys3[i]);
+        EXPECT_EQ(table[i], expect_values3[i]);
+    }
+
     EXPECT_EQ(table.size(), size_t(3));
-    EXPECT_EQ(table.found("a"), 40);
-    EXPECT_EQ(table.found("abcd"), 30);
-    std::cout << table;
 }

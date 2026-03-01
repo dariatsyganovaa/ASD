@@ -21,6 +21,8 @@ public:
 	TValue& found(const TKey& key) override;
 
 	void print(std::ostream& out) const override;
+	TValue& operator[](size_t pos);
+	TKey get_key(size_t pos) const;
 
 private:
 	int binary_search(const TKey& key) const;
@@ -78,6 +80,22 @@ void SortedTableM<TKey, TValue>::print(std::ostream& out) const {
 	for (size_t i = 0; i < _rows.size(); i++) {
 		out << "| " << _rows[i].first << " | " << _rows[i].second << " |" << "\n";
 	}
+}
+
+template<class TKey, class TValue>
+TValue& SortedTableM<TKey, TValue>::operator[](size_t pos) {
+	if (pos >= _rows.size()) {
+		throw std::out_of_range("SortedTableM::operator[]: index out of range");
+	}
+	return _rows[pos].second;
+}
+
+template<class TKey, class TValue>
+TKey SortedTableM<TKey, TValue>::get_key(size_t pos) const { 
+	if (pos >= _rows.size()) {
+		throw std::out_of_range("SortedTableM::operator[]: index out of range");
+	}
+	return _rows[pos].first;
 }
 
 template<class TKey, class TValue>
