@@ -6,20 +6,23 @@
 #include "../lib_skiplist/skiplist.h"
 
 int main() {
-    SkipList<int, std::string> sl(8); 
+    /*SkipList<std::string, int> list(8);
 
-    sl.insert(5, "five");
-    sl.insert(2, "two");
-    sl.insert(8, "eight");
-    sl.insert(1, "one");
-    sl.insert(7, "seven");
+    list.insert("five", 5);
+    list.insert("two", 2);
+    list.insert("eight", 8);
+    list.insert("one", 1);
+    list.insert("seven", 7);*/
 
-    sl.print();
+    SkipList<int, std::string> list(8);
 
-    std::string* val = &sl.found_pos(7);
-    if (val != nullptr) {
-        std::cout << "found: " << *val << "\n";
-    }
+    list.insert(5, "five");
+    list.insert(2, "two");
+    list.insert(8, "eight");
+    list.insert(1, "one");
+    list.insert(7, "seven");
+
+    list.print();
 
     return 0;
 }

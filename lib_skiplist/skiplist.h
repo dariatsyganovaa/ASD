@@ -116,7 +116,7 @@ void SkipList<TKey, TValue>::print() const noexcept {
 
 		SkipNode<TKey, TValue>* cur = _heads[i];
 		while (cur != nullptr) {
-			std::cout << "|" << cur->_data.first << ":" << cur->_data.second << "|";
+			std::cout << "|" << cur->_data.first /*<< ":" << cur->_data.second */ << "|";
 			if (cur->_next[i] != nullptr) {
 				std::cout << " -> ";
 			}
