@@ -16,7 +16,6 @@ class Monom {
 public:
     Monom();
     Monom(double coeff, const int powers[VARS_COUNT]);
-    Monom(const std::string& str);
     Monom(const Monom& other);
 
     double get_coeff() const noexcept { return _coeff; }
@@ -25,9 +24,6 @@ public:
     Monom& operator=(const Monom& other);
     bool operator==(const Monom& other) const;
     bool operator!=(const Monom& other) const;
-
-    int& operator[](size_t);
-    const int& operator[](size_t) const;
 
     bool operator>(const Monom& other) const;
     bool operator<(const Monom& other) const;
@@ -55,7 +51,7 @@ public:
 
     friend Monom operator*(double scalar, const Monom& m);
 
-    friend std::ostream& operator<<(std::ostream& os, const Monom& m);
-    friend std::istream& operator>>(std::istream& is, Monom& m);
+    friend std::ostream& operator<<(std::ostream& out, const Monom& m);
+    friend std::istream& operator>>(std::istream& in, Monom& m);
 };
 #endif

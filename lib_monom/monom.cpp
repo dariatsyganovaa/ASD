@@ -41,20 +41,6 @@ bool Monom::operator!=(const Monom& other) const {
     return !(*this == other);
 }
 
-int& Monom::operator[](size_t i) {
-    if (i >= VARS_COUNT) {
-        throw std::out_of_range("Monom::operator[] : index out of range!");
-    }
-    return _powers[i];
-}
-
-const int& Monom::operator[](size_t i) const {
-    if (i >= VARS_COUNT) {
-        throw std::out_of_range("Monom::operator[] : index out of range!");
-    }
-    return _powers[i];
-}
-
 bool Monom::operator>(const Monom& other) const {
     for (int i = 0; i < VARS_COUNT; i++) {
         if (_powers[i] > other._powers[i]) {
@@ -65,22 +51,11 @@ bool Monom::operator>(const Monom& other) const {
             return false;
         }
     }
-
-    return false;
+    return _coeff > other._coeff;
 }
 
 bool Monom::operator<(const Monom& other) const {
-    for (int i = 0; i < VARS_COUNT; i++) {
-        if (_powers[i] < other._powers[i]) {
-            return true;
-        }
-
-        if (_powers[i] > other._powers[i]) {
-            return false;
-        }
-    }
-
-    return false;
+    return other > *this;
 }
 
 Monom Monom::operator+(const Monom& other) const {
@@ -117,7 +92,7 @@ Monom& Monom::operator+=(const Monom& other) {
 
 Monom& Monom::operator-=(const Monom& other) {
     if (*this != other) {
-        throw std::invalid_argument("Monom::operator+= : Monomes are not similar for subtraction");
+        throw std::invalid_argument("Monom::operator+= : Monomes are not similar for subtraction!");
     }
     _coeff -= other._coeff;
     return *this;
@@ -188,21 +163,24 @@ Monom operator*(double scalar, const Monom& m) {
     return m * scalar;
 }
 
-std::ostream& operator<<(std::ostream& os, const Monom& m) {
-    os << std::fixed << std::setprecision(6) << m._coeff; 
+std::ostream& operator<<(std::ostream& out, const Monom& m) {
+    out << std::fixed << std::setprecision(3) << m._coeff; 
 
     const char names[] = { 'x', 'y', 'z' };
     for (int i = 0; i < VARS_COUNT; i++)
         if (m._powers[i] != 0) {
-            os << names[i];
-            if (m._powers[i] != 1) os << '^' << m._powers[i];
+            out << names[i];
+            if (m._powers[i] != 1) {
+                out << '^' << m._powers[i];
+            }
         }
-    return os;
+    return out;
 }
 
-std::istream& operator>>(std::istream& is, Monom& m) {
-    is >> m._coeff;
-    for (int i = 0; i < VARS_COUNT; i++)
-        is >> m._powers[i];
-    return is;
+std::istream& operator>>(std::istream& in, Monom& m) {
+    in >> m._coeff;
+    for (int i = 0; i < VARS_COUNT; i++) {
+        in >> m._powers[i];
+    }
+    return in;
 }

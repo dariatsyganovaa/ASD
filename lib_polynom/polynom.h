@@ -1,41 +1,73 @@
-#ifndef LIB_POLYNOM_POLYNOM_H_
+﻿#ifndef LIB_POLYNOM_POLYNOM_H_
 #define LIB_POLYNOM_POLYNOM_H_
 
-#include "../lib_tvector/tvector.h"
+#include "../lib_list/list.h"
 #include "../lib_monom/monom.h"
 #include <string>
 #include <algorithm>
 
 class Polynom {
-    TVector<Monom> monoms;
+    List<Monom> _monoms;
 public:
-    Polynom() = default;
-    Polynom(const TVector<Monom>& m) : monoms(m) {
-    }
+    Polynom();
+    Polynom(const Monom& m);
+    Polynom(const std::string& str);
+    Polynom(const Polynom& other);
 
-    void addMonom(double c, int d) {
-        if (std::abs(c) < 1e-10) return;
-        monoms.push_back_elem(Monom(c, d));
-    }
+    Monom parse_monoms(const std::string&);
+    const List<Monom>& get_monoms() const noexcept { return _monoms; }
 
-    bool operator==(const Polynom& other) const {
-        if (monoms.size() != other.monoms.size()) return false;
-        for (size_t i = 0; i < monoms.size(); ++i) {
-            if (monoms[i] != other.monoms[i]) return false;
-        }
-        return true;
-    }
+    Polynom& operator=(const Polynom& other);
 
-    friend std::ostream& operator<<(std::ostream& out, const Polynom& p) {
-        if (p.monoms.is_empty()) {
-            out << "0";
-            return out;
-        }
-        for (size_t i = 0; i < p.monoms.size(); ++i) {
-            if (i > 0 && p.monoms[i].coef > 0) out << " + ";
-            out << p.monoms[i].coef << "(deg:" << p.monoms[i].degree << ")";
-        }
-        return out;
-    }
+    bool operator==(const Polynom& other) const;
+    bool operator!=(const Polynom& other) const;
+    bool operator<(const Polynom& other) const;
+    bool operator>(const Polynom& other) const;
+
+    Polynom operator-() const;
+
+    Polynom operator+(const Polynom& other) const;
+    Polynom operator-(const Polynom& other) const;
+    Polynom operator*(const Polynom& other) const;
+
+    Polynom& operator+=(const Polynom& other);
+    Polynom& operator-=(const Polynom& other);
+    Polynom& operator*=(const Polynom& other);
+
+    Polynom operator+(const Monom& m) const;
+    Polynom operator-(const Monom& m) const;
+    Polynom operator*(const Monom& m) const;
+    Polynom operator/(const Monom& m) const;
+
+    Polynom& operator+=(const Monom& m);
+    Polynom& operator-=(const Monom& m);
+    Polynom& operator*=(const Monom& m);
+    Polynom& operator/=(const Monom& m);
+
+    Polynom operator+(double scalar) const;
+    Polynom operator-(double scalar) const;
+    Polynom operator*(double scalar) const;
+    Polynom operator/(double scalar) const;
+
+    Polynom& operator+=(double scalar);
+    Polynom& operator-=(double scalar);
+    Polynom& operator*=(double scalar);
+    Polynom& operator/=(double scalar);
+
+    friend Polynom operator+(double scalar, const Polynom& p);
+    friend Polynom operator*(double scalar, const Polynom& p);
+    friend Polynom operator+(const Monom& m, const Polynom& p);
+    friend Polynom operator-(const Monom& m, const Polynom& p);
+    friend Polynom operator*(const Monom& m, const Polynom& p);
+
+    double calculate(double x, double y, double z) const;
+    double evaluate(const double values[VARS_COUNT]) const;
+
+    std::string toString() const;
+    friend std::ostream& operator<<(std::ostream& out, const Polynom& p);
+    friend std::istream& operator>>(std::istream& in, Polynom& p);
+
+private:
+    void add_monom(const Monom& m);
 };
 #endif
