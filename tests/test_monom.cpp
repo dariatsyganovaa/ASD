@@ -253,6 +253,16 @@ TEST(TestMonomLib, check_the_comparison_of_monomes) {
     EXPECT_FALSE(m2 < m3);
 }
 
+TEST(TestMonomLib, check_the_comparison_of_monomes2) {
+    int powers[3] = { 2, 1, 0 };
+    Monom m1(2.0, powers);
+    Monom m2(3.0, powers);
+    EXPECT_TRUE(m2 > m1);
+    EXPECT_TRUE(m1 < m2);
+    EXPECT_FALSE(m1 > m2);
+    EXPECT_FALSE(m2 < m1);
+}
+
 TEST(TestMonomLib, check_assignment) {
     int powers1[3] = { 2, 2, 1 };
     Monom m1(42.85, powers1);
@@ -262,3 +272,10 @@ TEST(TestMonomLib, check_assignment) {
         EXPECT_EQ(m2.get_powers()[i], powers1[i]);
     }
 }
+
+TEST(TestMonomLib, check_calculate) {
+    int powers[3] = { 4, 3, 2 };
+    Monom m(8.45, powers);
+    EXPECT_NEAR(m.calculate(8.2, 5.3, 2.1), 25082932.92, 1e-2);
+}
+
