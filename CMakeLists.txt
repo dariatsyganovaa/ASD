@@ -15,6 +15,7 @@ include(cmake/function.cmake)         # подхватываем функции,
 
 add_subdirectory(lib_tvector) 
 add_subdirectory(lib_list)
+add_subdirectory(lib_queue_on_list) 
 add_subdirectory(lib_monom) 
 add_subdirectory(lib_polynom) 
 add_subdirectory(lib_itable)
@@ -23,6 +24,8 @@ add_subdirectory(lib_unsorted_table_on_arr)
 add_subdirectory(lib_unsorted_table_on_list)
 add_subdirectory(lib_sorted_table_on_arr)  
 add_subdirectory(lib_skiplist)
+add_subdirectory(lib_tree)
+add_subdirectory(lib_unsorted_table_on_tree) 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main
 
 option(BTEST "build test?" ON)        # указываем подключаем ли google-тесты (ON или YES) или нет (OFF или NO)

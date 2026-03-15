@@ -1,9 +1,11 @@
 ﻿#ifndef LIB_SKIPLIST_SKIPLIST_H_
 #define LIB_SKIPLIST_SKIPLIST_H_
 
+#include <string>
 #include <iostream>
 #include <random>
 #include "../lib_list/list.h"
+#include "../lib_tvector/tvector.h"
 
 template <class TKey, class TValue>
 struct SkipNode {
@@ -33,7 +35,7 @@ public:
 	~SkipList();
 	size_t get_level() const noexcept;
 	void insert(const TKey& key, const TValue& value);
-	TValue& found_pos(const TKey& key);
+	TValue& find(const TKey& key);
 	void print() const noexcept;
 protected:
 	size_t flip_coin() const noexcept;
@@ -93,7 +95,7 @@ void SkipList<TKey, TValue>::insert(const TKey& key, const TValue& value) {
 }
 
 template <class TKey, class TValue>
-TValue& SkipList<TKey, TValue>::found_pos(const TKey& key) {
+TValue& SkipList<TKey, TValue>::find(const TKey& key) {
 	SkipNode<TKey, TValue>* cur = _heads[_level - 1];
 
 	for (int i = _level - 1; i >= 0; i--) {
@@ -111,19 +113,23 @@ TValue& SkipList<TKey, TValue>::found_pos(const TKey& key) {
 
 template <class TKey, class TValue>
 void SkipList<TKey, TValue>::print() const noexcept {
+	TVector<TKey> keys;
+	for (SkipNode<TKey, TValue>* cur = _heads[0]; cur; cur = cur->_next[0])
+		keys.push_back_elem(cur->_data.first);
+
 	for (int i = _level - 1; i >= 0; i--) {
-		std::cout << "Level " << i << ": ";
-
-		SkipNode<TKey, TValue>* cur = _heads[i];
-		while (cur != nullptr) {
-			std::cout << "|" << cur->_data.first /*<< ":" << cur->_data.second */ << "|";
-			if (cur->_next[i] != nullptr) {
-				std::cout << " -> ";
+		std::cout << "L" << i << ": ";
+		SkipNode<TKey, TValue>* node = _heads[i];
+		for (const auto& k : keys) {
+			if (node && node->_data.first == k) {
+				std::cout << "[" << std::setw(2) << k << "] ";
+				node = node->_next[i];
 			}
-			cur = cur->_next[i];
+			else {
+				std::cout << "     ";
+			}
 		}
-
-		std::cout << " -> NULL\n";
+		std::cout << "\n";
 	}
 	std::cout << "\n";
 }

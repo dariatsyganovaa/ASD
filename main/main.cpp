@@ -14,7 +14,7 @@ int main() {
     list.insert("one", 1);
     list.insert("seven", 7);*/
 
-    SkipList<int, std::string> list(8);
+    /*SkipList<int, std::string> list(8);
 
     list.insert(5, "five");
     list.insert(2, "two");
@@ -22,7 +22,19 @@ int main() {
     list.insert(1, "one");
     list.insert(7, "seven");
 
-    list.print();
+    list.print();*/
+
+    srand(time(NULL));
+
+    SkipList<int, int> sl(8);
+    int keys[] = { 3, 7, 1, 12, 5, 9, 2, 15, 6, 11, 4, 8, 14, 10, 13 };
+
+    for (int k : keys) {
+        sl.insert(k, k * 10);
+    }
+
+    std::cout << "\n";
+    sl.print();
 
     return 0;
 }

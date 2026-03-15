@@ -56,6 +56,10 @@ public:
 		T& operator*() const {
 			return _cur->data;
 		}
+
+		T* operator->() const {
+			return &(_cur->data);
+		}
 	};
 
 	Iterator begin() {
@@ -90,6 +94,9 @@ public:
 	void erase(size_t pos);
 	void erase(Node<T>* node);
 
+	void clear();
+
+	List<T>& operator=(const List<T>& other);
 	T& operator[](size_t pos);
 	const T& operator[](size_t pos) const;
 };
@@ -114,15 +121,7 @@ List<T>::List(const List<T>& other) : _head(nullptr), _tail(nullptr), _count(0) 
 
 template <class T>
 List<T>::~List() {
-	Node<T>* cur = _head;
-	Node<T>* next_node = nullptr;
-	while (cur != nullptr) {
-		next_node = cur->next;
-		delete cur;
-		cur = next_node;
-	}
-	_head = _tail = nullptr;
-	_count = 0;
+	clear();
 }
 
 template <class T>
@@ -331,6 +330,31 @@ void List<T>::erase(size_t pos) {
 
 	delete to_delete;
 	_count--;
+}
+
+template <class T>
+void List<T>::clear() {
+	Node<T>* cur = _head;
+	while (cur != nullptr) {
+		Node<T>* next = cur->next;
+		delete cur;
+		cur = next;
+	}
+	_head = _tail = nullptr;
+	_count = 0;
+}
+
+template <class T>
+List<T>& List<T>::operator=(const List<T>& other) {
+	if (this != &other) {
+		clear();
+		Node<T>* cur = other._head;
+		while (cur != nullptr) {
+			push_back(cur->data);
+			cur = cur->next;
+		}
+	}
+	return *this;
 }
 
 template <class T>
