@@ -25,6 +25,7 @@ add_subdirectory(lib_unsorted_table_on_list)
 add_subdirectory(lib_sorted_table_on_arr)  
 add_subdirectory(lib_skiplist)
 add_subdirectory(lib_tree)
+add_subdirectory(lib_bstree)
 add_subdirectory(lib_unsorted_table_on_tree) 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main
 
