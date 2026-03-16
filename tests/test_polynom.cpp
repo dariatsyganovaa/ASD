@@ -78,10 +78,10 @@ TEST(TestPolynomLib, check_subtraction_polynoms) {
 }
 
 TEST(TestPolynomLib, check_subtraction_with_assignment) {
-    Polynom p1("2.4x^3y^2+7.34y^3-4.6z^3");
+    Polynom p1("2.4x^3y^2+7.34y^3-4.6z^3+2x");
     Polynom p2("3.6x^3y^2+5.4y^3z^2+2x");
     p1 -= p2;
-    std::string expected = "-1.200x^3y^2-2.000x-5.400y^3z^2+7.340y^3-4.600z^3";
+    std::string expected = "-1.200x^3y^2-5.400y^3z^2+7.340y^3-4.600z^3";
     EXPECT_EQ(p1.toString(), expected);
 }
 
