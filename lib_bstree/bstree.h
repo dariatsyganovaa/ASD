@@ -29,6 +29,7 @@ public:
 	TValue* find(const TKey& key) const noexcept;
 	void erase(const TKey& key);
 
+	void print_table_rec(BSTreeNode<TKey, TValue>* node, std::ostream& out) const noexcept;
 	void print_table(std::ostream& out) const noexcept;
 	void print_DLCR() const noexcept;
 	void print_DLCR_rec(BSTreeNode<TKey, TValue>*) const noexcept;
@@ -231,5 +232,16 @@ void BSTree<TKey, TValue>::print_DLCR_rec(BSTreeNode<TKey, TValue>* node) const 
 	print_DLCR_rec(node->right);
 }
 
+template<class TKey, class TValue>
+void BSTree<TKey, TValue>::print_table_rec(BSTreeNode<TKey, TValue>* node, std::ostream& out) const noexcept {
+	if (node == nullptr) return;
+	print_table_rec(node->left, out);
+	out << node->data.first << " | " << node->data.second << " | " << "\n";
+	print_table_rec(node->right, out);
+}
 
+template<class TKey, class TValue>
+void BSTree<TKey, TValue>::print_table(std::ostream& out) const noexcept {
+	print_table_rec(_root, out);
+}
 #endif
