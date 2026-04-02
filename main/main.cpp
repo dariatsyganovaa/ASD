@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../lib_skiplist/skiplist.h"
+#include "../lib_priority_queue/priority_queue.h"
 
 int main() {
     /*SkipList<std::string, int> list(8);
@@ -24,7 +25,7 @@ int main() {
 
     list.print();*/
 
-    srand(time(NULL));
+    /*srand(time(NULL));
 
     SkipList<int, int> sl(8);
     int keys[] = { 3, 7, 1, 12, 5, 9, 2, 15, 6, 11, 4, 8, 14, 10, 13 };
@@ -34,8 +35,25 @@ int main() {
     }
 
     std::cout << "\n";
-    sl.print();
+    sl.print();*/
 
+    PriorityQueue<int> queue;
+    for (int i = 0; i < 15; i++) {
+        int rand_prior = rand() % 5 + 1;
+        int rand_value = rand() % 100 + 1;
+        queue.insert(rand_prior, rand_value);
+
+        std::cout << "(" <<rand_prior << ")" << rand_value << " ";
+    }
+
+    std::cout << "\n";
+    
+    for (int i = 0; i < 5; i++) {
+        int val = queue.pop();
+        std::cout << val << " ";
+    }
+    std::cout << "\n";
+    
     return 0;
 }
 
